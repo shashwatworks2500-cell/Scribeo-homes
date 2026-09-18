@@ -146,6 +146,16 @@
     letter-spacing: -0.008em;
     font-weight: 300;
   }
+  /* Question rows: display face, but sized for a list of thirty-six rather
+     than for a section heading. */
+  .t-faq {
+    font-family: var(--font-display);
+    font-size: clamp(1.0625rem, 0.45vw + 0.96rem, 1.3125rem);
+    line-height: 1.3;
+    letter-spacing: -0.006em;
+    font-weight: 300;
+  }
+
   .t-eyebrow {
     font-family: var(--font-sans);
     font-size: 0.6875rem;

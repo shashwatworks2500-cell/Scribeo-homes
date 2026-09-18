@@ -1,16 +1,17 @@
-import MotionProvider from "@/components/MotionProvider";
 import Curtain from "@/components/Curtain";
+import MotionProvider from "@/components/MotionProvider";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
+import Pricing from "@/components/Pricing";
 import Statement from "@/components/Statement";
 import Architecture from "@/components/Architecture";
-import Residence from "@/components/Residence";
-import Interstitial from "@/components/Interstitial";
-import Landscape from "@/components/Landscape";
-import Lifestyle from "@/components/Lifestyle";
+import FloorPlans from "@/components/FloorPlans";
+import Amenities from "@/components/Amenities";
+import Gallery from "@/components/Gallery";
+import Distances from "@/components/Distances";
 import Location from "@/components/Location";
-import Details from "@/components/Details";
-import Enquire from "@/components/Enquire";
+import Faq from "@/components/Faq";
+import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 export default function Page() {
@@ -22,15 +23,16 @@ export default function Page() {
       <div id="top" />
       <main id="main">
         <Hero />
+        <Pricing />
         <Statement />
         <Architecture />
-        <Residence />
-        <Interstitial />
-        <Landscape />
-        <Lifestyle />
+        <FloorPlans />
+        <Amenities />
+        <Gallery />
+        <Distances />
         <Location />
-        <Details />
-        <Enquire />
+        <Faq />
+        <Contact />
       </main>
       <Footer />
     </>

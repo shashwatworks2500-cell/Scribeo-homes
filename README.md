@@ -105,6 +105,38 @@ at most three staggered children. Every section is complete and legible with all
 motion removed, and `prefers-reduced-motion` is a first-class render — no scrub,
 no sequence download, no movement.
 
+## Sections
+
+Hero (scroll-scrubbed) · Configurations and price range · Brand statement ·
+Architecture · Floor plans (1/2/3/4 BHK) · Amenities · Gallery ·
+Key distances · Location plan · Searchable questions · Enquiry.
+
+**Floor plans are drawn SVG, not renders** (`scripts/plans.py`). Room names,
+dimensions and the dimension chain have to be readable, and image models bake
+in unreadable lettering — one of the originally supplied assets was unusable
+for exactly that reason. Each plan carries explicit `width`/`height` as well as
+a `viewBox`, and all text is XML-escaped: an unescaped `&` in "Living & Dining"
+makes the document unparseable, which an `<img>` reports only as
+`naturalWidth: 0`.
+
+The gallery holds the full collection (41 images and drawings across six
+categories) so the page itself carries only the images that make its argument.
+
+The question index is a native `<details>` list, so with JavaScript off all 36
+answers are present and findable with the browser's own find-in-page. Search
+matches the question, the answer and a tag list, so "how much" returns the
+price answer and "emi" returns the loan answer.
+
+The enquiry form composes a `mailto:` to the site address. There is no backend
+on this deployment, so that is a real working route rather than a button that
+silently fails.
+
+## Figures
+
+Prices, distances and possession wording in `lib/content.ts` are **indicative
+placeholders**. No price list or survey was supplied. They are collected in one
+file so replacing them is a single edit.
+
 ## Generated assets
 
 The supplied collection is entirely 16:9, which forces every composition into

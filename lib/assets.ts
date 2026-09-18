@@ -162,6 +162,16 @@ export const A = {
     "v-light-corner",
     "An interior corner at first light, a wedge of warm morning sun laid across pale plaster and a travertine floor.",
   ),
+
+  /* Amenities. Generated in the same visual language as the supplied set. */
+  amClubhouse: img("am-clubhouse", "The residents' clubhouse: a low limestone pavilion with a deep shaded colonnade and full-height glazing, an olive tree at the forecourt."),
+  amPool: img("am-pool", "The lap pool: a long rectangle of still dark water with limestone coping and a shaded timber deck, mature trees beyond."),
+  amFitness: img("am-fitness", "The fitness studio: a double-height concrete room with a full glass wall onto mature greenery and equipment arranged sparsely."),
+  amPlay: img("am-play", "The children's play area: timber play structures in soft sand behind a low limestone wall, shaded by mature trees."),
+  amTrail: img("am-trail", "The jogging loop: a smooth paved trail curving away between olive trees and ornamental grasses in early morning light."),
+  amGreen: img("am-green", "The central green: a wide open lawn held between low limestone residences with mature trees framing both edges."),
+  amLounge: img("am-lounge", "The residents' lounge: limestone floor, warm plaster, a long timber bench and low linen seating beside a full-height window."),
+  amYoga: img("am-yoga", "The wellness deck: a raised timber platform under a tree canopy, edged by a low limestone wall and ornamental grasses."),
 } as const;
 
 /**
@@ -174,12 +184,12 @@ export const A = {
  */
 export const HERO = {
   avif: {
-    desktop: { dir: "/hero/avif/desktop", count: 169 },
-    mobile: { dir: "/hero/avif/mobile", count: 86 },
+    desktop: { dir: "/hero/avif/desktop", count: 154 },
+    mobile: { dir: "/hero/avif/mobile", count: 95 },
   },
   webp: {
-    desktop: { dir: "/hero/webp/desktop", count: 169 },
-    mobile: { dir: "/hero/webp/mobile", count: 86 },
+    desktop: { dir: "/hero/webp/desktop", count: 154 },
+    mobile: { dir: "/hero/webp/mobile", count: 95 },
   },
   poster: "/hero/poster.webp",
 } as const;

@@ -180,12 +180,26 @@ export default function Hero() {
           </>
         )}
 
+        {/* Two scrims, not one. The vertical pass seats the navigation and the
+            metadata row; the horizontal pass gives the headline a ground to sit
+            on, because midway through the sequence the frame fills with pale
+            render and light-on-light stops being readable. An automated
+            contrast check cannot see this — it measures CSS colours, not the
+            canvas underneath. */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(11,10,8,0.55) 0%, rgba(11,10,8,0.06) 38%, rgba(11,10,8,0.18) 72%, rgba(11,10,8,0.80) 100%)",
+              "linear-gradient(to bottom, rgba(11,10,8,0.58) 0%, rgba(11,10,8,0.06) 34%, rgba(11,10,8,0.20) 68%, rgba(11,10,8,0.84) 100%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(105deg, rgba(11,10,8,0.62) 0%, rgba(11,10,8,0.34) 26%, rgba(11,10,8,0.06) 52%, rgba(11,10,8,0) 68%)",
           }}
         />
 

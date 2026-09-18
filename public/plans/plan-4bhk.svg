@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="963" height="805" viewBox="0 0 963 805" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Four bedroom floor plan">
+<rect width="963" height="805" fill="#F2EEE5"/>
+<g transform="translate(86,86)">
+<rect x="0.0" y="0.0" width="386.4" height="92.0" fill="#EFEBE0" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="0.0" y="92.0" width="386.4" height="266.8" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="386.4" y="0.0" width="404.8" height="174.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="386.4" y="174.8" width="184.0" height="184.0" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="570.4" y="174.8" width="138.0" height="184.0" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="708.4" y="174.8" width="82.8" height="184.0" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="0.0" y="358.8" width="257.6" height="220.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="257.6" y="358.8" width="119.6" height="220.8" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="377.2" y="358.8" width="147.2" height="220.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="524.4" y="358.8" width="147.2" height="220.8" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="671.6" y="358.8" width="119.6" height="220.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="0" y="0" width="791.2" height="579.6" fill="none" stroke="#1A1814" stroke-width="7"/>
+<rect x="156.4" y="92.0" width="59.8" height="2.8" fill="#F2EEE5"/>
+<rect x="386.4" y="101.2" width="2.8" height="46.0" fill="#F2EEE5"/>
+<rect x="386.4" y="239.2" width="2.8" height="41.4" fill="#F2EEE5"/>
+<rect x="570.4" y="239.2" width="2.8" height="41.4" fill="#F2EEE5"/>
+<rect x="82.8" y="358.8" width="50.6" height="2.8" fill="#F2EEE5"/>
+<rect x="432.4" y="358.8" width="46.0" height="2.8" fill="#F2EEE5"/>
+<rect x="579.6" y="358.8" width="46.0" height="2.8" fill="#F2EEE5"/>
+<rect x="708.4" y="358.8" width="46.0" height="2.8" fill="#F2EEE5"/>
+<rect x="257.6" y="432.4" width="2.8" height="41.4" fill="#F2EEE5"/>
+<text x="193.2" y="43.0" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11.5" letter-spacing="1.6" fill="#1A1814">BALCONY</text>
+<text x="193.2" y="60.0" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">8.4 × 2.0 m</text>
+<text x="193.2" y="222.4" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">LIVING &amp; DINING</text>
+<text x="193.2" y="239.4" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">8.4 × 5.8 m</text>
+<text x="588.8" y="84.4" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">KITCHEN</text>
+<text x="588.8" y="101.4" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">8.8 × 3.8 m</text>
+<text x="478.4" y="263.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">UTILITY</text>
+<text x="478.4" y="280.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">4.0 × 4.0 m</text>
+<text x="639.4" y="263.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">FAMILY ROOM</text>
+<text x="639.4" y="280.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">3.0 × 4.0 m</text>
+<text x="749.8" y="263.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11.5" letter-spacing="1.6" fill="#1A1814">BATH 3</text>
+<text x="749.8" y="280.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">1.8 × 4.0 m</text>
+<text x="128.8" y="466.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">MASTER BEDROOM</text>
+<text x="128.8" y="483.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">5.6 × 4.8 m</text>
+<text x="317.4" y="466.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11.5" letter-spacing="1.6" fill="#1A1814">MASTER BATH</text>
+<text x="317.4" y="483.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">2.6 × 4.8 m</text>
+<text x="450.8" y="466.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">BEDROOM 2</text>
+<text x="450.8" y="483.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">3.2 × 4.8 m</text>
+<text x="598.0" y="466.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">BEDROOM 3</text>
+<text x="598.0" y="483.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">3.2 × 4.8 m</text>
+<text x="731.4" y="466.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11.5" letter-spacing="1.6" fill="#1A1814">BEDROOM 4</text>
+<text x="731.4" y="483.2" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">2.6 × 4.8 m</text>
+<line x1="0" y1="-34" x2="791.2" y2="-34" stroke="#6B6559" stroke-width="1"/>
+<line x1="0.0" y1="-40" x2="0.0" y2="-28" stroke="#6B6559" stroke-width="1"/>
+<line x1="791.2" y1="-40" x2="791.2" y2="-28" stroke="#6B6559" stroke-width="1"/>
+<text x="395.6" y="-42" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11" letter-spacing="1.2" fill="#6B6559">17.2 m</text>
+<line x1="-34" y1="0" x2="-34" y2="579.6" stroke="#6B6559" stroke-width="1"/>
+<line x1="-40" y1="0.0" x2="-28" y2="0.0" stroke="#6B6559" stroke-width="1"/>
+<line x1="-40" y1="579.6" x2="-28" y2="579.6" stroke="#6B6559" stroke-width="1"/>
+<text x="-42" y="289.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11" letter-spacing="1.2" fill="#6B6559" transform="rotate(-90,-42,289.8)">12.6 m</text>
+<g transform="translate(825.2,10)"><path d="M0,26 L0,0 M0,0 L-5,9 M0,0 L5,9" stroke="#1A1814" stroke-width="1.4" fill="none"/><text x="0" y="40" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="1.4" fill="#6B6559">N</text></g>
+</g>
+<line x1="86" y1="749" x2="877" y2="749" stroke="#C9C2B2" stroke-width="1"/>
+<text x="86" y="771" font-family="Jost, Helvetica, Arial, sans-serif" font-size="12.5" letter-spacing="2.6" fill="#1A1814">4 BHK</text>
+<text x="877" y="771" text-anchor="end" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11" letter-spacing="1.2" fill="#6B6559">Indicative layout · not to scale</text>
+</svg>

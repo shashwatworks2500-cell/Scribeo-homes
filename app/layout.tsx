@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
+import { CONTACT, PRICE_RANGE } from "@/lib/content";
 import "./globals.css";
 
 /* Display: high-contrast garamond. Echoes the inscribed roman capitals on the
@@ -29,7 +30,8 @@ export const metadata: Metadata = {
     default: `${SITE_NAME} — Contemporary residences set in mature landscape`,
     template: `%s · ${SITE_NAME}`,
   },
-  description: SITE_DESCRIPTION,
+  description: `${SITE_DESCRIPTION} 1, 2, 3 and 4 BHK from ${PRICE_RANGE.min}.`,
+  keywords: ["Scribeo Homes","1 BHK","2 BHK","3 BHK","4 BHK","residences","floor plans","amenities"],
   alternates: { canonical: "/" },
   openGraph: {
     title: SITE_NAME,
@@ -55,7 +57,20 @@ const JSON_LD = {
   url: SITE_URL,
   description: SITE_DESCRIPTION,
   image: `${SITE_URL}/hero/poster.webp`,
-  publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  publisher: {
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    email: CONTACT.email,
+    telephone: CONTACT.phoneDisplay,
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      telephone: CONTACT.phoneDisplay,
+      email: CONTACT.email,
+      availableLanguage: ["en", "hi"],
+    },
+  },
 };
 
 export const viewport: Viewport = {

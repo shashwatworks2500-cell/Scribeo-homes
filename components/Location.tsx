@@ -33,7 +33,7 @@ export default function Location() {
         <div className="grid grid-cols-12 gap-[clamp(2rem,5vw,4.5rem)]">
           <div className="col-span-12 md:col-span-5">
             <p data-reveal className="t-eyebrow text-paper-dim">
-              06 — Location
+              07 — Location
             </p>
             <h2 id="loc-heading" className="t-display-m mt-6 max-w-[16ch]">
               <SplitLines>Held inside the green, not outside the city.</SplitLines>

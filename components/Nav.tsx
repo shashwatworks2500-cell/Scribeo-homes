@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 const LINKS = [
-  { href: "#about", label: "About" },
-  { href: "#architecture", label: "Architecture" },
-  { href: "#residence", label: "Residence" },
-  { href: "#landscape", label: "Landscape" },
+  { href: "#pricing", label: "Configurations" },
+  { href: "#residences", label: "Floor plans" },
+  { href: "#amenities", label: "Amenities" },
+  { href: "#gallery", label: "Gallery" },
+  { href: "#faq", label: "Questions" },
   { href: "#enquire", label: "Enquire" },
 ] as const;
 

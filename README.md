@@ -1,7 +1,7 @@
 # Scribeo Homes
 
 A scroll-driven, editorial marketing site for **Scribeo Homes**, a contemporary
-residential development. Next.js 15 (App Router) · TypeScript · Tailwind v4 ·
+residential development. Next.js 16 (App Router) · TypeScript · Tailwind v4 ·
 GSAP ScrollTrigger · Lenis.
 
 ## Art direction

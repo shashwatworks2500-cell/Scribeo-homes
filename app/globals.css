@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+/* ───────────────────────────────────────────────────────────
+   Scribeo Homes — design tokens
+   Palette derived by sampling the supplied photography:
+   72% of pixel mass sits in shadow + warm mid-tone, so the
+   site is dark-ground and the photographs are the light.
+   ─────────────────────────────────────────────────────────── */
+@theme {
+  --color-ink: #0b0a08;
+  --color-ink-2: #12100d;
+  --color-ink-3: #1c1915;
+  --color-hair: #2a2620;
+  --color-stone: #e9e3d7;
+  --color-stone-dim: #a29889;
+  --color-stone-faint: #8a8073;
+  --color-travertine: #c6b49a;
+  --color-timber: #9a6b44;
+  --color-olive: #4a5238;
+  --color-paper: #f2eee5;
+  --color-paper-ink: #1a1814;
+  --color-paper-dim: #6b6559;
+  --color-paper-hair: #d8d2c4;
+
+  /* stone-faint raised from #6d655a (3.47:1, fails AA) to 5.11:1. */
+  --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-quiet: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quiet: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root {
+  /* Hero scroll runway. Desktop gets a deliberate hold; mobile is shortened
+     because a long pinned section on touch reads as a broken page. */
+  --hero-runway: 260vh;
+}
+@media (max-width: 767px) {
+  :root { --hero-runway: 190vh; }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: auto; /* Lenis owns scrolling; never fight it */
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ink);
+    color: var(--color-stone);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: clamp(0.9375rem, 0.35vw + 0.85rem, 1.0625rem);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  p { margin: 0; }
+  img, video, canvas { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; }
+
+  ::selection {
+    background: var(--color-travertine);
+    color: var(--color-ink);
+  }
+
+  /* Visible focus, on every interactive element, in brand colour. */
+  :focus-visible {
+    outline: 1px solid var(--color-travertine);
+    outline-offset: 4px;
+    border-radius: 1px;
+  }
+  .on-paper :focus-visible {
+    outline-color: var(--color-paper-ink);
+  }
+}
+
+@layer utilities {
+  /* ── Type scale ───────────────────────────────────────── */
+  .t-display-xl {
+    font-family: var(--font-display);
+    font-size: clamp(2.875rem, 8.4vw, 8.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+  }
+  .t-display-l {
+    font-family: var(--font-display);
+    font-size: clamp(2.125rem, 5.6vw, 5rem);
+    line-height: 1.04;
+    letter-spacing: -0.017em;
+    font-weight: 300;
+  }
+  .t-display-m {
+    font-family: var(--font-display);
+    font-size: clamp(1.625rem, 3.4vw, 2.875rem);
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+    font-weight: 300;
+  }
+  .t-display-s {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.9vw, 1.75rem);
+    line-height: 1.22;
+    letter-spacing: -0.008em;
+    font-weight: 300;
+  }
+  .t-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .t-meta {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+  .t-lede {
+    font-size: clamp(1.0625rem, 0.6vw + 0.95rem, 1.3125rem);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .t-numeral {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Layout ───────────────────────────────────────────── */
+  .gutter { padding-inline: clamp(1.25rem, 5vw, 6.5rem); }
+  .section-y { padding-block: clamp(5.5rem, 13vh, 11rem); }
+  .measure { max-width: 34ch; }
+  .measure-wide { max-width: 46ch; }
+  .hair { border-color: var(--color-hair); }
+
+  /* ── Motion primitives ───────────────────────────────────
+     Static baseline first: every .reveal element is fully
+     legible with no JS. GSAP only ever removes the veil.     */
+  [data-reveal],
+  [data-reveal-clip] { opacity: 1; }
+  .js [data-reveal] { opacity: 0; will-change: opacity, transform; }
+  .js [data-reveal-clip] { clip-path: inset(0 0 100% 0); will-change: clip-path; }
+
+  .film-grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────
+   Not a follow-up: the no-motion experience is a first-class
+   render. Everything is visible, nothing scrubs, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .js [data-reveal-clip] { clip-path: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

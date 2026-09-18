@@ -1,0 +1,135 @@
+/**
+ * Asset manifest for Scribeo Homes.
+ *
+ * Every entry is a supplied asset. `alt` describes what is actually in the
+ * frame — written from the source art direction, not guessed from filenames.
+ *
+ * Two supplied assets are deliberately not listed:
+ *  - `unlabelled-01` carries garbled artefact text rendered into the image
+ *    ("SCRIBBCO HOMES"), which cannot appear on a finished site.
+ *  - `bathroom-02` is the one generic façade in the set and is weaker than
+ *    every alternative for the sections it could serve.
+ */
+
+export type Asset = {
+  src: string;
+  alt: string;
+  /** Intrinsic dimensions — declared so no image can cause layout shift. */
+  w: number;
+  h: number;
+};
+
+const img = (name: string, alt: string, w = 2048, h = 1152): Asset => ({
+  src: `/images/${name}.webp`,
+  alt,
+  w,
+  h,
+});
+
+export const A = {
+  masterReference: img(
+    "master-reference",
+    "The Scribeo Homes development at first light: low limestone and timber volumes set among mature trees, ornamental grasses and a stone pathway curving between them.",
+  ),
+  exteriorWide: img(
+    "exterior-wide-elevated",
+    "A single residence framed by mature trees, its stone and timber façade opening onto a lawn through full-height glazing.",
+  ),
+  establishingDistant: img(
+    "establishing-distant",
+    "The residences seen from beyond the landscaped edge, long horizontal roof slabs reading through the canopy against a pale dawn sky.",
+  ),
+  arrivalRoad: img(
+    "arrival-road",
+    "The internal road curving between mature trees, a cantilevered upper volume of stone and glass above the approach.",
+  ),
+  facadeStudy: img(
+    "facade-study",
+    "Close study of the signature façade: tall limestone fins, deeply recessed windows and vertical timber louvres in low morning sun.",
+  ),
+  materialDetail: img(
+    "material-detail",
+    "Material detail at the building edge — a travertine beam meeting dark glazing and warm timber, with the row of residences receding behind.",
+  ),
+  windowAperture: img(
+    "window-aperture",
+    "A deep recessed window used as an aperture: stone reveal, slim charcoal mullions and the garden reflected across the glass.",
+  ),
+  entranceThreshold: img(
+    "entrance-threshold",
+    "The main threshold — a timber-lined opening in a limestone wall, full-height glazing beyond and rough stone paving underfoot.",
+  ),
+  pavilion: img(
+    "pavilion",
+    "A small garden pavilion in the same material language, its concrete roof slab floating over glass and travertine beneath mature trees.",
+  ),
+  garden: img(
+    "garden",
+    "The landscaped garden at the heart of the development, olive-green canopy and ornamental grasses framing a glazed garden room.",
+  ),
+  courtyard: img(
+    "courtyard",
+    "The central courtyard between two residences, stone paving and planting held between limestone walls and deep shaded soffits.",
+  ),
+  pathway: img(
+    "pathway",
+    "A stone pathway crossing lawn and ornamental grasses toward a long glazed residence held under a horizontal roof.",
+  ),
+  benchSeating: img(
+    "bench-seating",
+    "Two residents seated on a timber and stone bench beside a planted path, dappled morning light across the limestone wall behind them.",
+  ),
+  livingRoom: img(
+    "living-room",
+    "A sheltered living terrace: full-height sliding glass under a deep stone soffit, opening to planting and a low outdoor sofa.",
+  ),
+  indoorOutdoor: img(
+    "indoor-outdoor",
+    "The indoor-outdoor threshold seen from within — sliding glass panels drawn back so stone floor runs uninterrupted into the garden.",
+  ),
+  bedroom: img(
+    "bedroom-02",
+    "A bedroom at dawn with a pivoting circular door swung open, the bed in warm light and a single tree filling the opening beyond.",
+  ),
+  bedroomAlt: img(
+    "bedroom-01",
+    "A bedroom opening through full-height glass onto a mature tree and stone terrace, morning light pooling across the travertine floor.",
+  ),
+  kitchen: img(
+    "kitchen-02",
+    "A travertine volume with a glazed corner revealing the timber kitchen within, a mature tree in the foreground.",
+  ),
+  kitchenAlt: img(
+    "kitchen-01",
+    "The kitchen read from outside: a long stone bench running beneath deep glazing, timber cabinetry visible within.",
+  ),
+  bathroom: img(
+    "bathroom-01",
+    "A bathing space of solid travertine — a monolithic basin and bench beside frameless glass opening to planting and distant greenery.",
+  ),
+  lifestylePathway: img(
+    "lifestyle-pathway",
+    "A resident walking a stone path between planting toward a tall glazed hall, a broad olive tree casting shade across the route.",
+  ),
+  lifestyleArrival: img(
+    "lifestyle-arrival",
+    "A resident approaching the timber entrance door of a stacked limestone residence across open ground at sunrise.",
+  ),
+  locationMap: {
+    src: "/images/square-study.webp",
+    alt:
+      "Location plan titled Scribeo Homes: the development at the centre of a ring road, surrounded by parklands, green belts, a university campus, a modern art museum, botanical gardens, residential and cultural districts, a lake and a riverfront.",
+    w: 2048,
+    h: 2048,
+  } satisfies Asset,
+} as const;
+
+/** Hero frame sequence — extracted from the supplied hero film. */
+export const HERO = {
+  desktop: { dir: "/hero/desktop", count: 145, width: 1536, height: 864 },
+  mobile: { dir: "/hero/mobile", count: 73, width: 960, height: 540 },
+  poster: "/hero/poster.webp",
+} as const;
+
+export const frameUrl = (dir: string, i: number) =>
+  `${dir}/f${String(i + 1).padStart(3, "0")}.webp`;

@@ -176,6 +176,13 @@
   }
 }
 
+/* Curtain failsafe: if the boot script's timer fires before React lifts the
+   curtain, remove it outright. The page underneath is fully server-rendered,
+   so this degrades to a complete, scrollable site rather than a black screen. */
+html[data-curtain="failsafe"] #entry-curtain {
+  display: none !important;
+}
+
 /* ── Reduced motion ──────────────────────────────────────────
    Not a follow-up: the no-motion experience is a first-class
    render. Everything is visible, nothing scrubs, nothing moves. */

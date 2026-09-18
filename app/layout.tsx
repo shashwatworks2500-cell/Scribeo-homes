@@ -74,6 +74,17 @@ setTimeout(function(){
     document.documentElement.classList.remove('js');
   }
 },2500);
+// Curtain failsafe. The curtain lifts from a React effect; if hydration never
+// happens (a chunk 404s, a slow network drops a script), that effect never
+// runs and the curtain would cover a fully-rendered page forever. This timer
+// is plain inline script with no dependency on the bundle, so it fires
+// regardless. CSS keyed on the attribute removes the curtain.
+setTimeout(function(){
+  if(document.documentElement.dataset.curtain!=='lifted'){
+    document.documentElement.dataset.curtain='failsafe';
+    document.documentElement.style.overflow='';
+  }
+},4500);
 `;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

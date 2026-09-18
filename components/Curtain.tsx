@@ -39,6 +39,8 @@ export default function Curtain() {
         return;
       }
       lifted.current = true;
+      // Tell the inline failsafe to stand down: React has this.
+      document.documentElement.dataset.curtain = "lifted";
       setLifting(true);
       // Hand scrolling back the moment the lift starts. Holding it for the
       // full slide means ~1.1s where the page looks ready but ignores input.
@@ -75,6 +77,7 @@ export default function Curtain() {
 
   return (
     <div
+      id="entry-curtain"
       aria-hidden="true"
       className="fixed inset-0 z-[90] flex items-center justify-center bg-ink"
       style={{

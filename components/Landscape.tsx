@@ -16,7 +16,6 @@ const PLATES = [
   { asset: A.exteriorWide, label: "The clearing", note: "One house, many trees" },
   { asset: A.pavilion, label: "The pavilion", note: "One room, no walls that matter" },
   { asset: A.benchSeating, label: "The pause", note: "Where the shade falls at seven" },
-  { asset: A.establishingDistant, label: "The edge", note: "Where the green takes over" },
 ] as const;
 
 /**
@@ -52,10 +51,14 @@ export default function Landscape() {
     gsap.registerPlugin(ScrollTrigger);
     let distance = 0;
 
+    /* Scroll cost per pixel of track. At 1:1 this section alone consumed
+       6.8 viewports of scrolling and the page felt frozen; at 0.55 the track
+       moves ~1.8x faster than the finger and the section costs ~2.8. */
+    const SCROLL_RATIO = 0.55;
+
     const measure = () => {
       distance = Math.max(0, track.scrollWidth - window.innerWidth);
-      // Scroll runway = one viewport of hold plus exactly the overflow.
-      stage.style.height = `calc(100svh + ${distance}px)`;
+      stage.style.height = `calc(100svh + ${Math.round(distance * SCROLL_RATIO)}px)`;
       return distance;
     };
     measure();
@@ -107,12 +110,12 @@ export default function Landscape() {
             </h2>
           </div>
 
-          <div ref={trackRef} className="flex items-center gap-[clamp(1.5rem,3vw,3rem)] pl-[clamp(1.25rem,5vw,6.5rem)] pr-[20vw] will-change-transform">
+          <div ref={trackRef} className="flex items-center gap-[clamp(1.5rem,3vw,3rem)] pl-[clamp(1.25rem,5vw,6.5rem)] pr-[10vw] will-change-transform">
             {/* The heading holds this column. Without it the first plate slides
                 under the title and the two fight for the same pixels. */}
-            <div aria-hidden="true" className="w-[30vw] shrink-0" />
+            <div aria-hidden="true" className="w-[19vw] shrink-0" />
             {PLATES.map((p, i) => (
-              <figure key={p.label} className="relative shrink-0" style={{ width: i % 2 === 0 ? "46vw" : "34vw" }}>
+              <figure key={p.label} className="relative shrink-0" style={{ width: i % 2 === 0 ? "34vw" : "26vw" }}>
                 <div
                   className="relative overflow-hidden bg-ink-2"
                   style={{ aspectRatio: i % 2 === 0 ? "16/10" : "4/5" }}
@@ -121,7 +124,7 @@ export default function Landscape() {
                     src={p.asset.src}
                     alt={p.asset.alt}
                     fill
-                    sizes="46vw"
+                    sizes="34vw"
                     quality={80}
                     loading="eager"
                     className="object-cover"

@@ -24,7 +24,7 @@ export default function Interstitial() {
         </div>
         <div className="col-span-12 md:col-span-6 md:col-start-7">
           <h2 id="pause-heading" className="t-display-m max-w-[16ch] text-stone">
-            <SplitLines>Most of the design is what was left out.</SplitLines>
+            <SplitLines>Most of the design is what was *left out*.</SplitLines>
           </h2>
           <p data-reveal className="mt-8 measure text-stone-dim">
             No mouldings, no applied ornament, no feature wall. The stone is asked to be stone, and

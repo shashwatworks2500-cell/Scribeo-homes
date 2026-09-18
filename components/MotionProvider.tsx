@@ -30,10 +30,16 @@ export default function MotionProvider() {
     /* Lenis drives scroll position; ScrollTrigger reads it. `syncTouch` stays
        off so touch devices keep native momentum — the brief requires real
        touch scrolling, and synthesised touch always feels wrong. */
+    /* lerp, not duration. Duration-based smoothing re-animates to a moving
+       target on every wheel tick, which reads as lag; a lerp tracks the real
+       scroll position and settles. 0.2 is deliberately tight: it reads as
+       native scrolling with the edge taken off, not as gliding on ice.
+       wheelMultiplier stays at 1 — anything less makes the page feel like it
+       is resisting the input. */
     const lenis = new Lenis({
-      duration: 1.05,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      wheelMultiplier: 0.95,
+      lerp: 0.2,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.5,
       syncTouch: false,
       autoRaf: false,
     });

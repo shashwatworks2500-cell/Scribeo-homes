@@ -77,6 +77,25 @@ grouping words into lines before the webfont lands groups the wrong words. It
 is progressive by construction: the heading renders as ordinary selectable
 markup and is only enhanced on mount, so a failure leaves a heading, not a gap.
 
+## Scroll
+
+Scroll length is a design constraint, not an accident. Measured per section at
+1600x900, the landscape sequence alone originally consumed **6.83 viewports**
+— nearly a third of the page — in a sticky section where the page appears
+frozen while plates slide sideways. It now costs 2.84, and the whole document
+is 17.1 viewports rather than 21.7.
+
+Two levers: narrower plates with a shorter leading column, and a scroll-to-track
+ratio of 0.55 in `Landscape.tsx`, so the track moves about 1.8x faster than the
+finger instead of 1:1.
+
+Smoothing is Lenis with `lerp: 0.2` and `wheelMultiplier: 1`. Duration-based
+smoothing re-animates toward a moving target on every wheel tick, which reads
+as lag; a tight lerp tracks the real position and settles. Touch is left native
+(`syncTouch: false`). Verified: keyboard scrolling (PageDown, Space, Arrows,
+End) works, anchors work, and a 1100px wheel input advances the page 1100px at
+every point on the page — no traps, no distance hijacking.
+
 ## Motion budget
 
 Enforced in `lib/motion.ts`, not aspirational: one focal element moves at a

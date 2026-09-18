@@ -192,7 +192,7 @@ export default function Hero() {
         <div className="absolute inset-0 gutter flex flex-col justify-end pb-[clamp(2.5rem,7vh,5rem)]">
           <div ref={headlineRef}>
             <h1 id="hero-heading" className="t-display-xl max-w-[6.3em] text-stone">
-              A place that reveals itself slowly.
+              A place that reveals <em>itself</em> slowly.
             </h1>
           </div>
 

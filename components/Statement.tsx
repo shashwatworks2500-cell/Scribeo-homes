@@ -12,17 +12,27 @@ export default function Statement() {
           <h2 id="about-heading" className="t-display-l max-w-[24ch] text-stone">
             <SplitLines>A home is not a structure. It is the hour you wake into.</SplitLines>
           </h2>
-          <div className="mt-[clamp(2rem,5vh,3.5rem)] grid gap-[clamp(1.5rem,3vw,3rem)] md:grid-cols-2">
-            <p data-reveal className="t-lede measure-wide text-stone-dim">
-              Scribeo Homes is a collection of contemporary residences held within mature
-              landscape — limestone, warm concrete, glass and teak, arranged so that each room
-              opens toward something growing.
-            </p>
-            <p data-reveal className="measure-wide text-stone-faint">
-              The plan is unhurried. Deep reveals keep the sun off the glass until it is wanted.
-              Roof slabs run long and low so the buildings read as horizontal against the trees.
-              Nothing here is trying to be the tallest thing in the landscape.
-            </p>
+          {/* Two voices, separated by scale and tone rather than decoration:
+              the statement is set larger and in full stone, the aside smaller
+              and quieter. A hairline over each marks the column without
+              drawing a box around it. */}
+          <div className="mt-[clamp(2.5rem,6vh,4rem)] grid gap-[clamp(1.75rem,3.5vw,3.5rem)] md:grid-cols-[1.15fr_1fr]">
+            <div data-reveal>
+              <span aria-hidden="true" className="mb-6 block h-px w-14 bg-travertine/55" />
+              <p className="t-lede measure-wide text-stone">
+                Scribeo Homes is a collection of contemporary residences held within mature
+                landscape — limestone, warm concrete, glass and teak, arranged so that each room
+                opens toward something growing.
+              </p>
+            </div>
+            <div data-reveal>
+              <span aria-hidden="true" className="mb-6 block h-px w-14 bg-hair" />
+              <p className="measure-wide text-stone-dim">
+                The plan is unhurried. Deep reveals keep the sun off the glass until it is wanted.
+                Roof slabs run long and low so the buildings read as horizontal against the trees.
+                Nothing here is trying to be the tallest thing in the landscape.
+              </p>
+            </div>
           </div>
         </div>
       </div>

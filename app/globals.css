@@ -33,10 +33,10 @@
 :root {
   /* Hero scroll runway. Desktop gets a deliberate hold; mobile is shortened
      because a long pinned section on touch reads as a broken page. */
-  --hero-runway: 260vh;
+  --hero-runway: 205vh;
 }
 @media (max-width: 767px) {
-  :root { --hero-runway: 190vh; }
+  :root { --hero-runway: 165vh; }
 }
 
 @layer base {
@@ -58,10 +58,23 @@
     font-family: var(--font-sans);
     font-weight: 300;
     font-size: clamp(0.9375rem, 0.35vw + 0.85rem, 1.0625rem);
-    line-height: 1.65;
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    /* Kerning and common ligatures on everywhere; they are the difference
+       between type that is set and type that is merely rendered. */
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
+    /* Quotes and hyphens hang into the margin where supported, so the text
+       block reads as optically flush rather than mathematically flush. */
+    hanging-punctuation: first last;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Paragraphs avoid single-word last lines. Headings balance instead. */
+  p, li, dd, figcaption {
+    text-wrap: pretty;
   }
 
   h1, h2, h3, h4 {
@@ -69,6 +82,17 @@
     font-weight: 300;
     margin: 0;
     text-wrap: balance;
+    /* Discretionary ligatures are worth having in a garamond at display size. */
+    font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
+  }
+
+  /* Display italic is a voice, not an emphasis: no extra weight, slightly
+     looser so the slant does not crowd the roman beside it. */
+  h1 em, h2 em, h3 em, .t-display-xl em, .t-display-l em, .t-display-m em {
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.005em;
+    color: var(--color-travertine);
   }
 
   p { margin: 0; }
@@ -96,22 +120,23 @@
   .t-display-xl {
     font-family: var(--font-display);
     font-size: clamp(2.875rem, 8.4vw, 8.5rem);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
+    line-height: 0.92;
+    letter-spacing: -0.028em;
     font-weight: 300;
+    word-spacing: 0.02em;
   }
   .t-display-l {
     font-family: var(--font-display);
     font-size: clamp(2.125rem, 5.6vw, 5rem);
-    line-height: 1.04;
-    letter-spacing: -0.017em;
+    line-height: 1.0;
+    letter-spacing: -0.021em;
     font-weight: 300;
   }
   .t-display-m {
     font-family: var(--font-display);
     font-size: clamp(1.625rem, 3.4vw, 2.875rem);
-    line-height: 1.12;
-    letter-spacing: -0.012em;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
     font-weight: 300;
   }
   .t-display-s {
@@ -128,6 +153,10 @@
     letter-spacing: 0.24em;
     text-transform: uppercase;
     line-height: 1;
+    /* Uppercase tracking adds a trailing space the eye reads as a gap. */
+    text-indent: 0.24em;
+    margin-left: -0.24em;
+    font-variant-numeric: tabular-nums;
   }
   .t-meta {
     font-family: var(--font-sans);
@@ -135,13 +164,21 @@
     font-weight: 400;
     letter-spacing: 0.11em;
     text-transform: uppercase;
-    line-height: 1.5;
+    line-height: 1.55;
+    text-indent: 0.11em;
+    margin-left: -0.11em;
+    font-variant-numeric: tabular-nums;
   }
   .t-lede {
     font-size: clamp(1.0625rem, 0.6vw + 0.95rem, 1.3125rem);
-    line-height: 1.6;
+    line-height: 1.62;
     font-weight: 300;
+    letter-spacing: 0.002em;
   }
+
+  /* Figures inside running prose read better as oldstyle; they sit on the
+     x-height instead of standing up like capitals mid-sentence. */
+  .t-oldstyle { font-variant-numeric: oldstyle-nums proportional-nums; }
   .t-numeral {
     font-family: var(--font-sans);
     font-size: 0.6875rem;
@@ -153,8 +190,8 @@
   /* ── Layout ───────────────────────────────────────────── */
   .gutter { padding-inline: clamp(1.25rem, 5vw, 6.5rem); }
   .section-y { padding-block: clamp(5.5rem, 13vh, 11rem); }
-  .measure { max-width: 34ch; }
-  .measure-wide { max-width: 46ch; }
+  .measure { max-width: 36ch; }
+  .measure-wide { max-width: 48ch; }
   .hair { border-color: var(--color-hair); }
 
   /* ── Motion primitives ───────────────────────────────────

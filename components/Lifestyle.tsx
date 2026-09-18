@@ -34,7 +34,7 @@ export default function Lifestyle() {
             05 — Living here
           </p>
           <h2 id="life-heading" className="t-display-l mt-6 max-w-[22ch] text-stone">
-            <SplitLines>The best part of a house is the walk back to it.</SplitLines>
+            <SplitLines>The best part of a house is the *walk back* to it.</SplitLines>
           </h2>
         </div>
       </div>

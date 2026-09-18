@@ -68,6 +68,17 @@ anywhere on the site, because none exists in the supplied material. The details
 table states only what is observable in the assets or their art direction, and
 the footer declares the imagery as architectural visualisation.
 
+## Deployment
+
+Vercel auto-detects the framework; no `vercel.json` is needed. The canonical
+origin is resolved from the platform in `lib/site.ts` — never hardcoded — so
+Open Graph images, the canonical link and the sitemap are correct on the
+production domain without configuration. Preview deployments serve
+`Disallow: /` so throwaway hostnames cannot poison the canonical.
+
+Once a custom domain exists, set `NEXT_PUBLIC_SITE_URL` to it (e.g.
+`https://scribeohomes.com`) and it takes priority over the Vercel domain.
+
 ## Before going live
 
 `components/Enquire.tsx` uses **`enquiries@example.com`** as a deliberate

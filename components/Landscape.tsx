@@ -11,10 +11,12 @@ const PLATES = [
   { asset: A.arrivalRoad, label: "The approach", note: "A single road, curving" },
   { asset: A.pathway, label: "The walk", note: "Stone, laid loose in grass" },
   { asset: A.garden, label: "The garden", note: "Mature before we arrived" },
+  { asset: A.vPool, label: "The water", note: "Still enough to hold the sky" },
   { asset: A.courtyard, label: "The courtyard", note: "Held between two houses" },
   { asset: A.exteriorWide, label: "The clearing", note: "One house, many trees" },
   { asset: A.pavilion, label: "The pavilion", note: "One room, no walls that matter" },
   { asset: A.benchSeating, label: "The pause", note: "Where the shade falls at seven" },
+  { asset: A.establishingDistant, label: "The edge", note: "Where the green takes over" },
 ] as const;
 
 /**
@@ -73,7 +75,7 @@ export default function Landscape() {
           onUpdate: (self) => {
             if (headingRef.current) {
               headingRef.current.style.transform = `translate3d(${self.progress * -5}vw,0,0)`;
-              headingRef.current.style.opacity = String(Math.max(0, 1 - self.progress * 2.2));
+              headingRef.current.style.opacity = String(Math.max(0, 1 - self.progress * 3.4));
             }
           },
         },
@@ -106,6 +108,9 @@ export default function Landscape() {
           </div>
 
           <div ref={trackRef} className="flex items-center gap-[clamp(1.5rem,3vw,3rem)] pl-[clamp(1.25rem,5vw,6.5rem)] pr-[20vw] will-change-transform">
+            {/* The heading holds this column. Without it the first plate slides
+                under the title and the two fight for the same pixels. */}
+            <div aria-hidden="true" className="w-[30vw] shrink-0" />
             {PLATES.map((p, i) => (
               <figure key={p.label} className="relative shrink-0" style={{ width: i % 2 === 0 ? "46vw" : "34vw" }}>
                 <div

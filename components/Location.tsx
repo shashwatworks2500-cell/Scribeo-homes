@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { A } from "@/lib/assets";
+import SplitLines from "./SplitLines";
 
 /**
  * Tonal inversion. Every other section is dark-ground; this one is paper.
@@ -34,8 +35,8 @@ export default function Location() {
             <p data-reveal className="t-eyebrow text-paper-dim">
               06 — Location
             </p>
-            <h2 id="loc-heading" data-reveal className="t-display-m mt-6 max-w-[16ch]">
-              Held inside the green, not outside the city.
+            <h2 id="loc-heading" className="t-display-m mt-6 max-w-[16ch]">
+              <SplitLines>Held inside the green, not outside the city.</SplitLines>
             </h2>
             <p data-reveal className="mt-8 measure text-paper-dim">
               The development sits at the centre of the plan, inside the ring, with parkland and

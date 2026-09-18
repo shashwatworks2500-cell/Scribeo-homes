@@ -1,3 +1,4 @@
+import SplitLines from "./SplitLines";
 export default function Statement() {
   return (
     <section id="about" aria-labelledby="about-heading" className="section-y gutter">
@@ -8,8 +9,8 @@ export default function Statement() {
           </p>
         </div>
         <div className="col-span-12 md:col-span-9 md:pl-[clamp(0rem,3vw,3rem)]">
-          <h2 id="about-heading" data-reveal className="t-display-l max-w-[24ch] text-stone">
-            A home is not a structure. It is the hour you wake into.
+          <h2 id="about-heading" className="t-display-l max-w-[24ch] text-stone">
+            <SplitLines>A home is not a structure. It is the hour you wake into.</SplitLines>
           </h2>
           <div className="mt-[clamp(2rem,5vh,3.5rem)] grid gap-[clamp(1.5rem,3vw,3rem)] md:grid-cols-2">
             <p data-reveal className="t-lede measure-wide text-stone-dim">

@@ -22,27 +22,60 @@ navigation, metadata and body.
 The supplied hero film is **10-bit HEVC, 22.6 Mbps, 3 keyframes across 289
 frames**. That does not decode in Chrome or Firefox, and seeking it by
 `currentTime` stalls on every scroll tick. So it is decomposed into a still
-sequence and composited on a `<canvas>`:
+sequence and composited on a `<canvas>`. Three things then make it feel like
+film rather than a slideshow.
 
-| tier | frames | width | weight |
-| --- | --- | --- | --- |
-| desktop (≥768px) | 145 (every 2nd) | 1536px | ~7.5 MB |
-| mobile | 73 (every 4th) | 960px | ~2.0 MB |
+**1. Frames are sampled by visual distance, not by time.** The camera in the
+source is not linear. Measured across the shot:
 
-This removes the codec problem entirely and makes scrubbing deterministic in
-both directions. Frames load in three passes — first frame, then every 8th, then
-the remainder — and the playhead always paints the nearest frame it already has,
-so the hero is interactive long before it is complete.
+| | peak-to-trough velocity | coefficient of variation |
+| --- | ---: | ---: |
+| source, sampled by time | 9.22× | 50.4% |
+| sampled by visual distance | 1.95× | 28.0% |
+
+67 of the 289 source frames are near-static — the film surges around the
+halfway mark and almost stops in its final tenth. Sampling at equal cumulative
+visual distance (`scripts/pick-frames.py`) means equal scrolling produces equal
+visual change, which is the single biggest factor in whether a scrubbed hero
+feels expensive or broken.
+
+**2. Sub-frame blending.** Scroll progress maps to a *fractional* index; the
+engine draws frame `n`, then `n+1` on top at the fractional alpha. Motion is
+continuous rather than snapping between discrete frames.
+
+**3. AVIF, with a WebP fallback.** Measured on a representative frame, AVIF q50
+is 25 KB against WebP q72 at 46 KB — 46% smaller at visibly higher fidelity
+(the WebP smooths away grass and paving micro-detail). That buys frame density
+at lower total weight. Browsers without AVIF get the WebP set, not a broken hero.
+
+| tier | frames | width | AVIF |
+| --- | ---: | ---: | ---: |
+| desktop (≥768px) | 169 | 1536px | 4.5 MB |
+| mobile | 86 | 960px | 1.3 MB |
+
+Net result versus a naive time-sampled WebP sequence: **more frames, 41% less
+weight, and measurably more uniform motion.**
 
 The hold is CSS `position: sticky`, not a GSAP pin: no pin-spacer, no reflow on
-refresh, and no fight with Lenis. ScrollTrigger only reads progress.
+refresh, and no fight with Lenis. ScrollTrigger only reads progress, and
+painting happens on `requestAnimationFrame` so a burst of scroll events cannot
+cause two paints in one frame.
 
-Regenerate the sequence from a source film with:
+## Entry
 
-```bash
-ffmpeg -i hero.mp4 -vf "select=not(mod(n\,2)),scale=1536:-2" -vsync 0 \
-  -c:v libwebp -q:v 72 -compression_level 5 -f image2 public/hero/desktop/f%03d.webp
-```
+`Curtain.tsx` covers the moment the hero spends decoding its first frame. It
+lifts on a real signal (`hero:ready`, which the hero broadcasts once frame 0 is
+painted — measured at ~390 ms) rather than a guessed timer, holds a 620 ms
+minimum so it reads as intentional rather than a flicker, caps at 3.2 s, and
+hands scrolling back the instant the lift begins.
+
+## Type
+
+`SplitLines.tsx` re-wraps display headings into masked lines that rise from
+their own baseline. It measures only after `document.fonts.ready`, because
+grouping words into lines before the webfont lands groups the wrong words. It
+is progressive by construction: the heading renders as ordinary selectable
+markup and is only enhanced on mount, so a failure leaves a heading, not a gap.
 
 ## Motion budget
 
@@ -52,6 +85,17 @@ parallax only on full-bleed imagery, capped at ±6%; one reveal per section with
 at most three staggered children. Every section is complete and legible with all
 motion removed, and `prefers-reduced-motion` is a first-class render — no scrub,
 no sequence download, no movement.
+
+## Generated assets
+
+The supplied collection is entirely 16:9, which forces every composition into
+landscape. Seven 3:4 portrait plates were generated in the same visual language
+(same model, same master prompt) to open up the editorial layout: a full-height
+façade, the threshold, a tree against a plain wall, a reflecting pool, a
+material macro, a roof slab from beneath, and a corner of morning light.
+
+Supplied assets lead; generated plates fill gaps. Where the two competed for a
+slot, the supplied frame was restored.
 
 ## Assets deliberately not used
 

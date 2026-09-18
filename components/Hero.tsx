@@ -1,24 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { HERO, frameUrl } from "@/lib/assets";
+import gsap from "gsap";
+import { HERO } from "@/lib/assets";
+import { FrameSequence, supportsAvif } from "@/lib/sequence";
 import { prefersReducedMotion } from "@/lib/motion";
 
-/**
- * Scroll-driven hero.
- *
- * The supplied hero film is 10-bit HEVC at 22.6 Mbps with three keyframes in
- * 289 frames: it does not decode in Chrome or Firefox, and seeking it by
- * `currentTime` would stall on every scroll tick. So the film is decomposed
- * into a still sequence and composited on a canvas. That removes the codec
- * problem entirely and makes scrubbing deterministic — forwards, backwards,
- * and at any speed.
- *
- * The hold is CSS `position: sticky`, not a GSAP pin. ScrollTrigger only reads
- * progress. No pin-spacer, no layout reflow on refresh, no fight with Lenis.
- */
+/** Broadcast so the entry curtain can lift on real readiness, not a timer. */
+const signalReady = () => window.dispatchEvent(new CustomEvent("hero:ready"));
+const signalProgress = (v: number) =>
+  window.dispatchEvent(new CustomEvent("hero:progress", { detail: v }));
+
 export default function Hero() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -27,41 +20,26 @@ export default function Hero() {
   const closingRef = useRef<HTMLDivElement | null>(null);
   const barRef = useRef<HTMLSpanElement | null>(null);
 
-  const [ready, setReady] = useState(false);
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
     if (prefersReducedMotion()) {
       setReduced(true);
-      setReady(true);
+      signalProgress(1);
+      signalReady();
       return;
     }
 
     const canvas = canvasRef.current;
     const section = sectionRef.current;
     if (!canvas || !section) return;
-
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    /* Tier by viewport, not user-agent: a small window on a desktop should
-       not pay for 1536px frames. 73 frames / 2 MB on mobile, 145 / 7.5 MB up. */
-    const tier = window.matchMedia("(min-width: 768px)").matches ? HERO.desktop : HERO.mobile;
-    const frames: (HTMLImageElement | null)[] = new Array(tier.count).fill(null);
-
+    let seq: FrameSequence | null = null;
     let disposed = false;
-    let current = -1;
-    let loadedCount = 0;
-
-    /** Nearest loaded frame to `i` — so scrubbing never blocks on a pending load. */
-    const nearest = (i: number) => {
-      if (frames[i]) return frames[i];
-      for (let r = 1; r < tier.count; r++) {
-        if (frames[i - r]) return frames[i - r];
-        if (frames[i + r]) return frames[i + r];
-      }
-      return null;
-    };
+    let progress = 0;
+    let raf = 0;
 
     const sizeCanvas = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -72,61 +50,57 @@ export default function Hero() {
       canvas.height = Math.round(h * dpr);
     };
 
-    const draw = (i: number) => {
-      const img = nearest(i);
-      if (!img) return;
-      const cw = canvas.width;
-      const ch = canvas.height;
-      const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-      const dw = img.naturalWidth * scale;
-      const dh = img.naturalHeight * scale;
-      ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    /* Paint on rAF rather than inside the scroll callback: scroll events can
+       outpace the compositor, and painting twice in one frame is wasted work. */
+    let dirty = true;
+    const tick = () => {
+      if (disposed) return;
+      if (dirty && seq) {
+        seq.draw(ctx, progress);
+        dirty = false;
+      }
+      raf = requestAnimationFrame(tick);
     };
 
-    const load = (i: number) =>
-      new Promise<void>((resolve) => {
-        if (disposed || frames[i]) return resolve();
-        const img = new Image();
-        img.decoding = "async";
-        img.src = frameUrl(tier.dir, i);
-        img.onload = () => {
-          if (disposed) return resolve();
-          frames[i] = img;
-          loadedCount++;
-          // First frame, or filling a gap the playhead is sitting on.
-          if (current < 0 || nearest(current) === img) draw(current < 0 ? 0 : current);
-          resolve();
-        };
-        img.onerror = () => resolve();
-      });
-
-    /* Three-pass load. Frame 0 makes the hero look finished immediately; the
-       stride pass makes it scrubbable within a second; the fill pass makes it
-       smooth. The playhead always renders the nearest frame it has. */
     const boot = async () => {
+      const useAvif = await supportsAvif();
+      if (disposed) return;
+      const wide = window.matchMedia("(min-width: 768px)").matches;
+      const set = useAvif ? HERO.avif : HERO.webp;
+      seq = new FrameSequence(wide ? set.desktop : set.mobile);
+
       sizeCanvas();
-      await load(0);
-      if (disposed) return;
-      setReady(true);
+      raf = requestAnimationFrame(tick);
 
-      const stride = 8;
+      // Pass 1 — first frame. The hero stops being a placeholder.
+      await seq.load(0);
+      if (disposed) return;
+      dirty = true;
+      canvas.style.opacity = "1";
+      signalProgress(0.45);
+      // The hero is already showing real footage and will paint the nearest
+      // frame it holds for any scroll position, so there is nothing left to
+      // wait for. The curtain enforces its own minimum so this cannot flash.
+      signalReady();
+
+      // Pass 2 — a coarse spread, so the whole shot is scrubbable early.
+      const stride = 6;
       const sparse: number[] = [];
-      for (let i = stride; i < tier.count; i += stride) sparse.push(i);
-      await pool(sparse, 6);
-      if (disposed) return;
-
-      const rest: number[] = [];
-      for (let i = 1; i < tier.count; i++) if (!frames[i]) rest.push(i);
-      await pool(rest, 6);
-    };
-
-    /** Bounded-concurrency queue: never open 145 sockets at once. */
-    const pool = async (list: number[], limit: number) => {
-      let cursor = 0;
-      const workers = Array.from({ length: Math.min(limit, list.length) }, async () => {
-        while (cursor < list.length && !disposed) await load(list[cursor++]);
+      for (let i = stride; i < seq.count; i += stride) sparse.push(i);
+      await seq.pool(sparse, 8, () => {
+        dirty = true;
+        signalProgress(0.25 + 0.55 * (seq ? seq.progress : 0));
       });
-      await Promise.all(workers);
+      if (disposed) return;
+      signalProgress(0.9);
+
+      // Pass 3 — fill everything, for blend-quality smoothness.
+      const rest: number[] = [];
+      for (let i = 1; i < seq.count; i++) rest.push(i);
+      await seq.pool(rest, 8, () => {
+        dirty = true;
+      });
+      signalProgress(1);
     };
 
     void boot();
@@ -135,9 +109,7 @@ export default function Hero() {
       if (el) el.style.opacity = String(Math.max(0, Math.min(1, v)));
     };
 
-    /* Typography tracks the film's own narrative: the opening line holds
-       through HIDDEN → REVEAL, clears the frame while the architecture is on
-       screen, and the closing line lands on the held final composition. */
+    gsap.registerPlugin(ScrollTrigger);
     const trigger = ScrollTrigger.create({
       trigger: section,
       start: "top top",
@@ -145,33 +117,33 @@ export default function Hero() {
       scrub: true,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
-        const p = self.progress;
-        const i = Math.min(tier.count - 1, Math.round(p * (tier.count - 1)));
-        if (i !== current) {
-          current = i;
-          draw(i);
-        }
-        setOpacity(headlineRef.current, p < 0.5 ? 1 : 1 - (p - 0.5) / 0.18);
-        setOpacity(cueRef.current, 1 - p / 0.12);
-        setOpacity(closingRef.current, (p - 0.84) / 0.1);
-        if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
+        progress = self.progress;
+        dirty = true;
+        // Type tracks the film: the opening line holds through the reveal,
+        // clears while the architecture is on screen, and the closing line
+        // lands on the final held composition.
+        setOpacity(headlineRef.current, self.progress < 0.5 ? 1 : 1 - (self.progress - 0.5) / 0.18);
+        setOpacity(cueRef.current, 1 - self.progress / 0.12);
+        setOpacity(closingRef.current, (self.progress - 0.84) / 0.1);
+        if (barRef.current) barRef.current.style.transform = `scaleX(${self.progress})`;
       },
     });
 
     const onResize = () => {
       sizeCanvas();
-      draw(Math.max(current, 0));
+      dirty = true;
     };
     window.addEventListener("resize", onResize);
-    // Orientation change reports stale dimensions for a frame on iOS.
-    window.addEventListener("orientationchange", () => setTimeout(onResize, 120));
+    const onOrient = () => setTimeout(onResize, 120);
+    window.addEventListener("orientationchange", onOrient);
 
     return () => {
       disposed = true;
+      cancelAnimationFrame(raf);
       trigger.kill();
       window.removeEventListener("resize", onResize);
-      frames.forEach((f) => f && (f.onload = null));
-      void loadedCount;
+      window.removeEventListener("orientationchange", onOrient);
+      seq?.dispose();
     };
   }, []);
 
@@ -184,8 +156,6 @@ export default function Hero() {
     >
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-ink film-grain">
         {reduced ? (
-          /* Reduced motion: the held final composition, as a still. No scrub,
-             no sequence download, no movement. */
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={HERO.poster}
@@ -200,31 +170,26 @@ export default function Hero() {
               ref={canvasRef}
               className="h-full w-full"
               aria-hidden="true"
-              style={{ opacity: ready ? 1 : 0, transition: "opacity 900ms var(--ease-out-quiet)" }}
+              style={{ opacity: 0, transition: "opacity 700ms var(--ease-out-quiet)" }}
             />
-            {/* Poster underneath: the hero is never an empty black box. */}
             <div
               aria-hidden="true"
               className="absolute inset-0 -z-10 bg-ink bg-cover bg-center"
-              style={{ backgroundImage: `url(${HERO.poster})`, filter: "brightness(0.55)" }}
+              style={{ backgroundImage: `url(${HERO.poster})`, filter: "brightness(0.5)" }}
             />
           </>
         )}
 
-        {/* Legibility scrim. Two stops, bottom-weighted — the frames are
-            already dark at the edges, so this stays very light. */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(11,10,8,0.55) 0%, rgba(11,10,8,0.08) 38%, rgba(11,10,8,0.20) 72%, rgba(11,10,8,0.78) 100%)",
+              "linear-gradient(to bottom, rgba(11,10,8,0.55) 0%, rgba(11,10,8,0.06) 38%, rgba(11,10,8,0.18) 72%, rgba(11,10,8,0.80) 100%)",
           }}
         />
 
         <div className="absolute inset-0 gutter flex flex-col justify-end pb-[clamp(2.5rem,7vh,5rem)]">
-          {/* No wordmark here: the fixed navigation already carries it, and
-              two "Scribeo Homes" stacked in the same corner reads as a bug. */}
           <div ref={headlineRef}>
             <h1 id="hero-heading" className="t-display-xl max-w-[6.3em] text-stone">
               A place that reveals itself slowly.

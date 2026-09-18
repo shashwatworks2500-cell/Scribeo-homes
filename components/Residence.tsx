@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { A } from "@/lib/assets";
+import SplitLines from "./SplitLines";
 
 /**
  * Property highlights as an editorial index rather than a card grid.
@@ -81,8 +82,8 @@ export default function Residence() {
           <p data-reveal className="t-eyebrow text-travertine/80">
             03 — The residence
           </p>
-          <h2 id="res-heading" data-reveal className="t-display-m mt-6 max-w-[16ch] text-stone">
-            Six rooms, and the light in each.
+          <h2 id="res-heading" className="t-display-m mt-6 max-w-[16ch] text-stone">
+            <SplitLines>Six rooms, and the light in each.</SplitLines>
           </h2>
 
           <ol className="mt-[clamp(2.5rem,6vh,4rem)] border-t hair">

@@ -81,7 +81,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
-        <link rel="preload" as="image" href="/hero/desktop/f001.webp" fetchPriority="high" />
+        {/* First hero frame, preloaded per tier. `type` means a browser without
+            AVIF skips it rather than fetching a file it cannot decode; `media`
+            keeps phones off the 1536px set. */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/avif/desktop/f001.avif"
+          type="image/avif"
+          media="(min-width: 768px)"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/avif/mobile/f001.avif"
+          type="image/avif"
+          media="(max-width: 767px)"
+          fetchPriority="high"
+        />
+        <link rel="preload" as="image" href="/hero/poster.webp" fetchPriority="high" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}

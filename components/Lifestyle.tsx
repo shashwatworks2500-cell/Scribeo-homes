@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { A } from "@/lib/assets";
 import Plate from "./Plate";
+import SplitLines from "./SplitLines";
 
 /**
  * The emotional register. One full-bleed plate, one line of type, and enough
@@ -32,8 +33,8 @@ export default function Lifestyle() {
           <p data-reveal className="t-eyebrow text-travertine/85">
             05 — Living here
           </p>
-          <h2 id="life-heading" data-reveal className="t-display-l mt-6 max-w-[22ch] text-stone">
-            The best part of a house is the walk back to it.
+          <h2 id="life-heading" className="t-display-l mt-6 max-w-[22ch] text-stone">
+            <SplitLines>The best part of a house is the walk back to it.</SplitLines>
           </h2>
         </div>
       </div>

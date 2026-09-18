@@ -1,5 +1,6 @@
 import { A } from "@/lib/assets";
 import Plate from "./Plate";
+import SplitLines from "./SplitLines";
 
 /**
  * Property details.
@@ -31,8 +32,8 @@ export default function Details() {
           <p data-reveal className="t-eyebrow text-travertine/80">
             07 — Details
           </p>
-          <h2 id="det-heading" data-reveal className="t-display-m mt-6 max-w-[18ch] text-stone">
-            What the drawings already say.
+          <h2 id="det-heading" className="t-display-m mt-6 max-w-[18ch] text-stone">
+            <SplitLines>What the drawings already say.</SplitLines>
           </h2>
 
           <dl className="mt-[clamp(2.5rem,5vh,3.5rem)] border-t hair">
@@ -61,7 +62,7 @@ export default function Details() {
               ratio="3/4"
               parallax={4}
               sizes="(max-width: 768px) 100vw, 33vw"
-              caption="Fig. 05 — The development read from beyond the landscaped edge"
+              caption="Fig. 08 — The development read from beyond the landscaped edge"
             />
           </div>
         </div>

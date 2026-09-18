@@ -1,10 +1,14 @@
 import { A } from "@/lib/assets";
 import Plate from "./Plate";
+import SplitLines from "./SplitLines";
 
 /**
- * Editorial spread, not a grid. The façade study runs tall and full-bleed to
- * the right edge; the material detail overlaps it from the left at a smaller
- * scale; the window study sits low and wide. Text holds the left margin.
+ * Editorial spread, not a grid.
+ *
+ * The lower register is a vertical triptych — three portrait plates at
+ * staggered heights. Portrait is the natural format for a façade, a material
+ * and a threshold, and it is the one composition the supplied 16:9-only
+ * collection could not do.
  */
 export default function Architecture() {
   return (
@@ -15,8 +19,8 @@ export default function Architecture() {
             <p data-reveal className="t-eyebrow text-travertine/80">
               02 — Architecture
             </p>
-            <h2 id="arch-heading" data-reveal className="t-display-m mt-6 max-w-[18ch] text-stone">
-              Restraint, held in stone.
+            <h2 id="arch-heading" className="t-display-m mt-6 max-w-[18ch] text-stone">
+              <SplitLines>Restraint, held in stone.</SplitLines>
             </h2>
             <p data-reveal className="mt-8 measure text-stone-dim">
               The language is fixed and repeated: warm limestone and beige sandstone, warm-grey
@@ -49,15 +53,45 @@ export default function Architecture() {
           </div>
         </div>
 
-        {/* Overlapping lower register: small plate pulled up into the spread. */}
-        <div className="mt-[clamp(1.5rem,4vh,3rem)] grid grid-cols-12 items-end gap-y-[clamp(1.5rem,4vh,2.5rem)]">
-          <div className="col-span-12 md:col-span-5 md:-mt-[clamp(3rem,10vh,8rem)]">
+        {/* Vertical triptych, staggered so the eye travels rather than scans. */}
+        <div className="mt-[clamp(3rem,9vh,7rem)] grid grid-cols-12 gap-[clamp(1rem,2.5vw,2.25rem)]">
+          <div className="col-span-12 sm:col-span-4">
+            <Plate
+              asset={A.vFacade}
+              ratio="3/4"
+              parallax={4}
+              sizes="(max-width: 640px) 100vw, 31vw"
+              caption="Fig. 02 — Three storeys of one bay"
+            />
+          </div>
+          <div className="col-span-12 sm:col-span-4 sm:mt-[clamp(2rem,7vh,5.5rem)]">
+            <Plate
+              asset={A.vMaterial}
+              ratio="3/4"
+              parallax={4}
+              sizes="(max-width: 640px) 100vw, 31vw"
+              caption="Fig. 03 — Teak, shadow gap, plaster, travertine, concrete"
+            />
+          </div>
+          <div className="col-span-12 sm:col-span-4 sm:mt-[clamp(1rem,3.5vh,2.75rem)]">
+            <Plate
+              asset={A.vThreshold}
+              ratio="3/4"
+              parallax={4}
+              sizes="(max-width: 640px) 100vw, 31vw"
+              caption="Fig. 04 — The door, set back from the weather"
+            />
+          </div>
+        </div>
+
+        <div className="mt-[clamp(2.5rem,7vh,5rem)] grid grid-cols-12 items-end gap-y-[clamp(1.5rem,4vh,2.5rem)]">
+          <div className="col-span-12 md:col-span-5">
             <Plate
               asset={A.materialDetail}
               ratio="3/2"
               parallax={4}
               sizes="(max-width: 768px) 100vw, 40vw"
-              caption="Fig. 02 — Travertine meeting glass and teak at the building edge"
+              caption="Fig. 05 — Travertine meeting glass and teak at the building edge"
             />
           </div>
           <div className="col-span-12 md:col-span-6 md:col-start-7">
@@ -66,7 +100,7 @@ export default function Architecture() {
               ratio="16/9"
               parallax={4}
               sizes="(max-width: 768px) 100vw, 48vw"
-              caption="Fig. 03 — The reveal used as an aperture between room and garden"
+              caption="Fig. 06 — The reveal used as an aperture between room and garden"
             />
           </div>
         </div>

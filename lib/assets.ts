@@ -26,6 +26,14 @@ const img = (name: string, alt: string, w = 2048, h = 1152): Asset => ({
   h,
 });
 
+/** 3:4 portrait plate. */
+const vimg = (name: string, alt: string): Asset => ({
+  src: `/images/${name}.webp`,
+  alt,
+  w: 1536,
+  h: 2048,
+});
+
 export const A = {
   masterReference: img(
     "master-reference",
@@ -122,14 +130,56 @@ export const A = {
     w: 2048,
     h: 2048,
   } satisfies Asset,
+
+  /* Vertical plates. The supplied collection is entirely 16:9, which forces
+     every composition into landscape; these 3:4 frames were generated in the
+     same visual language to open up the editorial layout. */
+  vFacade: vimg(
+    "v-facade-tall",
+    "The signature façade read full height: slender limestone piers, deep timber-lined reveals and dark glazing stacked over three storeys in low morning sun.",
+  ),
+  vThreshold: vimg(
+    "v-threshold",
+    "The entrance seen straight on — a tall timber-lined opening cut deep into limestone, glass set well back in shadow, stone paving running to the door.",
+  ),
+  vTreeWall: vimg(
+    "v-tree-wall",
+    "A single mature olive tree standing against a broad plain travertine wall, its shadow thrown long and graphic across the stone.",
+  ),
+  vPool: vimg(
+    "v-reflecting-pool",
+    "A still reflecting pool holding a perfect mirror of the limestone residence, its glazing and the pale morning sky.",
+  ),
+  vMaterial: vimg(
+    "v-material-macro",
+    "Material study at close range: natural teak, a charcoal shadow gap, pale plaster, warm travertine and grey concrete meeting in vertical bands.",
+  ),
+  vRoofSlab: vimg(
+    "v-roof-slab",
+    "Looking up beneath a deep cantilevered roof slab, its concrete underside cutting a hard diagonal against pale sky with olive canopy at the corner.",
+  ),
+  vLightCorner: vimg(
+    "v-light-corner",
+    "An interior corner at first light, a wedge of warm morning sun laid across pale plaster and a travertine floor.",
+  ),
 } as const;
 
-/** Hero frame sequence — extracted from the supplied hero film. */
+/**
+ * Hero frame sequence.
+ *
+ * Frames are sampled at equal cumulative visual distance rather than equal
+ * time, so scrolling at a constant rate produces a constant rate of visual
+ * change. AVIF is preferred; the WebP set is the fallback for browsers
+ * without AVIF support.
+ */
 export const HERO = {
-  desktop: { dir: "/hero/desktop", count: 145, width: 1536, height: 864 },
-  mobile: { dir: "/hero/mobile", count: 73, width: 960, height: 540 },
+  avif: {
+    desktop: { dir: "/hero/avif/desktop", count: 169 },
+    mobile: { dir: "/hero/avif/mobile", count: 86 },
+  },
+  webp: {
+    desktop: { dir: "/hero/webp/desktop", count: 169 },
+    mobile: { dir: "/hero/webp/mobile", count: 86 },
+  },
   poster: "/hero/poster.webp",
 } as const;
-
-export const frameUrl = (dir: string, i: number) =>
-  `${dir}/f${String(i + 1).padStart(3, "0")}.webp`;

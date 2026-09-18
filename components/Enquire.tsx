@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { A } from "@/lib/assets";
+import SplitLines from "./SplitLines";
 
 /**
  * Closing statement.
@@ -36,8 +37,8 @@ export default function Enquire() {
           <p data-reveal className="t-eyebrow text-travertine/85">
             08 — Enquire
           </p>
-          <h2 id="enq-heading" data-reveal className="t-display-xl mt-[clamp(1rem,3vh,2rem)] max-w-[15ch] text-stone">
-            Come at seven. Stay for the light.
+          <h2 id="enq-heading" className="t-display-xl mt-[clamp(1rem,3vh,2rem)] max-w-[15ch] text-stone">
+            <SplitLines>Come at seven. Stay for the light.</SplitLines>
           </h2>
 
           <div className="mt-[clamp(2.5rem,6vh,4rem)] grid gap-[clamp(1.5rem,4vw,3rem)] border-t hair pt-[clamp(1.5rem,4vh,2.5rem)] md:grid-cols-12">

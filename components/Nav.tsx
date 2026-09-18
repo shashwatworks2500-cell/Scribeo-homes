@@ -17,6 +17,7 @@ export default function Nav() {
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
   const lastY = useRef(0);
+  const progressRef = useRef<HTMLSpanElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
@@ -26,6 +27,11 @@ export default function Nav() {
     const onScroll = () => {
       const y = window.scrollY;
       setSolid(y > 24);
+      // Reading progress. Orientation only — it never moves anything else.
+      if (progressRef.current) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+      }
       if (!open) setHidden(y > lastY.current && y > 220);
       lastY.current = y;
     };
@@ -121,6 +127,13 @@ export default function Nav() {
             {open ? "Close" : "Menu"}
           </button>
         </div>
+        <span aria-hidden="true" className="block h-px w-full bg-transparent">
+          <span
+            ref={progressRef}
+            className="block h-px w-full origin-left bg-travertine/45"
+            style={{ transform: "scaleX(0)" }}
+          />
+        </span>
       </header>
 
       {/* Mobile panel: full-bleed, typographic, same register as the page. */}

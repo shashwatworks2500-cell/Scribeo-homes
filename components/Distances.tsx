@@ -33,7 +33,7 @@ export default function Distances() {
                 <span className="col-span-12 sm:col-span-4">
                   <span className="t-meta block text-stone-faint">{d.detail}</span>
                 </span>
-                <span className="col-span-5 sm:col-span-3 text-right">
+                <span className="col-span-12 sm:col-span-3 text-right">
                   <span className="t-meta block text-travertine">{d.km.toFixed(1)} km</span>
                   <span className="t-meta block text-stone-faint">{d.mins} min drive</span>
                 </span>

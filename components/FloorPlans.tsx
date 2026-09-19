@@ -83,7 +83,7 @@ export default function FloorPlans() {
         role="tabpanel"
         id={`${uid}-panel-${cfg.id}`}
         aria-labelledby={`${uid}-tab-${cfg.id}`}
-        className="mt-[clamp(2rem,5vh,3rem)] grid grid-cols-12 gap-[clamp(1.5rem,4vw,3.5rem)]"
+        className="mt-[clamp(2rem,5vh,3rem)] grid grid-cols-12 gap-y-[clamp(1.5rem,4vw,3.5rem)] lg:gap-x-[clamp(1.5rem,4vw,3.5rem)]"
       >
         <div className="col-span-12 lg:col-span-8">
           {/* The plan is a drawing on paper: it keeps its own light register

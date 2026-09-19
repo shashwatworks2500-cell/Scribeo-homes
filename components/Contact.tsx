@@ -77,7 +77,7 @@ export default function Contact() {
         />
 
         <div className="gutter section-y relative">
-          <div className="grid grid-cols-12 gap-[clamp(2rem,5vw,4.5rem)]">
+          <div className="grid grid-cols-12 gap-y-[clamp(2rem,5vw,4.5rem)] md:gap-x-[clamp(2rem,5vw,4.5rem)]">
             <div className="col-span-12 md:col-span-5">
               <p data-reveal className="t-eyebrow text-travertine/85">
                 09 — Enquire

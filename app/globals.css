@@ -39,6 +39,31 @@
   :root { --hero-runway: 165vh; }
 }
 
+/* Hero media stage.
+
+   The film is 16:9. Covering a portrait viewport with it throws most of the
+   frame away: at 390x844 the crop keeps only the middle 26% of the width,
+   and for the opening shot — an empty clearing ringed by forest — that
+   middle 26% is bare ground. A phone visitor met a blank brown rectangle,
+   and the empty-land-to-community arc the whole scrub is built on was
+   never visible to them.
+
+   Below square, the film becomes a band instead: 4:3 keeps 75% of the frame
+   width, enough for the clearing, both converging treelines and the full
+   run of houses, and the type takes the ink ground beneath it. At square and
+   wider the stage fills the viewport as before. Driven by aspect ratio, not
+   width, so a portrait tablet gets the band too. */
+.hero-stage {
+  position: absolute;
+  inset: 0;
+}
+@media (max-aspect-ratio: 1 / 1) {
+  .hero-stage {
+    inset: 13svh 0 auto 0;
+    aspect-ratio: 4 / 3;
+  }
+}
+
 @layer base {
   *,
   *::before,

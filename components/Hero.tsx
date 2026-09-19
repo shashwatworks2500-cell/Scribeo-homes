@@ -155,53 +155,59 @@ export default function Hero() {
       style={{ height: reduced ? "100svh" : "var(--hero-runway)" }}
     >
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-ink film-grain">
-        {reduced ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={HERO.poster}
-            alt="Scribeo Homes at first light: low limestone and timber residences among mature trees, seen across ornamental grasses."
-            className="h-full w-full object-cover"
-            width={1920}
-            height={1080}
-          />
-        ) : (
-          <>
-            <canvas
-              ref={canvasRef}
-              className="h-full w-full"
-              aria-hidden="true"
-              style={{ opacity: 0, transition: "opacity 700ms var(--ease-out-quiet)" }}
+        {/* Portrait viewports get a band rather than a full-bleed cover — see
+            .hero-stage in globals.css for why. The scrims live inside it so
+            they grade the film and nothing else: on portrait the navigation
+            and the headline already sit on ink and need no help. */}
+        <div className="hero-stage overflow-hidden">
+          {reduced ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={HERO.poster}
+              alt="Scribeo Homes at first light: low limestone and timber residences among mature trees, seen across ornamental grasses."
+              className="h-full w-full object-cover"
+              width={1920}
+              height={1080}
             />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 -z-10 bg-ink bg-cover bg-center"
-              style={{ backgroundImage: `url(${HERO.poster})`, filter: "brightness(0.5)" }}
-            />
-          </>
-        )}
+          ) : (
+            <>
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-ink bg-cover bg-center"
+                style={{ backgroundImage: `url(${HERO.poster})`, filter: "brightness(0.5)" }}
+              />
+              <canvas
+                ref={canvasRef}
+                className="relative block h-full w-full"
+                aria-hidden="true"
+                style={{ opacity: 0, transition: "opacity 700ms var(--ease-out-quiet)" }}
+              />
+            </>
+          )}
 
-        {/* Two scrims, not one. The vertical pass seats the navigation and the
-            metadata row; the horizontal pass gives the headline a ground to sit
-            on, because midway through the sequence the frame fills with pale
-            render and light-on-light stops being readable. An automated
-            contrast check cannot see this — it measures CSS colours, not the
-            canvas underneath. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(11,10,8,0.58) 0%, rgba(11,10,8,0.06) 34%, rgba(11,10,8,0.20) 68%, rgba(11,10,8,0.84) 100%)",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(105deg, rgba(11,10,8,0.62) 0%, rgba(11,10,8,0.34) 26%, rgba(11,10,8,0.06) 52%, rgba(11,10,8,0) 68%)",
-          }}
-        />
+          {/* Two scrims, not one. The vertical pass seats the navigation and
+              the metadata row; the horizontal pass gives the headline a ground
+              to sit on, because midway through the sequence the frame fills
+              with pale render and light-on-light stops being readable. An
+              automated contrast check cannot see this — it measures CSS
+              colours, not the canvas underneath. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(11,10,8,0.58) 0%, rgba(11,10,8,0.06) 34%, rgba(11,10,8,0.20) 68%, rgba(11,10,8,0.84) 100%)",
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(105deg, rgba(11,10,8,0.62) 0%, rgba(11,10,8,0.34) 26%, rgba(11,10,8,0.06) 52%, rgba(11,10,8,0) 68%)",
+            }}
+          />
+        </div>
 
         <div className="absolute inset-0 gutter flex flex-col justify-end pb-[clamp(2.5rem,7vh,5rem)]">
           <div ref={headlineRef}>

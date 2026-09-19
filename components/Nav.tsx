@@ -1,18 +1,50 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SearchTrigger } from "./Search";
 
 const LINKS = [
   { href: "#pricing", label: "Configurations" },
   { href: "#residences", label: "Floor plans" },
   { href: "#amenities", label: "Amenities" },
   { href: "#gallery", label: "Gallery" },
-  { href: "#faq", label: "Questions" },
   { href: "#enquire", label: "Enquire" },
 ] as const;
 
 type Lenis = { scrollTo: (t: string | HTMLElement, o?: Record<string, unknown>) => void };
+
+/** Focuses the docked concierge rather than opening a second surface. */
+function AskTrigger({ variant = "bar" }: { variant?: "bar" | "icon" | "row" }) {
+  const ask = () => window.dispatchEvent(new CustomEvent("scribeo:ask"));
+  const glass = (
+    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.3">
+      <circle cx="7" cy="7" r="4.6" />
+      <path d="M10.4 10.4 14 14" strokeLinecap="square" />
+    </svg>
+  );
+  if (variant === "icon")
+    return (
+      <button type="button" onClick={ask} aria-label="Ask the concierge" className="text-ink transition-colors duration-200 hover:text-travertine">
+        <svg aria-hidden="true" viewBox="0 0 16 16" className="h-[1.05rem] w-[1.05rem]" fill="none" stroke="currentColor" strokeWidth="1.3">
+          <circle cx="7" cy="7" r="4.6" />
+          <path d="M10.4 10.4 14 14" strokeLinecap="square" />
+        </svg>
+      </button>
+    );
+  if (variant === "row")
+    return (
+      <button type="button" onClick={ask} className="t-meta flex w-full items-center gap-3 border-b border-rule pb-3 text-left text-ink-dim transition-colors duration-200 hover:border-travertine hover:text-ink">
+        {glass}
+        <span>Ask the concierge</span>
+      </button>
+    );
+  return (
+    <button type="button" onClick={ask} className="t-meta flex items-center gap-2.5 border-b border-rule pb-1.5 text-ink-dim transition-colors duration-200 hover:border-travertine hover:text-ink">
+      {glass}
+      <span>Concierge</span>
+      <kbd aria-hidden="true" className="t-numeral text-ink-faint">⌘K</kbd>
+    </button>
+  );
+}
 
 export default function Nav() {
   const [hidden, setHidden] = useState(false);
@@ -116,13 +148,13 @@ export default function Nav() {
                 </li>
               ))}
               <li className="ml-[clamp(0.5rem,1.4vw,1.5rem)]">
-                <SearchTrigger />
+                <AskTrigger />
               </li>
             </ul>
           </nav>
 
           <div className="flex items-center gap-5 md:hidden">
-            <SearchTrigger variant="icon" />
+            <AskTrigger variant="icon" />
             <button
             ref={toggleRef}
             type="button"
@@ -153,7 +185,7 @@ export default function Nav() {
       >
         <nav aria-label="Primary" className="gutter flex h-full flex-col justify-center">
           <div className="mb-[clamp(2rem,5vh,3rem)]">
-            <SearchTrigger variant="row" />
+            <AskTrigger variant="row" />
           </div>
           <ul className="space-y-[clamp(1rem,3.2vh,2rem)]">
             {LINKS.map((l, i) => (

@@ -24,6 +24,8 @@ export type Entry = {
   faq?: number;
   /** Gallery category to preselect. */
   category?: string;
+  /** A starter runs this rather than navigating. */
+  query?: string;
 };
 
 const SECTIONS: Entry[] = [
@@ -45,9 +47,6 @@ const SECTIONS: Entry[] = [
   { id: "s-location", kind: "Section", title: "Location",
     detail: "Where the development sits", href: "#location",
     tags: ["location", "map", "address", "where", "site", "plan"] },
-  { id: "s-faq", kind: "Section", title: "Questions",
-    detail: `${FAQS.length} answers`, href: "#faq",
-    tags: ["faq", "questions", "answers", "help"] },
   { id: "s-enquire", kind: "Section", title: "Enquire",
     detail: "Book a visit or ask a question", href: "#enquire",
     tags: ["enquire", "enquiry", "contact", "visit", "book", "site visit", "form", "call back"] },
@@ -87,7 +86,8 @@ export const INDEX: Entry[] = [
     href: "#gallery", category: c, tags: ["gallery", "photos", "images", c],
   })),
   ...FAQS.map<Entry>((f, i) => ({
-    id: `q-${i}`, kind: "Question", title: f.q, body: f.a, tags: f.tags, href: "#faq", faq: i,
+    id: `q-${i}`, kind: "Question", title: f.q, body: f.a, tags: f.tags,
+    href: "#enquire", faq: i, detail: "Answer",
   })),
   ...CONTACTS,
 ];
@@ -109,7 +109,7 @@ const KIND_RANK: Record<Kind, number> = {
   Question: 0, Configuration: 1, Section: 2, Nearby: 3, Amenity: 4, Gallery: 5, Contact: 6,
 };
 
-export function search(query: string, limit = 24): Entry[] {
+export function search(query: string, limit = 24, strict = false): Entry[] {
   const needle = normalise(query);
   if (!needle) return [];
   const words = needle.split(" ").filter(Boolean).map(stem);
@@ -145,7 +145,7 @@ export function search(query: string, limit = 24): Entry[] {
     if (words.length > 1 && (h.title.includes(needle) || h.body.includes(needle))) score += 4;
     // Every word matching somewhere is worth more than one word matching well.
     if (matchedAll && words.length > 1) score += 2;
-    if (score > 0) scored.push({ e: INDEX[i], score });
+    if (score > 0 && (!strict || matchedAll)) scored.push({ e: INDEX[i], score });
   }
 
   return scored
@@ -157,8 +157,33 @@ export function search(query: string, limit = 24): Entry[] {
     .map((r) => r.e);
 }
 
-/** A few starting points, shown before anything is typed. */
-export const SUGGESTIONS = [
-  "price", "3 bhk", "floor plan", "home loan", "possession",
-  "parking", "how far", "site visit", "pets",
+/**
+ * What the concierge offers before anything is typed.
+ *
+ * Each starter says one thing and runs another: the label is how a person
+ * would ask, the query is the words that actually discriminate. Counting the
+ * label instead would either be meaningless — "what", "does" and "it" match
+ * nothing, so a strict count is zero — or inflated, because a loose count of
+ * a five-word sentence pulls in half the index. The number beside each row is
+ * a strict count of its query, so it is the number of things you will see.
+ */
+const STARTER_QUERIES: { label: string; query: string }[] = [
+  { label: "What does it cost", query: "price" },
+  { label: "Show me a three bedroom", query: "3 bhk" },
+  { label: "Can I get a home loan", query: "home loan" },
+  { label: "When is possession", query: "possession" },
+  { label: "What is nearby", query: "nearby" },
 ];
+
+export const STARTERS: Entry[] = STARTER_QUERIES.map(({ label, query }) => {
+  const n = search(query, 99, true).length;
+  return {
+    id: `starter-${query}`,
+    kind: "Section",
+    title: label,
+    detail: `${n} ${n === 1 ? "answer" : "answers"}`,
+    tags: [],
+    href: "#enquire",
+    query,
+  };
+});

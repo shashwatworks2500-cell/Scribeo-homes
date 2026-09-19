@@ -2,7 +2,7 @@ import { CONTACT } from "@/lib/content";
 
 export default function Footer() {
   return (
-    <footer className="gutter border-t hair bg-ground py-[clamp(2.5rem,6vh,4rem)]">
+    <footer className="gutter dock-clear border-t hair bg-ground pt-[clamp(2.5rem,6vh,4rem)]">
       <div className="grid grid-cols-12 gap-y-8">
         <div className="col-span-12 md:col-span-4">
           <p className="t-eyebrow text-ink">Scribeo&nbsp;Homes</p>

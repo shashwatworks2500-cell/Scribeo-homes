@@ -53,12 +53,17 @@
 }
 
 :root {
-  /* Hero scroll runway. Desktop gets a deliberate hold; mobile is shortened
-     because a long pinned section on touch reads as a broken page. */
-  --hero-runway: 205vh;
+  /* Hero scroll runway, in dvh so the box and the sticky child inside it
+     agree on what a viewport is — with vh they disagree by the height of a
+     mobile browser's chrome, and the difference shows up as dead scroll.
+     205vh was three-quarters of a minute of thumb for one shot. 180 desktop
+     and 155 portrait keep enough travel to scrub the film without stepping
+     (80vh and 55vh respectively, across 154 and 95 frames) and end promptly
+     once it has played. */
+  --hero-runway: 180dvh;
 }
 @media (max-width: 767px) {
-  :root { --hero-runway: 165vh; }
+  :root { --hero-runway: 155dvh; }
 }
 
 /* Hero media stage.
@@ -96,6 +101,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: auto; /* Lenis owns scrolling; never fight it */
+    scroll-padding-bottom: clamp(5.5rem, 12vh, 7.5rem);
   }
 
   body {
@@ -223,6 +229,22 @@
     margin-left: -0.11em;
     font-variant-numeric: tabular-nums;
   }
+  /* Concierge. The rows are display-face questions at reading size; the input
+     matches them so what you type looks like what it will find. */
+  .t-concierge {
+    font-family: var(--font-display);
+    font-size: clamp(1.125rem, 0.5vw + 1rem, 1.5rem);
+    line-height: 1.28;
+    letter-spacing: -0.008em;
+    font-weight: 300;
+  }
+  .t-concierge-input {
+    font-family: var(--font-display);
+    font-size: clamp(1.0625rem, 0.4vw + 0.97rem, 1.3125rem);
+    line-height: 1.3;
+    letter-spacing: -0.006em;
+    font-weight: 300;
+  }
   .t-lede {
     font-size: clamp(1.0625rem, 0.6vw + 0.95rem, 1.3125rem);
     line-height: 1.62;
@@ -243,7 +265,14 @@
 
   /* ── Layout ───────────────────────────────────────────── */
   .gutter { padding-inline: clamp(1.25rem, 5vw, 6.5rem); }
-  .section-y { padding-block: clamp(5.5rem, 13vh, 11rem); }
+  /* The concierge is docked over the page, so the last thing on it needs room
+     to clear the bar — and an anchored jump needs to land above it. */
+  .dock-clear { padding-bottom: clamp(5.5rem, 12vh, 7.5rem); }
+  /* Section rhythm. Measured, not chosen: at 11rem a 750px-tall viewport
+     could land entirely inside the gap between two sections and show 2% ink,
+     which is what "the scroll is not consistent" looks like — you push and
+     nothing changes. This still breathes; it no longer strands anyone. */
+  .section-y { padding-block: clamp(3.25rem, 7.5vh, 6.5rem); }
   .measure { max-width: 36ch; }
   .measure-wide { max-width: 48ch; }
   .hair { border-color: var(--color-hair); }

@@ -1,7 +1,7 @@
 import Curtain from "@/components/Curtain";
 import MotionProvider from "@/components/MotionProvider";
 import Nav from "@/components/Nav";
-import Search from "@/components/Search";
+import Concierge from "@/components/Concierge";
 import Hero from "@/components/Hero";
 import Pricing from "@/components/Pricing";
 import Statement from "@/components/Statement";
@@ -11,7 +11,7 @@ import Amenities from "@/components/Amenities";
 import Gallery from "@/components/Gallery";
 import Distances from "@/components/Distances";
 import Location from "@/components/Location";
-import Faq from "@/components/Faq";
+import QuestionsNoScript from "@/components/QuestionsNoScript";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -21,7 +21,7 @@ export default function Page() {
       <Curtain />
       <MotionProvider />
       <Nav />
-      <Search />
+      <Concierge />
       <div id="top" />
       <main id="main">
         <Hero />
@@ -33,7 +33,7 @@ export default function Page() {
         <Gallery />
         <Distances />
         <Location />
-        <Faq />
+        <QuestionsNoScript />
         <Contact />
       </main>
       <Footer />

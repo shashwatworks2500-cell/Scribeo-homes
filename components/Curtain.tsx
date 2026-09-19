@@ -79,7 +79,7 @@ export default function Curtain() {
     <div
       id="entry-curtain"
       aria-hidden="true"
-      className="fixed inset-0 z-[90] flex items-center justify-center bg-ink"
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-ground"
       style={{
         transform: lifting ? "translateY(-100%)" : "translateY(0)",
         transition: "transform 1100ms cubic-bezier(0.76, 0, 0.24, 1)",
@@ -92,7 +92,7 @@ export default function Curtain() {
           transition: "opacity 420ms ease-out",
         }}
       >
-        <p className="t-eyebrow text-stone" style={{ letterSpacing: "0.42em" }}>
+        <p className="t-eyebrow text-ink" style={{ letterSpacing: "0.42em" }}>
           Scribeo&nbsp;Homes
         </p>
         <span className="relative block h-px w-[clamp(7rem,22vw,12rem)] bg-hair">

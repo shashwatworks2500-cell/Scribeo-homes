@@ -154,11 +154,11 @@ export default function Hero() {
       className="relative"
       style={{ height: reduced ? "100svh" : "var(--hero-runway)" }}
     >
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-ink film-grain">
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-ground film-grain">
         {/* Portrait viewports get a band rather than a full-bleed cover — see
             .hero-stage in globals.css for why. The scrims live inside it so
             they grade the film and nothing else: on portrait the navigation
-            and the headline already sit on ink and need no help. */}
+            and the headline already sit on ground and need no help. */}
         <div className="hero-stage overflow-hidden">
           {reduced ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -173,8 +173,8 @@ export default function Hero() {
             <>
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-ink bg-cover bg-center"
-                style={{ backgroundImage: `url(${HERO.poster})`, filter: "brightness(0.5)" }}
+                className="absolute inset-0 bg-ground bg-cover bg-center"
+                style={{ backgroundImage: `url(${HERO.poster})`, filter: "brightness(1.14) saturate(0.6) contrast(0.86)" }}
               />
               <canvas
                 ref={canvasRef}
@@ -188,15 +188,16 @@ export default function Hero() {
           {/* Two scrims, not one. The vertical pass seats the navigation and
               the metadata row; the horizontal pass gives the headline a ground
               to sit on, because midway through the sequence the frame fills
-              with pale render and light-on-light stops being readable. An
+              with dark treeline and dark-on-dark stops being readable. An
               automated contrast check cannot see this — it measures CSS
-              colours, not the canvas underneath. */}
+              colours, not the canvas underneath, so the composited contrast
+              beneath the headline is sampled from the rendered page. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "linear-gradient(to bottom, rgba(11,10,8,0.58) 0%, rgba(11,10,8,0.06) 34%, rgba(11,10,8,0.20) 68%, rgba(11,10,8,0.84) 100%)",
+                "linear-gradient(to bottom, rgba(251,250,247,0.74) 0%, rgba(251,250,247,0.10) 30%, rgba(251,250,247,0.36) 62%, rgba(251,250,247,0.96) 100%)",
             }}
           />
           <div
@@ -204,14 +205,14 @@ export default function Hero() {
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "linear-gradient(105deg, rgba(11,10,8,0.62) 0%, rgba(11,10,8,0.34) 26%, rgba(11,10,8,0.06) 52%, rgba(11,10,8,0) 68%)",
+                "linear-gradient(105deg, rgba(251,250,247,0.88) 0%, rgba(251,250,247,0.66) 28%, rgba(251,250,247,0.34) 48%, rgba(251,250,247,0.08) 68%, rgba(251,250,247,0) 80%)",
             }}
           />
         </div>
 
         <div className="absolute inset-0 gutter flex flex-col justify-end pb-[clamp(2.5rem,7vh,5rem)]">
           <div ref={headlineRef}>
-            <h1 id="hero-heading" className="t-display-xl max-w-[6.3em] text-stone">
+            <h1 id="hero-heading" className="t-display-xl max-w-[6.3em] text-ink">
               A place that reveals <em>itself</em> slowly.
             </h1>
           </div>
@@ -222,18 +223,18 @@ export default function Hero() {
             className="pointer-events-none absolute inset-x-0 bottom-[clamp(2.5rem,7vh,5rem)] gutter"
             style={{ opacity: 0 }}
           >
-            <p className="t-display-m max-w-[20ch] text-stone">Stone, light, and the time between.</p>
+            <p className="t-display-m max-w-[20ch] text-ink">Stone, light, and the time between.</p>
           </div>
 
           <div
             ref={cueRef}
             className="mt-[clamp(2rem,5vh,3.5rem)] flex items-end justify-between gap-6 border-t hair pt-4"
           >
-            <p className="t-meta max-w-[24ch] text-stone-dim">
+            <p className="t-meta max-w-[24ch] text-ink-dim">
               Contemporary residences set in mature landscape
             </p>
             <div className="flex items-center gap-3">
-              <span className="t-meta whitespace-nowrap text-stone-dim">
+              <span className="t-meta whitespace-nowrap text-ink-dim">
                 Scroll<span className="hidden sm:inline"> to enter</span>
               </span>
               <span aria-hidden="true" className="relative block h-px w-16 bg-hair">

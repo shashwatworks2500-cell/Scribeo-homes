@@ -10,16 +10,16 @@ export default function Pricing() {
     <section id="pricing" aria-labelledby="price-heading" className="section-y gutter">
       <div className="grid grid-cols-12 items-end gap-y-[clamp(1.5rem,4vh,2.5rem)]">
         <div className="col-span-12 md:col-span-5">
-          <p data-reveal className="t-eyebrow text-travertine/80">
+          <p data-reveal className="t-eyebrow text-travertine">
             01 — Configurations
           </p>
-          <h2 id="price-heading" className="t-display-m mt-6 max-w-[16ch] text-stone">
+          <h2 id="price-heading" className="t-display-m mt-6 max-w-[16ch] text-ink">
             <SplitLines>Four plans. One *language*.</SplitLines>
           </h2>
         </div>
         <div className="col-span-12 md:col-span-6 md:col-start-7">
-          <p data-reveal className="t-meta text-stone-faint">Price range</p>
-          <p data-reveal className="t-display-l mt-3 text-stone">
+          <p data-reveal className="t-meta text-ink-faint">Price range</p>
+          <p data-reveal className="t-display-l mt-3 text-ink">
             {PRICE_RANGE.min}
             <span className="mx-[0.3em] text-travertine">—</span>
             {PRICE_RANGE.max}
@@ -32,25 +32,25 @@ export default function Pricing() {
           <li key={c.id} data-reveal className="border-b hair">
             <a
               href="#residences"
-              className="group grid grid-cols-12 items-baseline gap-x-4 gap-y-2 py-[clamp(1.25rem,3vh,2rem)] transition-colors duration-300 hover:bg-ink-2/60"
+              className="group grid grid-cols-12 items-baseline gap-x-4 gap-y-2 py-[clamp(1.25rem,3vh,2rem)] transition-colors duration-300 hover:bg-ground-2/60"
             >
               <span className="col-span-4 sm:col-span-2">
-                <span className="t-display-s block text-stone transition-colors group-hover:text-travertine">
+                <span className="t-display-s block text-ink transition-colors group-hover:text-travertine">
                   {c.bhk}
                 </span>
               </span>
               <span className="col-span-8 sm:col-span-3">
-                <span className="t-meta block text-stone-dim">{c.label}</span>
+                <span className="t-meta block text-ink-dim">{c.label}</span>
               </span>
               <span className="col-span-6 sm:col-span-3">
-                <span className="t-meta block text-stone-faint">Built-up</span>
-                <span className="t-meta block text-stone">
+                <span className="t-meta block text-ink-faint">Built-up</span>
+                <span className="t-meta block text-ink">
                   {c.builtUpSqft.toLocaleString("en-IN")} sq ft
                 </span>
               </span>
               <span className="col-span-6 sm:col-span-3">
-                <span className="t-meta block text-stone-faint">From</span>
-                <span className="t-meta block text-stone">{c.priceFrom}</span>
+                <span className="t-meta block text-ink-faint">From</span>
+                <span className="t-meta block text-ink">{c.priceFrom}</span>
               </span>
               <span
                 aria-hidden="true"
@@ -63,7 +63,7 @@ export default function Pricing() {
         ))}
       </ul>
 
-      <p className="t-meta mt-6 max-w-[62ch] text-stone-faint">
+      <p className="t-meta mt-6 max-w-[62ch] text-ink-faint">
         Prices are indicative and exclude stamp duty, registration, applicable taxes and
         maintenance deposits. The site office issues the current price list.
       </p>

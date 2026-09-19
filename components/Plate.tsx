@@ -37,7 +37,7 @@ export default function Plate({
     <figure className={className}>
       <div
         {...(clip ? { "data-reveal-clip": "" } : {})}
-        className="relative overflow-hidden bg-ink-2"
+        className="relative overflow-hidden bg-ground-2"
         style={{ aspectRatio: ratio ?? `${asset.w}/${asset.h}` }}
       >
         <div
@@ -57,7 +57,7 @@ export default function Plate({
         </div>
       </div>
       {caption ? (
-        <figcaption className="t-meta mt-4 text-stone-faint">{caption}</figcaption>
+        <figcaption className="t-meta mt-4 text-ink-faint">{caption}</figcaption>
       ) : null}
     </figure>
   );

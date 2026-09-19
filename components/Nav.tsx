@@ -87,7 +87,7 @@ export default function Nav() {
         style={{
           transform: hidden ? "translateY(-100%)" : "translateY(0)",
           transitionTimingFunction: "var(--ease-in-out-quiet)",
-          backgroundColor: solid && !open ? "rgba(11,10,8,0.82)" : "transparent",
+          backgroundColor: solid && !open ? "rgba(251,250,247,0.88)" : "transparent",
           backdropFilter: solid && !open ? "blur(10px)" : "none",
           borderBottom: `1px solid ${solid && !open ? "var(--color-hair)" : "transparent"}`,
         }}
@@ -96,7 +96,7 @@ export default function Nav() {
           <a
             href="#top"
             onClick={(e) => go(e, "#top")}
-            className="t-eyebrow text-stone transition-colors duration-200 hover:text-travertine"
+            className="t-eyebrow text-ink transition-colors duration-200 hover:text-travertine"
           >
             Scribeo&nbsp;Homes
           </a>
@@ -108,7 +108,7 @@ export default function Nav() {
                   <a
                     href={l.href}
                     onClick={(e) => go(e, l.href)}
-                    className="t-meta text-stone-dim transition-colors duration-200 hover:text-stone"
+                    className="t-meta text-ink-dim transition-colors duration-200 hover:text-ink"
                   >
                     {l.label}
                   </a>
@@ -123,7 +123,7 @@ export default function Nav() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="t-meta relative z-50 text-stone md:hidden"
+            className="t-meta relative z-50 text-ink md:hidden"
           >
             {open ? "Close" : "Menu"}
           </button>
@@ -131,7 +131,7 @@ export default function Nav() {
         <span aria-hidden="true" className="block h-px w-full bg-transparent">
           <span
             ref={progressRef}
-            className="block h-px w-full origin-left bg-travertine/45"
+            className="block h-px w-full origin-left bg-travertine"
             style={{ transform: "scaleX(0)" }}
           />
         </span>
@@ -142,7 +142,7 @@ export default function Nav() {
         id="mobile-menu"
         ref={panelRef}
         hidden={!open}
-        className="fixed inset-0 z-40 bg-ink md:hidden"
+        className="fixed inset-0 z-40 bg-ground md:hidden"
       >
         <nav aria-label="Primary" className="gutter flex h-full flex-col justify-center">
           <ul className="space-y-[clamp(1rem,3.2vh,2rem)]">
@@ -151,9 +151,9 @@ export default function Nav() {
                 <a
                   href={l.href}
                   onClick={(e) => go(e, l.href)}
-                  className="t-display-m flex items-baseline gap-5 text-stone"
+                  className="t-display-m flex items-baseline gap-5 text-ink"
                 >
-                  <span className="t-numeral text-travertine/70">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="t-numeral text-travertine">{String(i + 1).padStart(2, "0")}</span>
                   {l.label}
                 </a>
               </li>

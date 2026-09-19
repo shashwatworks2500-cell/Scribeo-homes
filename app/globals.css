@@ -2,27 +2,49 @@
 
 /* ───────────────────────────────────────────────────────────
    Scribeo Homes — design tokens
-   Palette derived by sampling the supplied photography:
-   72% of pixel mass sits in shadow + warm mid-tone, so the
-   site is dark-ground and the photographs are the light.
+
+   Light ground. The ground is a warm near-white rather than #fff:
+   the supplied renders are sunlit and warm-neutral, and beside a pure
+   white the concrete reads grey and the whole page goes cold. #fbfaf7
+   is white to the eye and lets the photography keep its temperature.
+
+   Every text colour below was measured against every surface below.
+   The worst pairing in the set is ink-faint on ground-3 at 4.53:1,
+   so all body, meta and eyebrow text clears WCAG AA at any size:
+
+                 ground   ground-2   ground-3      paper
+     ink          17.63      16.31      14.92      15.89
+     ink-dim       7.64       7.07       6.47       6.89
+     ink-faint     5.35       4.95       4.53       4.82
+     travertine    5.59       5.16       4.72       5.03
+
+   travertine is used solid, never at an alpha: on the dark ground an
+   80% accent still cleared AA, on this one it lands at 3.66 and fails.
+   --color-rule is the form-field underline, held at 3:1 as a UI
+   component; --color-hair is decorative division only.
    ─────────────────────────────────────────────────────────── */
 @theme {
-  --color-ink: #0b0a08;
-  --color-ink-2: #12100d;
-  --color-ink-3: #1c1915;
-  --color-hair: #2a2620;
-  --color-stone: #e9e3d7;
-  --color-stone-dim: #a29889;
-  --color-stone-faint: #8a8073;
-  --color-travertine: #c6b49a;
-  --color-timber: #9a6b44;
+  --color-ground: #fbfaf7;
+  --color-ground-2: #f4f1e9;
+  --color-ground-3: #ece7db;
+  --color-hair: #ddd6c6;
+  --color-rule: #8a7f6b;
+
+  --color-ink: #16140f;
+  --color-ink-dim: #55504a;
+  --color-ink-faint: #6e675d;
+
+  --color-travertine: #7d6038;
+  --color-timber: #8a5c33;
   --color-olive: #4a5238;
+
+  /* The floor plan keeps its own sheet so the drawing reads as a drawing
+     and not as a hole in the page; a hairline gives it an edge. */
   --color-paper: #f2eee5;
   --color-paper-ink: #1a1814;
   --color-paper-dim: #6b6559;
   --color-paper-hair: #d8d2c4;
 
-  /* stone-faint raised from #6d655a (3.47:1, fails AA) to 5.11:1. */
   --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
   --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
 
@@ -50,7 +72,7 @@
 
    Below square, the film becomes a band instead: 4:3 keeps 75% of the frame
    width, enough for the clearing, both converging treelines and the full
-   run of houses, and the type takes the ink ground beneath it. At square and
+   run of houses, and the type takes the ground beneath it. At square and
    wider the stage fills the viewport as before. Driven by aspect ratio, not
    width, so a portrait tablet gets the band too. */
 .hero-stage {
@@ -78,8 +100,8 @@
 
   body {
     margin: 0;
-    background-color: var(--color-ink);
-    color: var(--color-stone);
+    background-color: var(--color-ground);
+    color: var(--color-ink);
     font-family: var(--font-sans);
     font-weight: 300;
     font-size: clamp(0.9375rem, 0.35vw + 0.85rem, 1.0625rem);
@@ -126,17 +148,14 @@
 
   ::selection {
     background: var(--color-travertine);
-    color: var(--color-ink);
+    color: var(--color-ground);
   }
 
   /* Visible focus, on every interactive element, in brand colour. */
   :focus-visible {
-    outline: 1px solid var(--color-travertine);
+    outline: 2px solid var(--color-travertine);
     outline-offset: 4px;
     border-radius: 1px;
-  }
-  .on-paper :focus-visible {
-    outline-color: var(--color-paper-ink);
   }
 }
 
@@ -242,15 +261,15 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.035;
-    mix-blend-mode: overlay;
+    opacity: 0.055;
+    mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
 /* Curtain failsafe: if the boot script's timer fires before React lifts the
    curtain, remove it outright. The page underneath is fully server-rendered,
-   so this degrades to a complete, scrollable site rather than a black screen. */
+   so this degrades to a complete, scrollable site rather than a blank screen. */
 html[data-curtain="failsafe"] #entry-curtain {
   display: none !important;
 }

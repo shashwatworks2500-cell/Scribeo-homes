@@ -59,11 +59,11 @@ export default function Contact() {
   };
 
   const field =
-    "mt-2 w-full border-b border-hair bg-transparent pb-2.5 text-stone outline-none transition-colors placeholder:text-stone-faint focus:border-travertine";
+    "mt-2 w-full border-b border-rule bg-transparent pb-2.5 text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-travertine";
 
   return (
     <section id="enquire" aria-labelledby="enq-heading" className="relative">
-      <div className="relative overflow-hidden bg-ink film-grain">
+      <div className="relative overflow-hidden bg-ground film-grain">
         <div data-parallax="4" className="absolute inset-0" style={{ top: "-4%", bottom: "-4%" }}>
           <Image src={A.masterReference.src} alt="" fill sizes="100vw" quality={82} className="object-cover" />
         </div>
@@ -72,50 +72,50 @@ export default function Contact() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(11,10,8,0.72) 0%, rgba(11,10,8,0.88) 45%, rgba(11,10,8,0.96) 100%)",
+              "linear-gradient(to bottom, rgba(251,250,247,0.80) 0%, rgba(251,250,247,0.94) 45%, rgba(251,250,247,0.985) 100%)",
           }}
         />
 
         <div className="gutter section-y relative">
           <div className="grid grid-cols-12 gap-y-[clamp(2rem,5vw,4.5rem)] md:gap-x-[clamp(2rem,5vw,4.5rem)]">
             <div className="col-span-12 md:col-span-5">
-              <p data-reveal className="t-eyebrow text-travertine/85">
+              <p data-reveal className="t-eyebrow text-travertine">
                 09 — Enquire
               </p>
-              <h2 id="enq-heading" className="t-display-l mt-6 max-w-[14ch] text-stone">
+              <h2 id="enq-heading" className="t-display-l mt-6 max-w-[14ch] text-ink">
                 <SplitLines>Come at seven. Stay for the *light*.</SplitLines>
               </h2>
-              <p data-reveal className="mt-8 measure text-stone-dim">
+              <p data-reveal className="mt-8 measure text-ink-dim">
                 Viewings are arranged privately, one household at a time, early in the day while
                 the shadows are still long.
               </p>
 
               <dl className="mt-[clamp(2rem,5vh,3rem)] border-t hair">
                 <div className="flex items-baseline justify-between gap-4 border-b hair py-4">
-                  <dt className="t-meta text-stone-faint">Phone</dt>
+                  <dt className="t-meta text-ink-faint">Phone</dt>
                   <dd>
                     <a
                       href={CONTACT.phoneHref}
-                      className="t-display-s text-stone transition-colors hover:text-travertine"
+                      className="t-display-s text-ink transition-colors hover:text-travertine"
                     >
                       {CONTACT.phoneDisplay}
                     </a>
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-4 border-b hair py-4">
-                  <dt className="t-meta text-stone-faint">Email</dt>
+                  <dt className="t-meta text-ink-faint">Email</dt>
                   <dd>
                     <a
                       href={CONTACT.emailHref}
-                      className="t-meta break-all text-stone transition-colors hover:text-travertine"
+                      className="t-meta break-all text-ink transition-colors hover:text-travertine"
                     >
                       {CONTACT.email}
                     </a>
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-4 border-b hair py-4">
-                  <dt className="t-meta text-stone-faint">Visits</dt>
-                  <dd className="t-meta max-w-[22ch] text-right text-stone-dim">{CONTACT.hours}</dd>
+                  <dt className="t-meta text-ink-faint">Visits</dt>
+                  <dd className="t-meta max-w-[22ch] text-right text-ink-dim">{CONTACT.hours}</dd>
                 </div>
               </dl>
             </div>
@@ -123,7 +123,7 @@ export default function Contact() {
             <div className="col-span-12 md:col-span-6 md:col-start-7">
               <form onSubmit={onSubmit} noValidate className="grid gap-[clamp(1.25rem,3vh,1.75rem)]">
                 <div>
-                  <label htmlFor={`${uid}-name`} className="t-meta text-stone-faint">
+                  <label htmlFor={`${uid}-name`} className="t-meta text-ink-faint">
                     Name <span aria-hidden="true">*</span>
                   </label>
                   <input id={`${uid}-name`} name="name" required autoComplete="name" className={field} placeholder="Your name" />
@@ -131,7 +131,7 @@ export default function Contact() {
 
                 <div className="grid gap-[clamp(1.25rem,3vh,1.75rem)] sm:grid-cols-2">
                   <div>
-                    <label htmlFor={`${uid}-phone`} className="t-meta text-stone-faint">
+                    <label htmlFor={`${uid}-phone`} className="t-meta text-ink-faint">
                       Phone <span aria-hidden="true">*</span>
                     </label>
                     <input
@@ -146,7 +146,7 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label htmlFor={`${uid}-email`} className="t-meta text-stone-faint">
+                    <label htmlFor={`${uid}-email`} className="t-meta text-ink-faint">
                       Email
                     </label>
                     <input
@@ -161,15 +161,15 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor={`${uid}-config`} className="t-meta text-stone-faint">
+                  <label htmlFor={`${uid}-config`} className="t-meta text-ink-faint">
                     Interested in
                   </label>
                   <select id={`${uid}-config`} name="config" className={`${field} appearance-none`} defaultValue="">
-                    <option value="" className="bg-ink">
+                    <option value="" className="bg-ground">
                       Any configuration
                     </option>
                     {CONFIGS.map((c) => (
-                      <option key={c.id} value={`${c.bhk} — ${c.label}`} className="bg-ink">
+                      <option key={c.id} value={`${c.bhk} — ${c.label}`} className="bg-ground">
                         {c.bhk} — {c.label}
                       </option>
                     ))}
@@ -177,7 +177,7 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor={`${uid}-message`} className="t-meta text-stone-faint">
+                  <label htmlFor={`${uid}-message`} className="t-meta text-ink-faint">
                     Message
                   </label>
                   <textarea
@@ -198,9 +198,9 @@ export default function Contact() {
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                   <button
                     type="submit"
-                    className="group inline-flex items-baseline gap-4 border-b border-travertine/60 pb-2 transition-colors duration-300 hover:border-travertine"
+                    className="group inline-flex items-baseline gap-4 border-b border-travertine/70 pb-2 transition-colors duration-300 hover:border-travertine"
                   >
-                    <span className="t-display-s text-stone">Send enquiry</span>
+                    <span className="t-display-s text-ink">Send enquiry</span>
                     <span
                       aria-hidden="true"
                       className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1"
@@ -208,10 +208,10 @@ export default function Contact() {
                       →
                     </span>
                   </button>
-                  <p className="t-meta text-stone-faint">Opens your email app</p>
+                  <p className="t-meta text-ink-faint">Opens your email app</p>
                 </div>
 
-                <p aria-live="polite" className="t-meta text-stone-dim">
+                <p aria-live="polite" className="t-meta text-ink-dim">
                   {sent
                     ? `Your email app should now be open with the enquiry ready to send. If nothing happened, write to ${CONTACT.email} or call ${CONTACT.phoneDisplay}.`
                     : ""}

@@ -102,15 +102,15 @@ export default function Gallery() {
     <section id="gallery" aria-labelledby="gal-heading" className="section-y gutter">
       <div className="grid grid-cols-12 items-end gap-y-6">
         <div className="col-span-12 md:col-span-6">
-          <p data-reveal className="t-eyebrow text-travertine/80">
+          <p data-reveal className="t-eyebrow text-travertine">
             05 — Gallery
           </p>
-          <h2 id="gal-heading" className="t-display-m mt-6 max-w-[16ch] text-stone">
+          <h2 id="gal-heading" className="t-display-m mt-6 max-w-[16ch] text-ink">
             <SplitLines>The whole of it, *in one place*.</SplitLines>
           </h2>
         </div>
         <div className="col-span-12 md:col-span-5 md:col-start-8">
-          <p data-reveal className="measure text-stone-dim">
+          <p data-reveal className="measure text-ink-dim">
             {GALLERY.length} images and drawings across exteriors, interiors, landscape,
             amenities, material details and floor plans.
           </p>
@@ -119,9 +119,9 @@ export default function Gallery() {
             type="button"
             data-reveal
             onClick={() => setOpen(true)}
-            className="group mt-7 inline-flex items-baseline gap-4 border-b border-travertine/50 pb-2 transition-colors duration-300 hover:border-travertine"
+            className="group mt-7 inline-flex items-baseline gap-4 border-b border-travertine/70 pb-2 transition-colors duration-300 hover:border-travertine"
           >
-            <span className="t-display-s text-stone">View gallery</span>
+            <span className="t-display-s text-ink">View gallery</span>
             <span
               aria-hidden="true"
               className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1"
@@ -138,7 +138,7 @@ export default function Gallery() {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="group relative block w-full overflow-hidden bg-ink-2"
+              className="group relative block w-full overflow-hidden bg-ground-2"
               style={{ aspectRatio: "4/5" }}
               aria-label={`Open gallery at ${item.caption}`}
             >
@@ -162,11 +162,11 @@ export default function Gallery() {
           aria-modal="true"
           aria-label="Gallery"
           ref={dialogRef}
-          className="fixed inset-0 z-[95] flex flex-col bg-ink"
+          className="fixed inset-0 z-[95] flex flex-col bg-ground"
         >
           <div className="gutter flex items-center justify-between gap-6 border-b hair py-5">
-            <p className="t-eyebrow text-travertine/80">Gallery</p>
-            <button type="button" onClick={close} className="t-meta text-stone hover:text-travertine">
+            <p className="t-eyebrow text-travertine">Gallery</p>
+            <button type="button" onClick={close} className="t-meta text-ink hover:text-travertine">
               Close
             </button>
           </div>
@@ -186,9 +186,9 @@ export default function Gallery() {
                   aria-pressed={on}
                   className="t-meta shrink-0 border px-4 py-2 transition-colors duration-300"
                   style={{
-                    borderColor: on ? "var(--color-travertine)" : "var(--color-hair)",
+                    borderColor: on ? "var(--color-travertine)" : "var(--color-rule)",
                     backgroundColor: on ? "var(--color-travertine)" : "transparent",
-                    color: on ? "var(--color-ink)" : "var(--color-stone-dim)",
+                    color: on ? "var(--color-ground)" : "var(--color-ink-dim)",
                   }}
                 >
                   {c} <span className="opacity-60">{n}</span>
@@ -211,7 +211,7 @@ export default function Gallery() {
                       className="relative block w-full overflow-hidden"
                       style={{
                         aspectRatio: "4/3",
-                        backgroundColor: item.drawing ? "var(--color-paper)" : "var(--color-ink-2)",
+                        backgroundColor: item.drawing ? "var(--color-paper)" : "var(--color-ground-2)",
                       }}
                     >
                       <Image
@@ -228,7 +228,7 @@ export default function Gallery() {
                         }
                       />
                     </span>
-                    <span className="t-meta mt-3 block text-stone-faint group-hover:text-stone">
+                    <span className="t-meta mt-3 block text-ink-faint group-hover:text-ink">
                       {item.caption}
                     </span>
                   </button>
@@ -242,16 +242,16 @@ export default function Gallery() {
               role="dialog"
               aria-modal="true"
               aria-label={shot.caption}
-              className="absolute inset-0 z-10 flex flex-col bg-ink/97"
+              className="absolute inset-0 z-10 flex flex-col bg-ground/97"
             >
               <div className="gutter flex items-center justify-between gap-6 py-5">
-                <p className="t-meta text-stone-faint">
+                <p className="t-meta text-ink-faint">
                   {lightbox! + 1} / {items.length}
                 </p>
                 <button
                   type="button"
                   onClick={() => setLightbox(null)}
-                  className="t-meta text-stone hover:text-travertine"
+                  className="t-meta text-ink hover:text-travertine"
                 >
                   Back to grid
                 </button>
@@ -271,15 +271,15 @@ export default function Gallery() {
                 <button
                   type="button"
                   onClick={() => setLightbox((i) => (i === null ? null : (i - 1 + items.length) % items.length))}
-                  className="t-meta text-stone hover:text-travertine"
+                  className="t-meta text-ink hover:text-travertine"
                 >
                   ← Previous
                 </button>
-                <p className="t-meta max-w-[46ch] text-center text-stone-dim">{shot.caption}</p>
+                <p className="t-meta max-w-[46ch] text-center text-ink-dim">{shot.caption}</p>
                 <button
                   type="button"
                   onClick={() => setLightbox((i) => (i === null ? null : (i + 1) % items.length))}
-                  className="t-meta text-stone hover:text-travertine"
+                  className="t-meta text-ink hover:text-travertine"
                 >
                   Next →
                 </button>

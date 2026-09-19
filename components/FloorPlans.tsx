@@ -39,10 +39,10 @@ export default function FloorPlans() {
     <section id="residences" aria-labelledby="plans-heading" className="section-y gutter">
       <div className="grid grid-cols-12 items-end gap-y-6">
         <div className="col-span-12 md:col-span-7">
-          <p data-reveal className="t-eyebrow text-travertine/80">
+          <p data-reveal className="t-eyebrow text-travertine">
             03 — Floor plans
           </p>
-          <h2 id="plans-heading" className="t-display-m mt-6 max-w-[18ch] text-stone">
+          <h2 id="plans-heading" className="t-display-m mt-6 max-w-[18ch] text-ink">
             <SplitLines>Every room given *something to face*.</SplitLines>
           </h2>
         </div>
@@ -69,8 +69,8 @@ export default function FloorPlans() {
             onClick={() => setActive(i)}
             className="t-meta border px-5 py-2.5 transition-colors duration-300"
             style={{
-              borderColor: active === i ? "var(--color-travertine)" : "var(--color-hair)",
-              color: active === i ? "var(--color-ink)" : "var(--color-stone-dim)",
+              borderColor: active === i ? "var(--color-travertine)" : "var(--color-rule)",
+              color: active === i ? "var(--color-ground)" : "var(--color-ink-dim)",
               backgroundColor: active === i ? "var(--color-travertine)" : "transparent",
             }}
           >
@@ -101,8 +101,8 @@ export default function FloorPlans() {
         </div>
 
         <div className="col-span-12 lg:col-span-4">
-          <h3 className="t-display-s text-stone">{cfg.label}</h3>
-          <p className="mt-4 measure text-stone-dim">{cfg.blurb}</p>
+          <h3 className="t-display-s text-ink">{cfg.label}</h3>
+          <p className="mt-4 measure text-ink-dim">{cfg.blurb}</p>
           <dl className="mt-8 border-t hair">
             {[
               ["Configuration", cfg.bhk],
@@ -112,19 +112,19 @@ export default function FloorPlans() {
               ["Price to", cfg.priceTo],
             ].map(([k, v], i) => (
               <div key={`${k}-${i}`} className="flex justify-between gap-4 border-b hair py-3.5">
-                <dt className="t-meta text-stone-faint">{k}</dt>
-                <dd className="t-meta text-right text-stone">{v}</dd>
+                <dt className="t-meta text-ink-faint">{k}</dt>
+                <dd className="t-meta text-right text-ink">{v}</dd>
               </div>
             ))}
           </dl>
           <a
             href="#enquire"
-            className="mt-8 inline-flex items-baseline gap-3 border-b border-travertine/50 pb-2 transition-colors duration-300 hover:border-travertine"
+            className="mt-8 inline-flex items-baseline gap-3 border-b border-travertine/70 pb-2 transition-colors duration-300 hover:border-travertine"
           >
-            <span className="t-display-s text-stone">Enquire about this plan</span>
+            <span className="t-display-s text-ink">Enquire about this plan</span>
             <span aria-hidden="true" className="t-meta text-travertine">→</span>
           </a>
-          <p className="t-meta mt-6 text-stone-faint">
+          <p className="t-meta mt-6 text-ink-faint">
             Plans are indicative and not to scale. Dimensions are nominal.
           </p>
         </div>

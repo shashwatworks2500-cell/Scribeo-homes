@@ -1,6 +1,7 @@
 import Curtain from "@/components/Curtain";
 import MotionProvider from "@/components/MotionProvider";
 import Nav from "@/components/Nav";
+import Search from "@/components/Search";
 import Hero from "@/components/Hero";
 import Pricing from "@/components/Pricing";
 import Statement from "@/components/Statement";
@@ -20,6 +21,7 @@ export default function Page() {
       <Curtain />
       <MotionProvider />
       <Nav />
+      <Search />
       <div id="top" />
       <main id="main">
         <Hero />

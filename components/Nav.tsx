@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SearchTrigger } from "./Search";
 
 const LINKS = [
   { href: "#pricing", label: "Configurations" },
@@ -102,7 +103,7 @@ export default function Nav() {
           </a>
 
           <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-[clamp(1.5rem,2.6vw,3rem)]">
+            <ul className="flex items-center gap-[clamp(1.25rem,2.2vw,2.5rem)]">
               {LINKS.map((l) => (
                 <li key={l.href}>
                   <a
@@ -114,19 +115,25 @@ export default function Nav() {
                   </a>
                 </li>
               ))}
+              <li className="ml-[clamp(0.5rem,1.4vw,1.5rem)]">
+                <SearchTrigger />
+              </li>
             </ul>
           </nav>
 
-          <button
+          <div className="flex items-center gap-5 md:hidden">
+            <SearchTrigger variant="icon" />
+            <button
             ref={toggleRef}
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="t-meta relative z-50 text-ink md:hidden"
+            className="t-meta relative z-50 text-ink"
           >
             {open ? "Close" : "Menu"}
-          </button>
+            </button>
+          </div>
         </div>
         <span aria-hidden="true" className="block h-px w-full bg-transparent">
           <span
@@ -145,6 +152,9 @@ export default function Nav() {
         className="fixed inset-0 z-40 bg-ground md:hidden"
       >
         <nav aria-label="Primary" className="gutter flex h-full flex-col justify-center">
+          <div className="mb-[clamp(2rem,5vh,3rem)]">
+            <SearchTrigger variant="row" />
+          </div>
           <ul className="space-y-[clamp(1rem,3.2vh,2rem)]">
             {LINKS.map((l, i) => (
               <li key={l.href}>

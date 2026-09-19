@@ -87,14 +87,25 @@ export default function FloorPlans() {
       >
         <div className="col-span-12 lg:col-span-8">
           {/* The plan is a drawing on a sheet. The page is light too now, so the
-              sheet needs a hairline edge or it dissolves into the page. */}
-          <div className="relative w-full overflow-hidden border border-paper-hair bg-paper">
+              sheet needs a hairline edge or it dissolves into the page.
+
+              The sheet's ratio is fixed, and every drawing is contained inside
+              it. The four plans are 595x575, 705x658, 843x722 and 963x805 —
+              1.04 to 1.20 — and the box previously declared 1200x900 (1.33),
+              so it reserved the wrong space and grew 204px the moment a plan
+              decoded, shifting everything below it. A single ratio, set to the
+              tallest of the four, both reserves the space exactly and stops
+              the page resizing every time someone switches tab. */}
+          <div
+            className="relative w-full overflow-hidden border border-paper-hair bg-paper"
+            style={{ aspectRatio: "595 / 575" }}
+          >
             <Image
               src={cfg.plan}
               alt={`${cfg.bhk} floor plan: ${cfg.label}, ${cfg.builtUpSqft} square feet built-up.`}
-              width={1200}
-              height={900}
-              className="h-auto w-full"
+              fill
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              className="object-contain"
               unoptimized
             />
           </div>

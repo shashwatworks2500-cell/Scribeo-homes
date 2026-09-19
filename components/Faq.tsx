@@ -112,7 +112,10 @@ export default function Faq() {
             <ul className="mt-8 border-t hair">
               {results.map((f) => (
                 <li key={f.q} className="border-b hair">
-                  <details className="group">
+                  {/* Stable id keyed to the position in FAQS, not in the
+                      filtered view, so site search can open a given answer
+                      whatever the filter happens to be showing. */}
+                  <details id={`faq-q-${FAQS.indexOf(f)}`} className="group scroll-mt-28">
                     <summary className="flex cursor-pointer list-none items-baseline justify-between gap-6 py-[clamp(0.8rem,1.9vh,1.05rem)] text-ink marker:hidden">
                       <span className="t-faq">{f.q}</span>
                       <span

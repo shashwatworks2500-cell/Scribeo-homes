@@ -35,6 +35,18 @@ export default function Gallery() {
 
   const items = cat === "All" ? GALLERY : GALLERY.filter((i) => i.category === cat);
 
+  /* Search can open the gallery straight into a category. */
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const c = (e as CustomEvent<{ category?: string }>).detail?.category;
+      setCat(c && c !== "All" ? c : "All");
+      setLightbox(null);
+      setOpen(true);
+    };
+    window.addEventListener("scribeo:gallery", onOpen);
+    return () => window.removeEventListener("scribeo:gallery", onOpen);
+  }, []);
+
   const close = useCallback(() => {
     setLightbox(null);
     setOpen(false);

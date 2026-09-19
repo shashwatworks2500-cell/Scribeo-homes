@@ -86,9 +86,9 @@ export default function FloorPlans() {
         className="mt-[clamp(2rem,5vh,3rem)] grid grid-cols-12 gap-y-[clamp(1.5rem,4vw,3.5rem)] lg:gap-x-[clamp(1.5rem,4vw,3.5rem)]"
       >
         <div className="col-span-12 lg:col-span-8">
-          {/* The plan is a drawing on paper: it keeps its own light register
-              rather than being forced into the dark palette. */}
-          <div className="relative w-full overflow-hidden bg-paper">
+          {/* The plan is a drawing on a sheet. The page is light too now, so the
+              sheet needs a hairline edge or it dissolves into the page. */}
+          <div className="relative w-full overflow-hidden border border-paper-hair bg-paper">
             <Image
               src={cfg.plan}
               alt={`${cfg.bhk} floor plan: ${cfg.label}, ${cfg.builtUpSqft} square feet built-up.`}

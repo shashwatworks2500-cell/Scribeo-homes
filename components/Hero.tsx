@@ -72,10 +72,16 @@ export default function Hero() {
       sizeCanvas();
       raf = requestAnimationFrame(tick);
 
-      // Pass 1 — first frame. The hero stops being a placeholder.
+      // Pass 1 — first frame. Painted BEFORE the canvas is revealed, not
+      // after: an opaque canvas that has not been drawn to is a black
+      // rectangle, and covering that with a still of the finished
+      // development is what put two different pictures of this site on
+      // screen at once. Paint first, then fade up from the page's own
+      // ground, so only ever one image is visible.
       await seq.load(0);
       if (disposed) return;
-      dirty = true;
+      seq.draw(ctx, 0);
+      dirty = false;
       canvas.style.opacity = "1";
       signalProgress(0.45);
       // The hero is already showing real footage and will paint the nearest
@@ -169,19 +175,16 @@ export default function Hero() {
               height={1080}
             />
           ) : (
-            <>
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-ground bg-cover bg-center"
-                style={{ backgroundImage: `url(${HERO.poster})`, filter: "brightness(1.14) saturate(0.6) contrast(0.86)" }}
-              />
-              <canvas
-                ref={canvasRef}
-                className="relative block h-full w-full"
-                aria-hidden="true"
-                style={{ opacity: 0, transition: "opacity 700ms var(--ease-out-quiet)" }}
-              />
-            </>
+            /* Nothing behind the film but the page's own ground. The stage
+               is opaque, the canvas covers it, and the curtain holds until
+               the first frame is painted — so there is no moment that needs
+               a second picture to cover it. */
+            <canvas
+              ref={canvasRef}
+              className="relative block h-full w-full"
+              aria-hidden="true"
+              style={{ opacity: 0, transition: "opacity 420ms var(--ease-out-quiet)" }}
+            />
           )}
 
           {/* Two scrims, not one. The vertical pass seats the navigation and

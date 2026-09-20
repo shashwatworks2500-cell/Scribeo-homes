@@ -163,7 +163,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           media="(max-width: 767px)"
           fetchPriority="high"
         />
-        <link rel="preload" as="image" href="/hero/poster.webp" fetchPriority="high" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}

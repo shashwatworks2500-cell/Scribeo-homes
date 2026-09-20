@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 import { CONFIGS, CONTACT, FAQS, PRICE_RANGE } from "@/lib/content";
-import { HERO_FIRST } from "@/lib/assets";
+import { HERO, HERO_FIRST } from "@/lib/assets";
 import "./globals.css";
 
 /* Display: high-contrast garamond. Echoes the inscribed roman capitals on the
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: SITE_NAME,
     url: SITE_URL,
-    images: [{ url: "/hero/poster.webp", width: 1920, height: 1080, alt: "Scribeo Homes at first light" }],
+    images: [{ url: HERO.poster, width: 1920, height: 1080, alt: "Scribeo Homes at first light" }],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
@@ -60,7 +60,7 @@ const JSON_LD = {
       name: SITE_NAME,
       url: SITE_URL,
       description: SITE_DESCRIPTION,
-      image: `${SITE_URL}/hero/poster.webp`,
+      image: `${SITE_URL}${HERO.poster}`,
       telephone: CONTACT.phoneDisplay,
       email: CONTACT.email,
       numberOfAvailableAccommodationUnits: CONFIGS.length,
@@ -90,7 +90,7 @@ const JSON_LD = {
   name: SITE_NAME,
   url: SITE_URL,
   description: SITE_DESCRIPTION,
-  image: `${SITE_URL}/hero/poster.webp`,
+  image: `${SITE_URL}${HERO.poster}`,
   publisher: {
     "@type": "Organization",
     name: SITE_NAME,

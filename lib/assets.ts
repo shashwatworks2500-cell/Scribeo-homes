@@ -190,17 +190,38 @@ export const A = {
 import desktopFrames from "@/scripts/frames/desktop.json";
 import mobileFrames from "@/scripts/frames/mobile.json";
 
-const DESKTOP_COUNT = (desktopFrames as number[]).length;
-const MOBILE_COUNT = (mobileFrames as number[]).length;
+/* The film opens on bare ground: the first third is groundworks, and a
+   visitor landing on the page met a dirt plot. The sequence now starts where
+   the architecture is first readable.
+
+   The two tiers are sampled independently by visual distance, so the same
+   moment is not the same frame number in both. The manifests hold each
+   frame's index in the source film, which is what makes the two starts
+   comparable: desktop f045 is source frame 92, mobile f023 is source frame
+   91 — the same shot, one frame apart. Move DESKTOP_FROM and re-derive
+   MOBILE_FROM from the manifests rather than guessing a proportion. */
+const DESKTOP_FROM = 45;
+const MOBILE_FROM = 23;
+
+const DESKTOP_COUNT = (desktopFrames as number[]).length - DESKTOP_FROM + 1;
+const MOBILE_COUNT = (mobileFrames as number[]).length - MOBILE_FROM + 1;
 
 export const HERO = {
   avif: {
-    desktop: { dir: "/hero/avif/desktop", count: DESKTOP_COUNT },
-    mobile: { dir: "/hero/avif/mobile", count: MOBILE_COUNT },
+    desktop: { dir: "/hero/avif/desktop", count: DESKTOP_COUNT, from: DESKTOP_FROM },
+    mobile: { dir: "/hero/avif/mobile", count: MOBILE_COUNT, from: MOBILE_FROM },
   },
   webp: {
-    desktop: { dir: "/hero/webp/desktop", count: DESKTOP_COUNT },
-    mobile: { dir: "/hero/webp/mobile", count: MOBILE_COUNT },
+    desktop: { dir: "/hero/webp/desktop", count: DESKTOP_COUNT, from: DESKTOP_FROM },
+    mobile: { dir: "/hero/webp/mobile", count: MOBILE_COUNT, from: MOBILE_FROM },
   },
   poster: "/hero/poster.webp",
+} as const;
+
+/* The frames the page actually paints first, so the preload in <head> cannot
+   drift from DESKTOP_FROM / MOBILE_FROM and fetch a file nothing requests. */
+const pad = (n: number) => String(n).padStart(3, "0");
+export const HERO_FIRST = {
+  desktop: `/hero/avif/desktop/f${pad(DESKTOP_FROM)}.avif`,
+  mobile: `/hero/avif/mobile/f${pad(MOBILE_FROM)}.avif`,
 } as const;

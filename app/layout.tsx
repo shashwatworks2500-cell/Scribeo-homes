@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 import { CONFIGS, CONTACT, FAQS, PRICE_RANGE } from "@/lib/content";
+import { HERO_FIRST } from "@/lib/assets";
 import "./globals.css";
 
 /* Display: high-contrast garamond. Echoes the inscribed roman capitals on the
@@ -150,7 +151,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           rel="preload"
           as="image"
-          href="/hero/avif/desktop/f001.avif"
+          href={HERO_FIRST.desktop}
           type="image/avif"
           media="(min-width: 768px)"
           fetchPriority="high"
@@ -158,7 +159,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           rel="preload"
           as="image"
-          href="/hero/avif/mobile/f001.avif"
+          href={HERO_FIRST.mobile}
           type="image/avif"
           media="(max-width: 767px)"
           fetchPriority="high"

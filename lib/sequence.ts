@@ -19,7 +19,13 @@
  *    Browsers without AVIF get the WebP set rather than a broken hero.
  */
 
-export type Tier = { dir: string; count: number };
+/**
+ * `count` frames beginning at `from` (a 1-based file number, default 1).
+ * The offset exists because the film's opening is groundworks — the plot
+ * before anything is built — and a property page should open on architecture.
+ * The unused frames stay on disk so the start point is one number to move.
+ */
+export type Tier = { dir: string; count: number; from?: number };
 
 type Cell = { img: CanvasImageSource; w: number; h: number } | null;
 
@@ -61,7 +67,8 @@ export class FrameSequence {
 
   private url(i: number) {
     const ext = this.tier.dir.includes("/avif/") ? "avif" : "webp";
-    return `${this.tier.dir}/f${String(i + 1).padStart(3, "0")}.${ext}`;
+    const n = (this.tier.from ?? 1) + i;
+    return `${this.tier.dir}/f${String(n).padStart(3, "0")}.${ext}`;
   }
 
   /** Nearest already-decoded frame, so scrubbing never waits on the network. */

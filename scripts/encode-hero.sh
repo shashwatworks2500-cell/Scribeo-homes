@@ -13,7 +13,8 @@
 #
 #   what shipped before   avifenc -q 50, no sharpen      73.5%   18.5 KB
 #   unsharp 0.35, q 56                                  103.4%   27.7 KB
-#   unsharp 0.35, q 60    (this script)                ~106%    ~33 KB
+#   unsharp 0.35, q 60                                 ~106%    ~33 KB
+#   unsharp 0.35, q 52    (this script)                ~101%    ~25 KB
 #   unsharp 0.35, q 66                                  112.9%   43.5 KB
 #
 # q50 alone was throwing away 39% of the source's high-frequency detail before
@@ -23,6 +24,11 @@
 # to 0.85, measured.
 #
 # Mobile is sharpened less (0.22) because its band only upscales about 1.22x.
+#
+# q60 made the desktop tier 7.2 MB. The sequence streams while you scroll, and
+# at that weight only a quarter of it existed a minute in — which is what made
+# the frame-substitution bug so visible. q52 is a quarter lighter and still far
+# above the 73.5% of detail the original q50-without-sharpening shipped.
 set -euo pipefail
 
 SRC="${SRC:-/home/user/work2/hero2.mp4}"
@@ -33,7 +39,7 @@ JOBS="${JOBS:-4}"
 GRADE="eq=contrast=1.07:saturation=0.88:gamma=0.97,colorbalance=rs=0.025:bs=-0.035:rm=0.02:bm=-0.025:rh=0.01:bh=-0.02"
 SHARP_D="unsharp=5:5:0.35:5:5:0.0"
 SHARP_M="unsharp=5:5:0.22:5:5:0.0"
-QA=60; QA_M=58; QW=78; QW_M=76
+QA=52; QA_M=50; QW=74; QW_M=72
 
 rm -rf "$WORK"; mkdir -p "$WORK/d" "$WORK/m"
 echo "decoding + grading + sharpening source frames..."

@@ -58,7 +58,7 @@ export default function Materials() {
     <section ref={sectionRef} id="architecture" aria-labelledby="arch-heading" className="section-y">
       <div className="gutter">
         <p data-reveal className="t-eyebrow text-travertine">
-          03 — Architecture
+          04 — Architecture
         </p>
         <h2 id="arch-heading" className="t-display-m mt-6 max-w-[18ch] text-ink">
           <SplitLines>Four materials. *Nothing else.*</SplitLines>

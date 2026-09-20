@@ -44,6 +44,8 @@ export class FrameSequence {
   private tier: Tier;
   private disposed = false;
   private loaded = 0;
+  /** In flight, so parallel workers never fetch the same frame twice. */
+  private pending = new Set<number>();
 
   constructor(tier: Tier) {
     this.tier = tier;
@@ -116,6 +118,47 @@ export class FrameSequence {
   }
 
   /**
+   * Load everything still missing, nearest to where the reader is looking
+   * first.
+   *
+   * Filling in index order meant the frames on screen were the last to
+   * arrive: on a cold load only a quarter of the sequence existed, so the
+   * scrub spent its first minute showing substitutes. This keeps the working
+   * set around the playhead, so the frame you are looking at is the next one
+   * fetched.
+   */
+  async fill(focus: () => number, limit: number, onTick?: () => void) {
+    const nextMissing = () => {
+      const f = Math.round(Math.max(0, Math.min(1, focus())) * (this.tier.count - 1));
+      let best = -1;
+      let bestD = Infinity;
+      for (let i = 0; i < this.tier.count; i++) {
+        if (this.cells[i] || this.pending.has(i)) continue;
+        const d = Math.abs(i - f);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      }
+      return best;
+    };
+
+    await Promise.all(
+      Array.from({ length: limit }, async () => {
+        for (;;) {
+          if (this.disposed) return;
+          const i = nextMissing();
+          if (i < 0) return;
+          this.pending.add(i);
+          await this.load(i);
+          this.pending.delete(i);
+          onTick?.();
+        }
+      }),
+    );
+  }
+
+  /**
    * Paint at a fractional position in [0,1].
    * Draws the base frame, then blends the next one at the fractional alpha.
    */
@@ -128,7 +171,14 @@ export class FrameSequence {
     const i = Math.floor(f);
     const t = f - i;
 
-    const base = this.nearest(i);
+    /* The exact frame if it is decoded, otherwise the closest one that is.
+       Which of those two it is matters below: `nearest` can be a long way
+       from `i`, and blending it against frame i+1 composites two unrelated
+       moments of the film into one picture. On a cold load, with most of the
+       sequence still in flight, that is most of the time — which is why the
+       hero showed two developments ghosted over each other. */
+    const exact = this.cells[i];
+    const base = exact ?? this.nearest(i);
     if (!base) return;
 
     const cover = (c: NonNullable<Cell>) => {
@@ -141,9 +191,10 @@ export class FrameSequence {
     ctx.globalAlpha = 1;
     cover(base);
 
-    // Only blend against a genuinely adjacent, already-decoded frame —
-    // blending a distant substitute would read as a cross-dissolve, not motion.
-    if (t > 0.012 && i + 1 < this.tier.count) {
+    // Blend only when BOTH sides are the real thing: the exact base frame and
+    // its true successor. A substitute base gets drawn alone — a frame that is
+    // slightly behind reads as motion; two frames averaged reads as a fault.
+    if (exact && t > 0.012 && i + 1 < this.tier.count) {
       const next = this.cells[i + 1];
       if (next) {
         ctx.globalAlpha = t;

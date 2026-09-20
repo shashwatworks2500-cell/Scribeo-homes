@@ -101,3 +101,81 @@ export const TRUST: { k: string; v: string }[] = [
   { k: "Pricing", v: "Indicative and exclusive of duty, registration and taxes" },
   { k: "Distances", v: "Measured by road and to be confirmed on site" },
 ];
+
+/** 02 — Everything a first-time visitor needs in one line. */
+export const GLANCE: { k: string; v: string }[] = [
+  { k: "Configurations", v: "1 – 4 BHK" },
+  { k: "Built-up area", v: "753 – 2,333 sq ft" },
+  { k: "Price", v: "₹48 L – ₹1.79 Cr" },
+  { k: "Setting", v: "Mature landscape" },
+  { k: "Viewings", v: "Daily, by appointment" },
+];
+
+/** 04 — Why this one. Six principles, each earned by something on the page. */
+export const PRINCIPLES: { n: string; title: string; line: string; asset: Asset; href: string }[] = [
+  { n: "01", title: "Mature landscape", line: "The trees were here first and the plan was drawn to keep them.", asset: A.vTreeWall, href: "#landscape" },
+  { n: "02", title: "Low-rise architecture", line: "Long horizontal roof slabs, so the buildings sit under the canopy.", asset: A.establishingDistant, href: "#architecture" },
+  { n: "03", title: "Indoor and outdoor", line: "Glass slides away and the terrace becomes the room you were in.", asset: A.indoorOutdoor, href: "#day" },
+  { n: "04", title: "Plans that face something", line: "Every room is placed against a window, a court or a tree.", asset: A.windowAperture, href: "#residences" },
+  { n: "05", title: "A private community", line: "Twenty-six shared provisions, built in the same materials.", asset: A.amClubhouse, href: "#amenities" },
+  { n: "06", title: "Inside the ring road", line: "Parkland on three sides and the cultural quarter without leaving it.", asset: A.pathway, href: "#location" },
+];
+
+/**
+ * 13 — Specifications.
+ *
+ * Only what the supplied project information actually states. Anything a
+ * buyer would reasonably ask that was not supplied says so rather than
+ * guessing: an invented specification is worse than an absent one.
+ */
+export const SPECS: { group: string; rows: [string, string][] }[] = [
+  {
+    group: "Structure and envelope",
+    rows: [
+      ["Structure", "Warm-grey architectural concrete, left as cast"],
+      ["Façade", "Warm limestone and beige sandstone"],
+      ["Roof", "Deep cantilevered slabs, exposed soffit"],
+      ["Windows", "Deep reveals, slim charcoal frames"],
+      ["Joinery", "Natural teak, used where a hand goes"],
+    ],
+  },
+  {
+    group: "Inside",
+    rows: [
+      ["Flooring", "Natural stone"],
+      ["Walls", "Pale plaster"],
+      ["Openings", "Full-height glazing to terraces"],
+      ["Layouts", "1, 2, 3 and 4 BHK — see the floor plans"],
+    ],
+  },
+  {
+    group: "The development",
+    rows: [
+      ["Landscape", "Mature planting retained; central green"],
+      ["Parking", "Covered, plus visitor parking"],
+      ["Security", "24 × 7 security and CCTV"],
+      ["Power", "Backup to common areas"],
+      ["Water", "Rainwater harvesting"],
+      ["Lighting", "Solar-assisted common lighting"],
+      ["Vehicles", "EV charging provision"],
+      ["Waste", "Segregation point"],
+    ],
+  },
+  {
+    group: "Not yet published",
+    rows: [
+      ["Approvals and registration", "Details available from the site office"],
+      ["Construction status", "Details available from the site office"],
+      ["Possession", "Details available from the site office"],
+      ["Payment schedule", "Details available from the site office"],
+    ],
+  },
+];
+
+/** 12 — The neighbourhood as hours rather than pins. */
+export const AROUND: { when: string; line: string; places: string[] }[] = [
+  { when: "Morning", line: "Coffee, the loop, and the gardens before the heat.", places: ["Botanical gardens", "Parklands", "Retail hub"] },
+  { when: "Day", line: "Campus, errands and everything inside the ring road.", places: ["University campus", "Retail hub"] },
+  { when: "Evening", line: "Theatres, the permanent collection, dinner after.", places: ["Cultural district", "Modern art museum"] },
+  { when: "Weekend", line: "Water, long walks, and the green belt on three sides.", places: ["Lake", "Riverfront", "Parklands"] },
+];

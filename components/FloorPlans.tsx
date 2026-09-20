@@ -58,7 +58,7 @@ export default function FloorPlans() {
   return (
     <section ref={sectionRef} id="residences" aria-labelledby="plans-heading" className="section-y gutter">
       <p data-reveal className="t-eyebrow text-travertine">
-        05 — Floor plans
+        06 — Floor plans
       </p>
       <h2 id="plans-heading" className="t-display-m mt-6 max-w-[18ch] text-ink">
         <SplitLines>Every room given *something to face*.</SplitLines>

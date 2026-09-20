@@ -26,7 +26,7 @@ export default function Location() {
     <section id="location" aria-labelledby="loc-heading" className="section-y bg-ground-3">
       <div className="gutter">
         <p data-reveal className="t-eyebrow text-travertine">
-          09 — Location
+          10 — Location
         </p>
         <h2 id="loc-heading" className="t-display-m mt-6 max-w-[17ch] text-ink">
           <SplitLines>Held inside the green. *Not outside the city.*</SplitLines>

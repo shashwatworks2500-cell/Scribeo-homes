@@ -40,7 +40,7 @@ export default function Configurations() {
       <div className="grid grid-cols-12 items-end gap-y-[clamp(1.5rem,4vh,2.5rem)]">
         <div className="col-span-12 md:col-span-5">
           <p data-reveal className="t-eyebrow text-travertine">
-            04 — Configurations
+            05 — Configurations
           </p>
           <h2 id="price-heading" className="t-display-m mt-6 max-w-[16ch] text-ink">
             <SplitLines>Four plans. One *language*.</SplitLines>

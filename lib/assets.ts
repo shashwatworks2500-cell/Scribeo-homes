@@ -182,14 +182,25 @@ export const A = {
  * change. AVIF is preferred; the WebP set is the fallback for browsers
  * without AVIF support.
  */
+/* Frame counts come from the encode manifests rather than being written out
+   here. They were hardcoded and drifted the moment the sequence was
+   re-encoded: the manifest grew to 177 frames while this still said 154, so
+   the scrub would have ended a fifth of the way before the end of the film
+   with nothing to show for it. Now there is one source of truth. */
+import desktopFrames from "@/scripts/frames/desktop.json";
+import mobileFrames from "@/scripts/frames/mobile.json";
+
+const DESKTOP_COUNT = (desktopFrames as number[]).length;
+const MOBILE_COUNT = (mobileFrames as number[]).length;
+
 export const HERO = {
   avif: {
-    desktop: { dir: "/hero/avif/desktop", count: 154 },
-    mobile: { dir: "/hero/avif/mobile", count: 95 },
+    desktop: { dir: "/hero/avif/desktop", count: DESKTOP_COUNT },
+    mobile: { dir: "/hero/avif/mobile", count: MOBILE_COUNT },
   },
   webp: {
-    desktop: { dir: "/hero/webp/desktop", count: 154 },
-    mobile: { dir: "/hero/webp/mobile", count: 95 },
+    desktop: { dir: "/hero/webp/desktop", count: DESKTOP_COUNT },
+    mobile: { dir: "/hero/webp/mobile", count: MOBILE_COUNT },
   },
   poster: "/hero/poster.webp",
 } as const;

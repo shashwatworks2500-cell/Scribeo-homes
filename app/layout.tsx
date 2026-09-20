@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
-import { CONTACT, PRICE_RANGE } from "@/lib/content";
+import { CONFIGS, CONTACT, FAQS, PRICE_RANGE } from "@/lib/content";
 import "./globals.css";
 
 /* Display: high-contrast garamond. Echoes the inscribed roman capitals on the
@@ -52,6 +52,39 @@ export const metadata: Metadata = {
    be fabricating property facts. */
 const JSON_LD = {
   "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ResidentialComplex",
+      "@id": `${SITE_URL}#development`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      image: `${SITE_URL}/hero/poster.webp`,
+      telephone: CONTACT.phoneDisplay,
+      email: CONTACT.email,
+      numberOfAvailableAccommodationUnits: CONFIGS.length,
+      /* Each configuration as an Accommodation, with the areas the page
+         prints. Prices are deliberately absent from the markup: they are
+         indicative placeholders on this site, and an indicative figure
+         published as an offer in structured data is a different claim. */
+      containsPlace: CONFIGS.map((c) => ({
+        "@type": "Accommodation",
+        name: `${c.bhk} — ${c.label}`,
+        numberOfRooms: Number.parseInt(c.bhk, 10),
+        floorSize: { "@type": "QuantitativeValue", value: c.builtUpSqft, unitCode: "FTK" },
+        description: c.blurb,
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SITE_URL}#questions`,
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+    {
   "@type": "WebSite",
   name: SITE_NAME,
   url: SITE_URL,
@@ -71,11 +104,15 @@ const JSON_LD = {
       availableLanguage: ["en", "hi"],
     },
   },
+    },
+  ],
 };
 
 export const viewport: Viewport = {
   themeColor: "#fbfaf7",
-  colorScheme: "dark",
+  // The page went light; this still said dark, which is what the browser uses
+  // to pick form-control and scrollbar rendering.
+  colorScheme: "light",
 };
 
 /* Progressive enhancement, with a failsafe.

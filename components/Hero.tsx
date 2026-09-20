@@ -94,10 +94,9 @@ export default function Hero() {
       if (disposed) return;
       signalProgress(0.9);
 
-      // Pass 3 — fill everything, for blend-quality smoothness.
-      const rest: number[] = [];
-      for (let i = 1; i < seq.count; i++) rest.push(i);
-      await seq.pool(rest, 8, () => {
+      // Pass 3 — fill the rest, nearest the playhead first, so the frames
+      // on screen are the ones that arrive next.
+      await seq.fill(() => progress, 8, () => {
         dirty = true;
       });
       signalProgress(1);

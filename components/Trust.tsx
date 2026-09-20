@@ -15,7 +15,7 @@ export default function Trust() {
       <div className="grid grid-cols-12 gap-y-[clamp(1.5rem,4vh,2.5rem)] md:gap-x-[clamp(2rem,5vw,4.5rem)]">
         <div className="col-span-12 md:col-span-4">
           <p data-reveal className="t-eyebrow text-travertine">
-            10 — In writing
+            13 — Before you decide
           </p>
           <h2 id="trust-heading" className="t-display-s mt-6 max-w-[16ch] text-ink">
             What we are, stated plainly.

@@ -104,7 +104,7 @@ export default function Contact() {
           <div className="grid grid-cols-12 gap-y-[clamp(2rem,5vw,4.5rem)] md:gap-x-[clamp(2rem,5vw,4.5rem)]">
             <div className="col-span-12 md:col-span-5">
               <p data-reveal className="t-eyebrow text-travertine">
-                11 — Private viewing
+                14 — Private viewing
               </p>
               <h2 id="enq-heading" className="t-display-l mt-6 max-w-[14ch] text-ink">
                 <SplitLines>Come at seven. Stay for the *light*.</SplitLines>

@@ -56,7 +56,7 @@ export default function DayAt() {
     <section ref={sectionRef} id="day" aria-labelledby="day-heading" className="section-y bg-ground-2">
       <div className="gutter">
         <p data-reveal className="t-eyebrow text-travertine">
-          06 — A day here
+          07 — A day here
         </p>
         <h2 id="day-heading" className="t-display-m mt-6 max-w-[20ch] text-ink">
           <SplitLines>The hours are the *specification*.</SplitLines>

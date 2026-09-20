@@ -158,7 +158,30 @@ export const DISTANCES = [
   { place: "Parklands", detail: "Protected green belt", km: 5.9, mins: 15, dir: "West", at: [15, 42] },
 ] as const;
 
-export type Faq = { q: string; a: string; tags: string[] };
+export type FaqCategory =
+  | "Pricing" | "Buying" | "Finance" | "Construction" | "Amenities" | "Location" | "Documents" | "Booking";
+export type Faq = { q: string; a: string; tags: string[]; cat?: FaqCategory };
+
+/**
+ * Category is derived from the tags each question already carries rather than
+ * hand-assigned, so a new question is filed the moment it is tagged and the
+ * two can never disagree. First rule that matches wins.
+ */
+const CAT_RULES: [FaqCategory, string[]][] = [
+  ["Finance", ["loan", "emi", "bank", "nri", "finance", "mortgage"]],
+  ["Pricing", ["price", "cost", "rate", "charge", "tax", "stamp", "duty", "maintenance"]],
+  ["Booking", ["book", "booking", "token", "visit", "site visit", "viewing", "contact"]],
+  ["Documents", ["document", "agreement", "rera", "approval", "legal", "registration", "khata"]],
+  ["Construction", ["possession", "handover", "construction", "structure", "quality", "warranty", "progress"]],
+  ["Amenities", ["amenity", "amenities", "clubhouse", "pool", "gym", "parking", "pet", "security", "power", "water"]],
+  ["Location", ["location", "distance", "nearby", "school", "hospital", "airport", "metro", "road"]],
+];
+
+export const categorise = (f: { q: string; a: string; tags: string[] }): FaqCategory => {
+  const hay = `${f.q} ${f.tags.join(" ")}`.toLowerCase();
+  for (const [cat, words] of CAT_RULES) if (words.some((w) => hay.includes(w))) return cat;
+  return "Buying";
+};
 
 /** Searchable enquiry index. Tags widen what a query will match. */
 export const FAQS: Faq[] = [

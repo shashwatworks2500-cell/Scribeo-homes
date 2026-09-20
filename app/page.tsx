@@ -4,8 +4,10 @@ import Cursor from "@/components/Cursor";
 import Nav from "@/components/Nav";
 import Concierge from "@/components/Concierge";
 import Hero from "@/components/Hero";
+import Glance from "@/components/Glance";
 import Statement from "@/components/Statement";
 import Landscape from "@/components/Landscape";
+import Principles from "@/components/Principles";
 import Materials from "@/components/Materials";
 import Configurations from "@/components/Configurations";
 import FloorPlans from "@/components/FloorPlans";
@@ -13,8 +15,9 @@ import DayAt from "@/components/DayAt";
 import Amenities from "@/components/Amenities";
 import Gallery from "@/components/Gallery";
 import Location from "@/components/Location";
+import Specs from "@/components/Specs";
+import Faq from "@/components/Faq";
 import Trust from "@/components/Trust";
-import QuestionsNoScript from "@/components/QuestionsNoScript";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -36,8 +39,10 @@ export default function Page() {
       <div id="top" />
       <main id="main">
         <Hero />
+        <Glance />
         <Statement />
         <Landscape />
+        <Principles />
         <Materials />
         <Configurations />
         <FloorPlans />
@@ -45,8 +50,9 @@ export default function Page() {
         <Amenities />
         <Gallery />
         <Location />
+        <Specs />
+        <Faq />
         <Trust />
-        <QuestionsNoScript />
         <Contact />
       </main>
       <Footer />

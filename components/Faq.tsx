@@ -52,7 +52,7 @@ export default function Faq() {
       <div className="grid grid-cols-12 gap-y-[clamp(1.5rem,4vh,2.5rem)] md:gap-x-[clamp(2rem,5vw,4.5rem)]">
         <div className="col-span-12 md:col-span-4">
           <p data-reveal className="t-eyebrow text-travertine">
-            12 — Questions
+            14 — Questions
           </p>
           <h2 id="faq-heading" className="t-display-m mt-6 max-w-[14ch] text-ink">
             <SplitLines>Ask before you *ask us*.</SplitLines>

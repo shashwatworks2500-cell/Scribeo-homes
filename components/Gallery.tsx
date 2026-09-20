@@ -115,7 +115,7 @@ export default function Gallery() {
       <div className="grid grid-cols-12 items-end gap-y-6">
         <div className="col-span-12 md:col-span-6">
           <p data-reveal className="t-eyebrow text-travertine">
-            09 — Gallery
+            10 — Gallery
           </p>
           <h2 id="gal-heading" className="t-display-m mt-6 max-w-[16ch] text-ink">
             <SplitLines>The whole of it, *in one place*.</SplitLines>

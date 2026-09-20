@@ -59,7 +59,7 @@ export default function Amenities() {
     <section ref={sectionRef} id="amenities" aria-labelledby="amen-heading" className="section-y">
       <div className="gutter">
         <p data-reveal className="t-eyebrow text-travertine">
-          08 — Amenities
+          09 — Amenities
         </p>
         <h2 id="amen-heading" className="t-display-m mt-6 max-w-[18ch] text-ink">
           <SplitLines>Shared ground, *properly made*.</SplitLines>

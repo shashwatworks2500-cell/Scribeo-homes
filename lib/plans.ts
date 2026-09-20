@@ -41,14 +41,16 @@ export const PLANS: Record<string, Plan> = {
   ]),
   "3bhk": build("3bhk", 14.6, 10.8, [
     r(0, 0, 7.6, 1.8, "Balcony", "out"), r(0, 1.8, 7.6, 5.2, "Living & Dining"),
-    r(7.6, 0, 7.0, 3.6, "Kitchen"), r(7.6, 3.6, 3.4, 3.4, "Utility", "wet"),
+    r(7.6, 0, 7.0, 3.6, "Kitchen"), r(7.6, 3.6, 3.4, 1.5, "Utility", "wet"),
+    r(7.6, 5.1, 3.4, 1.9, "Bath 2", "wet"),
     r(11.0, 3.6, 3.6, 3.4, "Study"), r(0, 7.0, 5.0, 3.8, "Master Bedroom"),
     r(5.0, 7.0, 2.4, 3.8, "Master Bath", "wet"), r(7.4, 7.0, 3.6, 3.8, "Bedroom 2"),
     r(11.0, 7.0, 3.6, 3.8, "Bedroom 3"),
   ]),
   "4bhk": build("4bhk", 17.2, 12.6, [
     r(0, 0, 8.4, 2.0, "Balcony", "out"), r(0, 2.0, 8.4, 5.8, "Living & Dining"),
-    r(8.4, 0, 8.8, 3.8, "Kitchen"), r(8.4, 3.8, 4.0, 4.0, "Utility", "wet"),
+    r(8.4, 0, 8.8, 3.8, "Kitchen"), r(8.4, 3.8, 4.0, 2.1, "Utility", "wet"),
+    r(8.4, 5.9, 4.0, 1.9, "Bath 2", "wet"),
     r(12.4, 3.8, 3.0, 4.0, "Family Room"), r(15.4, 3.8, 1.8, 4.0, "Bath 3", "wet"),
     r(0, 7.8, 5.6, 4.8, "Master Bedroom"), r(5.6, 7.8, 2.6, 4.8, "Master Bath", "wet"),
     r(8.2, 7.8, 3.2, 4.8, "Bedroom 2"), r(11.4, 7.8, 3.2, 4.8, "Bedroom 3"),

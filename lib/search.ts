@@ -62,6 +62,12 @@ const SECTIONS: Entry[] = [
   { id: "s-distances", kind: "Section", title: "Key distances",
     detail: `${DISTANCES.length} places within a short drive`, href: "#distances",
     tags: ["distance", "nearby", "near", "how far", "connectivity", "location", "km"] },
+  { id: "s-compare", kind: "Section", title: "Compare residences",
+    detail: "Four plans, side by side", href: "#compare",
+    tags: ["compare", "comparison", "difference", "versus", "vs", "side by side", "which", "bigger", "smaller", "bhk"] },
+  { id: "s-around", kind: "Section", title: "Life around you",
+    detail: "A week, not a radius", href: "#around",
+    tags: ["around", "neighbourhood", "neighborhood", "nearby", "things to do", "lifestyle", "weekend", "surroundings"] },
   { id: "s-location", kind: "Section", title: "Location",
     detail: "The plan, and what is around it", href: "#location",
     tags: ["location", "map", "address", "where", "site", "plan"] },
@@ -127,10 +133,25 @@ const KIND_RANK: Record<Kind, number> = {
   Question: 0, Configuration: 1, Section: 2, Nearby: 3, Amenity: 4, Gallery: 5, Contact: 6,
 };
 
+/** Words too common to discriminate between 60-odd entries. */
+const STOP = new Set([
+  "a", "an", "and", "any", "are", "as", "at", "be", "by", "can", "do", "doe", "for", "from",
+  "have", "how", "i", "in", "is", "it", "me", "much", "my", "of", "on", "or", "that", "the",
+  "ha", "has", "its", "there", "these", "thi", "to", "was", "what", "when", "which", "will",
+  "with", "you", "your",
+]);
+
 export function search(query: string, limit = 24, strict = false): Entry[] {
   const needle = normalise(query);
   if (!needle) return [];
-  const words = needle.split(" ").filter(Boolean).map(stem);
+  const all = needle.split(" ").filter(Boolean).map(stem);
+
+  /* Drop the words that carry no signal. "which is bigger" was answering with
+     "Is there a gym?", because a title beginning "Is" scored five while the
+     only word the visitor actually meant scored two. Stopwords are removed
+     only while something else survives, so "what is it" still searches. */
+  const lean = all.filter((w) => !STOP.has(w));
+  const words = lean.length ? lean : all;
 
   /* A token of one or two characters must match a whole word, not a substring.
      "3 bhk" was surfacing the site phone number, because "63880" contains a 3,

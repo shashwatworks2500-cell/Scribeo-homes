@@ -4,18 +4,20 @@
 <rect x="0.0" y="0.0" width="386.4" height="92.0" fill="#EFEBE0" stroke="#1A1814" stroke-width="2.2"/>
 <rect x="0.0" y="92.0" width="386.4" height="266.8" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
 <rect x="386.4" y="0.0" width="404.8" height="174.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
-<rect x="386.4" y="174.8" width="184.0" height="184.0" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
-<rect x="570.4" y="174.8" width="138.0" height="184.0" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="386.4" y="174.8" width="184.0" height="96.6" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="386.4" y="271.4" width="184.0" height="87.4" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="570.4" y="174.8" width="138.0" height="184.0" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
 <rect x="708.4" y="174.8" width="82.8" height="184.0" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
-<rect x="0.0" y="358.8" width="257.6" height="220.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="0.0" y="358.8" width="257.6" height="220.8" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
 <rect x="257.6" y="358.8" width="119.6" height="220.8" fill="#DCD9CF" stroke="#1A1814" stroke-width="2.2"/>
-<rect x="377.2" y="358.8" width="147.2" height="220.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
-<rect x="524.4" y="358.8" width="147.2" height="220.8" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
-<rect x="671.6" y="358.8" width="119.6" height="220.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="377.2" y="358.8" width="147.2" height="220.8" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="524.4" y="358.8" width="147.2" height="220.8" fill="#E8E3D6" stroke="#1A1814" stroke-width="2.2"/>
+<rect x="671.6" y="358.8" width="119.6" height="220.8" fill="#E2DCCD" stroke="#1A1814" stroke-width="2.2"/>
 <rect x="0" y="0" width="791.2" height="579.6" fill="none" stroke="#1A1814" stroke-width="7"/>
 <rect x="156.4" y="92.0" width="59.8" height="2.8" fill="#F2EEE5"/>
 <rect x="386.4" y="101.2" width="2.8" height="46.0" fill="#F2EEE5"/>
-<rect x="386.4" y="239.2" width="2.8" height="41.4" fill="#F2EEE5"/>
+<rect x="386.4" y="197.8" width="2.8" height="41.4" fill="#F2EEE5"/>
+<rect x="386.4" y="289.8" width="2.8" height="41.4" fill="#F2EEE5"/>
 <rect x="570.4" y="239.2" width="2.8" height="41.4" fill="#F2EEE5"/>
 <rect x="82.8" y="358.8" width="50.6" height="2.8" fill="#F2EEE5"/>
 <rect x="432.4" y="358.8" width="46.0" height="2.8" fill="#F2EEE5"/>
@@ -28,8 +30,10 @@
 <text x="193.2" y="239.4" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">8.4 × 5.8 m</text>
 <text x="588.8" y="84.4" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">KITCHEN</text>
 <text x="588.8" y="101.4" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">8.8 × 3.8 m</text>
-<text x="478.4" y="263.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">UTILITY</text>
-<text x="478.4" y="280.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">4.0 × 4.0 m</text>
+<text x="478.4" y="220.1" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11.5" letter-spacing="1.6" fill="#1A1814">UTILITY</text>
+<text x="478.4" y="237.1" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">4.0 × 2.1 m</text>
+<text x="478.4" y="312.1" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11.5" letter-spacing="1.6" fill="#1A1814">BATH 2</text>
+<text x="478.4" y="329.1" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">4.0 × 1.9 m</text>
 <text x="639.4" y="263.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="13.5" letter-spacing="1.6" fill="#1A1814">FAMILY ROOM</text>
 <text x="639.4" y="280.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="10" letter-spacing="0.8" fill="#6B6559">3.0 × 4.0 m</text>
 <text x="749.8" y="263.8" text-anchor="middle" font-family="Jost, Helvetica, Arial, sans-serif" font-size="11.5" letter-spacing="1.6" fill="#1A1814">BATH 3</text>

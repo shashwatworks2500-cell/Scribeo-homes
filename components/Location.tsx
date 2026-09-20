@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { A } from "@/lib/assets";
-import { DISTANCES } from "@/lib/content";
+import { DISTANCES, PLACE_KINDS, type PlaceKind } from "@/lib/content";
 import SplitLines from "./SplitLines";
 
 /**
@@ -17,16 +17,57 @@ import SplitLines from "./SplitLines";
  * The markers are placed by the bearing printed on the supplied plan. That
  * drawing states orientation and no scale, so these are directions rather
  * than surveyed positions, and the caption says exactly that.
+ *
+ * Filtering narrows both instruments at once. A marker that has been filtered
+ * out is dimmed rather than removed, so the shape of the surroundings stays
+ * legible while you look at one part of it.
+ *
+ * Two kinds of highlight, not one. Hover is a glance and evaporates; a click —
+ * or an arrival from "Life around you" — pins a place and survives the pointer
+ * wandering over the list on its way somewhere else. Hover wins while it
+ * lasts, then hands back to whatever was pinned.
  */
 export default function Location() {
-  const [active, setActive] = useState<number | null>(null);
-  const shown = active ?? -1;
+  const [hover, setHover] = useState<number | null>(null);
+  const [pinned, setPinned] = useState<number | null>(null);
+  const [kind, setKind] = useState<PlaceKind | null>(null);
+  const shown = hover ?? pinned ?? -1;
+
+  /* Which categories actually occur. Printing a filter that matches nothing
+     is worse than printing no filter at all. */
+  const kinds = useMemo(
+    () => PLACE_KINDS.filter((k) => DISTANCES.some((d) => d.kind === k)),
+    [],
+  );
+  const inFilter = (i: number) => kind === null || DISTANCES[i].kind === kind;
+
+  const filterTo = (k: PlaceKind | null) => {
+    setKind(k);
+    setPinned((q) => (q !== null && k !== null && DISTANCES[q].kind !== k ? null : q));
+    setHover(null);
+  };
+
+  /* "Life around you" names places; clicking one brings the reader here with
+     that place lit, rather than to a list they then have to search. */
+  useEffect(() => {
+    const onPlace = (e: Event) => {
+      const place = (e as CustomEvent<{ place?: string }>).detail?.place;
+      const i = DISTANCES.findIndex((d) => d.place === place);
+      if (i < 0) return;
+      setKind(null);
+      setHover(null);
+      setPinned(i);
+      document.getElementById("distances")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+    window.addEventListener("scribeo:place", onPlace);
+    return () => window.removeEventListener("scribeo:place", onPlace);
+  }, []);
 
   return (
     <section id="location" aria-labelledby="loc-heading" className="section-y bg-ground-3">
       <div className="gutter">
         <p data-reveal className="t-eyebrow text-travertine">
-          10 — Location
+          11 — Location
         </p>
         <h2 id="loc-heading" className="t-display-m mt-6 max-w-[17ch] text-ink">
           <SplitLines>Held inside the green. *Not outside the city.*</SplitLines>
@@ -49,18 +90,22 @@ export default function Location() {
                     className="w-full"
                   />
                   {DISTANCES.map((d, i) => {
-                    const on = i === shown;
+                    const lit = inFilter(i);
+                    const on = i === shown && lit;
                     return (
                       <button
                         key={d.place}
                         type="button"
-                        onMouseEnter={() => setActive(i)}
-                        onMouseLeave={() => setActive((a) => (a === i ? null : a))}
-                        onFocus={() => setActive(i)}
-                        onBlur={() => setActive(null)}
+                        tabIndex={lit ? 0 : -1}
+                        aria-hidden={lit ? undefined : true}
+                        onMouseEnter={() => setHover(i)}
+                        onMouseLeave={() => setHover((h) => (h === i ? null : h))}
+                        onFocus={() => setHover(i)}
+                        onBlur={() => setHover(null)}
+                        onClick={() => setPinned((q) => (q === i ? null : i))}
                         aria-label={`${d.place}, ${d.dir}, ${d.km.toFixed(1)} km`}
-                        className="absolute -translate-x-1/2 -translate-y-1/2"
-                        style={{ left: `${d.at[0]}%`, top: `${d.at[1]}%` }}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-400 ease-[var(--ease-out-quiet)]"
+                        style={{ left: `${d.at[0]}%`, top: `${d.at[1]}%`, opacity: lit ? 1 : 0.22 }}
                       >
                         <span
                           aria-hidden="true"
@@ -98,17 +143,41 @@ export default function Location() {
               The development sits inside the ring road, with parkland and green belt on three
               sides and the cultural quarter reachable without leaving it.
             </p>
-            <ol className="mt-[clamp(1.5rem,4vh,2.5rem)] border-t hair">
+
+            <div role="group" aria-label="Filter destinations" className="mt-7 flex flex-wrap gap-2">
+              {[null, ...kinds].map((k) => {
+                const on = kind === k;
+                return (
+                  <button
+                    key={k ?? "all"}
+                    type="button"
+                    onClick={() => filterTo(k)}
+                    aria-pressed={on}
+                    className={`t-meta rounded-full border px-3.5 py-1.5 transition-colors duration-300 ${
+                      on
+                        ? "border-travertine bg-travertine text-paper"
+                        : "border-hair text-ink-dim hover:border-rule hover:text-ink"
+                    }`}
+                  >
+                    {k ?? "All"}
+                  </button>
+                );
+              })}
+            </div>
+
+            <ol className="mt-[clamp(1.25rem,3vh,2rem)] border-t hair">
               {DISTANCES.map((d, i) => {
+                if (!inFilter(i)) return null;
                 const on = i === shown;
                 return (
                   <li key={d.place} data-reveal className="border-b hair">
                     <button
                       type="button"
-                      onMouseEnter={() => setActive(i)}
-                      onMouseLeave={() => setActive((a) => (a === i ? null : a))}
-                      onFocus={() => setActive(i)}
-                      onBlur={() => setActive(null)}
+                      onMouseEnter={() => setHover(i)}
+                      onMouseLeave={() => setHover((h) => (h === i ? null : h))}
+                      onFocus={() => setHover(i)}
+                      onBlur={() => setHover(null)}
+                      onClick={() => setPinned((q) => (q === i ? null : i))}
                       aria-pressed={on}
                       className="relative grid w-full grid-cols-12 items-baseline gap-x-3 gap-y-1 py-[clamp(0.7rem,1.8vh,1rem)] text-left"
                     >
@@ -138,7 +207,9 @@ export default function Location() {
               })}
             </ol>
             <p className="t-meta mt-5 text-ink-faint">
-              Distances are indicative, measured by road, and should be confirmed on site.
+              Distances are indicative, measured by road, and should be confirmed on site. No
+              healthcare or transport distances have been supplied for this development; the site
+              office has them.
             </p>
           </div>
         </div>

@@ -57,8 +57,10 @@ export default function Footer() {
               ["#architecture", "Architecture"],
               ["#pricing", "Configurations"],
               ["#residences", "Floor plans"],
+              ["#compare", "Compare"],
               ["#amenities", "Amenities"],
               ["#location", "Location"],
+              ["#around", "Life around you"],
               ["#trust", "In writing"],
             ].map(([href, label]) => (
               <li key={href}>

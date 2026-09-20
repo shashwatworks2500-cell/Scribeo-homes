@@ -57,8 +57,13 @@ export default function MotionProvider() {
     const ctx = gsap.context(() => {
       /* Opacity + small rise. Batched so 30 elements cost a handful of
          triggers rather than 30 independent ones. */
+      /* 94%, not 88%. A flick that lands with an element's top at 89% of the
+         viewport left it sitting in plain sight at zero opacity until the next
+         scroll — measurable, and reproducible on the distance index. Nothing
+         inside the viewport is allowed to be blank at rest, so the trigger
+         fires as the element clears the lower edge rather than well after. */
       ScrollTrigger.batch("[data-reveal]", {
-        start: "top 88%",
+        start: "top 94%",
         once: true,
         batchMax: 3,
         onEnter: (batch) =>
@@ -82,7 +87,7 @@ export default function MotionProvider() {
           clipPath: "inset(0 0 0% 0)",
           duration: DUR.plate,
           ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 85%", once: true },
+          scrollTrigger: { trigger: el, start: "top 92%", once: true },
           onComplete: () => {
             el.style.willChange = "auto";
           },

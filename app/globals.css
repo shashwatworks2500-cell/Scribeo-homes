@@ -268,6 +268,11 @@
   /* The concierge is docked over the page, so the last thing on it needs room
      to clear the bar — and an anchored jump needs to land above it. */
   .dock-clear { padding-bottom: clamp(5.5rem, 12vh, 7.5rem); }
+
+  /* The enquiry steps hide the later ones once the script is running. With no
+     script every field stays in the DOM and the whole form submits at once. */
+  .js .js-only-hidden { display: none; }
+  html:not(.js) .js-only-hidden { display: block !important; }
   /* Section rhythm. Measured, not chosen: at 11rem a 750px-tall viewport
      could land entirely inside the gap between two sections and show 2% ink,
      which is what "the scroll is not consistent" looks like — you push and
@@ -294,6 +299,21 @@
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
   }
+}
+
+/* Pinned stages.
+
+   The height has to exist in CSS rather than arriving with a React state
+   flip: ScrollTrigger measures the element when it creates the pin, and if
+   that happens before the height lands it pins the full column — 2808px on a
+   900px screen — and the plate stretches to four screens tall. Same media
+   query the components use to decide whether to pin at all, so the two can
+   never disagree. */
+.pin-stage { height: auto; }
+.pin-plate { height: 100%; }
+@media (min-width: 768px) and (min-height: 620px) {
+  .pin-stage { height: 78vh; }
+  .pin-stage--short { height: 74vh; }
 }
 
 /* Curtain failsafe: if the boot script's timer fires before React lifts the

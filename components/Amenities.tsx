@@ -1,61 +1,117 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import gsap from "gsap";
 import { A } from "@/lib/assets";
 import { AMENITIES } from "@/lib/content";
+import { prefersReducedMotion } from "@/lib/motion";
 import SplitLines from "./SplitLines";
 
+/** One plate per group, so the list and the picture are never out of step. */
+const PLATE = [A.amClubhouse, A.amFitness, A.amGreen, A.amPlay];
+
 /**
- * Amenities: one strong image, then the whole list in the open.
- * Visitors scan this section rather than read it, so nothing is hidden behind
- * a carousel or an accordion — every provision is on the page at once.
+ * Amenities as four experiences rather than twenty-six bullet points.
+ *
+ * The provisions are all still on the page at once — nothing is hidden behind
+ * a carousel, because people scan this section rather than read it — but the
+ * plate follows the group you are reading, so leisure looks like leisure and
+ * landscape looks like landscape instead of one clubhouse standing in for all
+ * four.
  */
 export default function Amenities() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    const section = sectionRef.current;
+    if (!section) return;
+    const mq = window.matchMedia("(min-width: 768px) and (min-height: 620px)");
+    if (!mq.matches) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>("[data-amenity-group]").forEach((el, i) => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 62%",
+          end: "bottom 62%",
+          onToggle: (self) => self.isActive && setActive(i),
+        });
+      });
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        pin: "[data-amenity-stage]",
+        pinSpacing: false,
+      });
+    }, section);
+    return () => ctx.revert();
+  }, []);
+
+  const total = AMENITIES.reduce((n, g) => n + g.items.length, 0);
+
   return (
-    <section id="amenities" aria-labelledby="amen-heading" className="section-y">
+    <section ref={sectionRef} id="amenities" aria-labelledby="amen-heading" className="section-y">
       <div className="gutter">
-        <div className="grid grid-cols-12 items-end gap-y-6">
-          <div className="col-span-12 md:col-span-7">
-            <p data-reveal className="t-eyebrow text-travertine">
-              04 — Amenities
-            </p>
-            <h2 id="amen-heading" className="t-display-m mt-6 max-w-[18ch] text-ink">
-              <SplitLines>Shared ground, *properly made*.</SplitLines>
-            </h2>
-          </div>
-          <div className="col-span-12 md:col-span-4 md:col-start-9">
-            <p data-reveal className="measure text-ink-dim">
-              Twenty-six provisions across leisure, wellness, landscape and the everyday — built
-              in the same materials as the residences rather than bolted on afterwards.
-            </p>
-          </div>
-        </div>
+        <p data-reveal className="t-eyebrow text-travertine">
+          07 — Amenities
+        </p>
+        <h2 id="amen-heading" className="t-display-m mt-6 max-w-[18ch] text-ink">
+          <SplitLines>Shared ground, *properly made*.</SplitLines>
+        </h2>
+        <p data-reveal className="mt-6 measure text-ink-dim">
+          {total} provisions across leisure, wellness, landscape and the everyday — built in the
+          same materials as the residences rather than bolted on afterwards.
+        </p>
       </div>
 
-      <figure data-reveal-clip className="relative mt-[clamp(2.5rem,6vh,4rem)] h-[clamp(20rem,58vh,36rem)] w-full overflow-hidden bg-ground-2">
-        <div data-parallax="5" className="absolute inset-0" style={{ top: "-5%", bottom: "-5%" }}>
-          <Image
-            src={A.amClubhouse.src}
-            alt={A.amClubhouse.alt}
-            fill
-            sizes="100vw"
-            quality={84}
-            className="object-cover"
-          />
+      <div className="gutter mt-[clamp(2.5rem,6vh,4rem)] md:grid md:grid-cols-12 md:gap-x-[clamp(2rem,5vw,4.5rem)]">
+        <div data-amenity-stage className="hidden md:col-span-6 md:block pin-stage pin-stage--short">
+          <div className="pin-plate relative aspect-[4/5] w-full overflow-hidden bg-ground-2">
+            {PLATE.map((p, i) => (
+              <Image
+                key={p.src}
+                src={p.src}
+                alt={p.alt}
+                fill
+                sizes="50vw"
+                quality={84}
+                priority={i === 0}
+                className="object-cover transition-opacity duration-[900ms] ease-[var(--ease-out-quiet)]"
+                style={{ opacity: i === active ? 1 : 0 }}
+              />
+            ))}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 p-[clamp(1rem,2.5vw,1.75rem)]"
+              style={{ background: "linear-gradient(to top, rgba(22,20,15,0.4) 0%, rgba(22,20,15,0) 46%)" }}
+            >
+              <span className="t-meta text-ground/85">{AMENITIES[active].group}</span>
+            </div>
+          </div>
         </div>
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "linear-gradient(to top, rgba(251,250,247,0.94) 0%, rgba(251,250,247,0.55) 26%, rgba(251,250,247,0) 56%)" }}
-        />
-        <figcaption className="gutter absolute inset-x-0 bottom-0 pb-[clamp(1.5rem,4vh,2.5rem)]">
-          <span className="t-meta text-ink">The residents' clubhouse</span>
-        </figcaption>
-      </figure>
 
-      <div className="gutter mt-[clamp(2.5rem,6vh,4rem)]">
-        <div className="grid gap-x-[clamp(1.5rem,3vw,3rem)] gap-y-[clamp(2rem,5vh,3rem)] sm:grid-cols-2 lg:grid-cols-4">
-          {AMENITIES.map((group) => (
-            <div key={group.group} data-reveal>
-              <h3 className="t-eyebrow border-b hair pb-4 text-travertine">{group.group}</h3>
+        <div className="md:col-span-5 md:col-start-8">
+          {AMENITIES.map((group, i) => (
+            <div
+              key={group.group}
+              data-amenity-group
+              className="border-t hair py-[clamp(1.75rem,5vh,3rem)] first:border-t-0 first:pt-0 md:min-h-[74vh] md:py-0 md:flex md:flex-col md:justify-center"
+            >
+              <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden bg-ground-2 md:hidden">
+                <Image src={PLATE[i].src} alt={PLATE[i].alt} fill sizes="100vw" quality={80} className="object-cover" />
+              </div>
+              <div className="flex items-baseline justify-between gap-4 border-b hair pb-4">
+                <h3 className={`t-display-s transition-colors duration-500 ${i === active ? "text-travertine" : "text-ink"}`}>
+                  {group.group}
+                </h3>
+                <span className="t-meta text-ink-faint">{group.items.length}</span>
+              </div>
               <ul className="mt-5 space-y-2.5">
                 {group.items.map((item) => (
                   <li key={item} className="flex gap-3 text-ink-dim">

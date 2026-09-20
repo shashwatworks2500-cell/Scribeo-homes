@@ -21,9 +21,9 @@ const lenis = () => (window as unknown as { __lenis?: Lenis }).__lenis;
  * focus returns to the button that opened it. Scrolling behind is locked,
  * Lenis included.
  */
-const PREVIEW = GALLERY.filter((i) =>
-  ["Exteriors", "Interiors", "Landscape", "Amenities"].includes(i.category),
-).filter((_, i) => i % 4 === 0).slice(0, 4);
+/** One per register: architecture, interior, landscape. */
+const pickBy = (category: string) => GALLERY.find((g) => g.category === category) ?? GALLERY[0];
+const PREVIEW = [pickBy("Exteriors"), pickBy("Interiors"), pickBy("Landscape")];
 
 export default function Gallery() {
   const [open, setOpen] = useState(false);
@@ -115,7 +115,7 @@ export default function Gallery() {
       <div className="grid grid-cols-12 items-end gap-y-6">
         <div className="col-span-12 md:col-span-6">
           <p data-reveal className="t-eyebrow text-travertine">
-            05 — Gallery
+            08 — Gallery
           </p>
           <h2 id="gal-heading" className="t-display-m mt-6 max-w-[16ch] text-ink">
             <SplitLines>The whole of it, *in one place*.</SplitLines>
@@ -130,43 +130,57 @@ export default function Gallery() {
             ref={openerRef}
             type="button"
             data-reveal
+            data-cursor="explore"
             onClick={() => setOpen(true)}
             className="group mt-7 inline-flex items-baseline gap-4 border-b border-travertine/70 pb-2 transition-colors duration-300 hover:border-travertine"
           >
-            <span className="t-display-s text-ink">View gallery</span>
-            <span
-              aria-hidden="true"
-              className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1"
-            >
+            <span className="t-display-s text-ink">View all {GALLERY.length}</span>
+            <span aria-hidden="true" className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
           </button>
         </div>
       </div>
 
-      <ul className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-2 gap-[clamp(0.625rem,1.4vw,1.25rem)] lg:grid-cols-4">
-        {PREVIEW.map((item) => (
-          <li key={item.src} data-reveal>
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              className="group relative block w-full overflow-hidden bg-ground-2"
-              style={{ aspectRatio: "4/5" }}
-              aria-label={`Open gallery at ${item.caption}`}
-            >
-              <Image
-                src={item.src}
-                alt=""
-                fill
-                sizes="(max-width: 1024px) 50vw, 24vw"
-                quality={76}
-                className="object-cover transition-transform duration-[900ms] group-hover:scale-[1.04]"
-                style={{ transitionTimingFunction: "var(--ease-out-quiet)" }}
-              />
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* An editorial spread, not a grid: one plate carries the section and
+          three smaller ones sit around it at different heights. Each opens the
+          viewer at itself, so the preview is the gallery rather than a poster
+          advertising one. */}
+      <div className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-12 gap-[clamp(0.75rem,1.6vw,1.25rem)]">
+        {PREVIEW.map((item, i) => {
+          const idx = GALLERY.indexOf(item);
+          const shape = [
+            "col-span-12 lg:col-span-7 lg:row-span-2 aspect-[4/3] lg:aspect-[4/3.4]",
+            "col-span-6 lg:col-span-5 aspect-[4/3]",
+            "col-span-6 lg:col-span-5 aspect-[4/3]",
+          ][i] ?? "col-span-6 lg:col-span-4 aspect-[4/3]";
+          return (
+            <figure key={item.src} data-reveal className={shape}>
+              <button
+                type="button"
+                data-cursor="view"
+                onClick={() => {
+                  setCat("All");
+                  setOpen(true);
+                  setLightbox(idx >= 0 ? idx : 0);
+                }}
+                aria-label={`Open ${item.caption} in the gallery`}
+                className="group relative block h-full w-full overflow-hidden bg-ground-2"
+              >
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 40vw"
+                  quality={82}
+                  className="object-cover transition-transform duration-[1100ms] ease-[var(--ease-out-quiet)] group-hover:scale-[1.035]"
+                />
+              </button>
+              <figcaption className="t-meta mt-3 text-ink-faint">{item.caption}</figcaption>
+            </figure>
+          );
+        })}
+      </div>
 
       {open ? (
         <div

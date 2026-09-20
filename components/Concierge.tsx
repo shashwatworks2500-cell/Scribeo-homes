@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FAQS } from "@/lib/content";
+import { CONTACT, FAQS } from "@/lib/content";
 import { search, STARTERS, type Entry } from "@/lib/search";
 
 /**
@@ -325,6 +325,44 @@ export default function Concierge() {
               <path d="M10 16V5M5 9.5 10 4.5l5 5" strokeLinecap="square" />
             </svg>
           </button>
+
+          {/* The conversion path, in the same object rather than a second
+              floating pill competing for the same corner. */}
+          <a
+            href="#enquire"
+            data-cursor="open"
+            onClick={close}
+            className={`t-meta ml-1 hidden shrink-0 rounded-full px-5 py-3 transition-colors duration-300 lg:inline-block ${
+              open ? "bg-ground text-ink hover:bg-ground/85" : "bg-ink text-ground hover:bg-travertine"
+            }`}
+          >
+            Request a private viewing
+          </a>
+        </div>
+
+        {/* Phone: the three things someone actually does, thumb-height. */}
+        <div className="mt-2 grid grid-cols-3 gap-2 lg:hidden">
+          <a
+            href="#enquire"
+            onClick={close}
+            className="t-meta grid h-11 place-items-center rounded-full bg-ink text-ground transition-colors duration-300 hover:bg-travertine"
+          >
+            Enquire
+          </a>
+          <a
+            href={CONTACT.phoneHref}
+            className="t-meta grid h-11 place-items-center rounded-full bg-ground text-ink ring-1 ring-hair transition-colors duration-300 hover:ring-travertine"
+          >
+            Call
+          </a>
+          <a
+            href={`https://wa.me/91${CONTACT.phone}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="t-meta grid h-11 place-items-center rounded-full bg-ground text-ink ring-1 ring-hair transition-colors duration-300 hover:ring-travertine"
+          >
+            WhatsApp
+          </a>
         </div>
       </div>
     </div>

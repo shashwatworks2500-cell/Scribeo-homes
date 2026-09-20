@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 
+/* Four chapters and one action. The page has more sections than this, but a
+   navigation that lists every one of them is a table of contents, not a way
+   through — the rest are reachable from the concierge and the footer. */
 const LINKS = [
-  { href: "#pricing", label: "Configurations" },
-  { href: "#residences", label: "Floor plans" },
+  { href: "#landscape", label: "The residences" },
+  { href: "#architecture", label: "Architecture" },
   { href: "#amenities", label: "Amenities" },
-  { href: "#gallery", label: "Gallery" },
-  { href: "#enquire", label: "Enquire" },
+  { href: "#location", label: "Location" },
 ] as const;
 
 type Lenis = { scrollTo: (t: string | HTMLElement, o?: Record<string, unknown>) => void };
@@ -49,6 +51,10 @@ function AskTrigger({ variant = "bar" }: { variant?: "bar" | "icon" | "row" }) {
 export default function Nav() {
   const [hidden, setHidden] = useState(false);
   const [solid, setSolid] = useState(false);
+  /* Over the hero film the bar is transparent; over the page it is not. The
+     switch is the hero's own height, read once per scroll rather than
+     measured per frame. */
+  const [overHero, setOverHero] = useState(true);
   const [open, setOpen] = useState(false);
   const lastY = useRef(0);
   const progressRef = useRef<HTMLSpanElement | null>(null);
@@ -61,6 +67,8 @@ export default function Nav() {
     const onScroll = () => {
       const y = window.scrollY;
       setSolid(y > 24);
+      const hero = document.querySelector("section[aria-labelledby='hero-heading']");
+      setOverHero(!hero || y < hero.getBoundingClientRect().height - 120);
       // Reading progress. Orientation only — it never moves anything else.
       if (progressRef.current) {
         const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -120,9 +128,9 @@ export default function Nav() {
         style={{
           transform: hidden ? "translateY(-100%)" : "translateY(0)",
           transitionTimingFunction: "var(--ease-in-out-quiet)",
-          backgroundColor: solid && !open ? "rgba(251,250,247,0.88)" : "transparent",
-          backdropFilter: solid && !open ? "blur(10px)" : "none",
-          borderBottom: `1px solid ${solid && !open ? "var(--color-hair)" : "transparent"}`,
+          backgroundColor: solid && !open && !overHero ? "rgba(251,250,247,0.88)" : "transparent",
+          backdropFilter: solid && !open && !overHero ? "blur(10px)" : "none",
+          borderBottom: `1px solid ${solid && !open && !overHero ? "var(--color-hair)" : "transparent"}`,
         }}
       >
         <div className="gutter flex h-[clamp(4rem,9vh,5.5rem)] items-center justify-between">
@@ -149,6 +157,16 @@ export default function Nav() {
               ))}
               <li className="ml-[clamp(0.5rem,1.4vw,1.5rem)]">
                 <AskTrigger />
+              </li>
+              <li>
+                <a
+                  href="#enquire"
+                  onClick={(e) => go(e, "#enquire")}
+                  data-cursor="open"
+                  className="t-meta border-b border-travertine pb-1.5 text-ink transition-colors duration-200 hover:text-travertine"
+                >
+                  Enquire
+                </a>
               </li>
             </ul>
           </nav>

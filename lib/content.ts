@@ -140,16 +140,22 @@ export const AMENITIES = [
   },
 ] as const;
 
-/** Distances are indicative and should be confirmed against a survey. */
+/**
+ * Distances are indicative and should be confirmed against a survey.
+ *
+ * `dir` is read off the supplied location plan, which states orientation and
+ * no scale. `at` places the marker on that drawing by its stated direction —
+ * it is a bearing, not a surveyed coordinate, and the section says so.
+ */
 export const DISTANCES = [
-  { place: "Retail hub", detail: "Daily shopping and pharmacy", km: 1.2, mins: 4 },
-  { place: "Botanical gardens", detail: "Public gardens and glasshouse", km: 2.1, mins: 6 },
-  { place: "Cultural district", detail: "Theatres and galleries", km: 2.8, mins: 8 },
-  { place: "Modern art museum", detail: "Permanent collection", km: 3.4, mins: 9 },
-  { place: "University campus", detail: "Faculties and sports grounds", km: 4.0, mins: 11 },
-  { place: "Lake", detail: "Boating and promenade", km: 4.6, mins: 12 },
-  { place: "Riverfront", detail: "Riverside walk", km: 5.2, mins: 14 },
-  { place: "Parklands", detail: "Protected green belt", km: 5.9, mins: 15 },
+  { place: "Retail hub", detail: "Daily shopping and pharmacy", km: 1.2, mins: 4, dir: "North east", at: [72, 30] },
+  { place: "Botanical gardens", detail: "Public gardens and glasshouse", km: 2.1, mins: 6, dir: "East", at: [83, 54] },
+  { place: "Cultural district", detail: "Theatres and galleries", km: 2.8, mins: 8, dir: "South", at: [50, 80] },
+  { place: "Modern art museum", detail: "Permanent collection", km: 3.4, mins: 9, dir: "South west", at: [30, 66] },
+  { place: "University campus", detail: "Faculties and sports grounds", km: 4.0, mins: 11, dir: "North west", at: [30, 26] },
+  { place: "Lake", detail: "Boating and promenade", km: 4.6, mins: 12, dir: "South east", at: [68, 72] },
+  { place: "Riverfront", detail: "Riverside walk", km: 5.2, mins: 14, dir: "South west", at: [20, 81] },
+  { place: "Parklands", detail: "Protected green belt", km: 5.9, mins: 15, dir: "West", at: [15, 42] },
 ] as const;
 
 export type Faq = { q: string; a: string; tags: string[] };

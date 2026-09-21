@@ -7,7 +7,7 @@ import { CONFIGS, CONTACT } from "@/lib/content";
 import SplitLines from "./SplitLines";
 
 /**
- * Request a private viewing.
+ * Book a site visit.
  *
  * A single form with five fields asks a stranger to commit before they have
  * decided anything. Three short questions do not: what you are looking for,
@@ -104,7 +104,7 @@ export default function Contact() {
           <div className="grid grid-cols-12 gap-y-[clamp(2rem,5vw,4.5rem)] md:gap-x-[clamp(2rem,5vw,4.5rem)]">
             <div className="col-span-12 md:col-span-5">
               <p data-reveal className="t-eyebrow text-travertine">
-                16 — Private viewing
+            Visit
               </p>
               <h2 id="enq-heading" className="t-display-l mt-6 max-w-[14ch] text-ink">
                 <SplitLines>Come at seven. Stay for the *light*.</SplitLines>

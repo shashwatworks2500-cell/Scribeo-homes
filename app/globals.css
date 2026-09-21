@@ -169,25 +169,40 @@
 
   .t-eyebrow {
     font-family: var(--font-sans);
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 500;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     line-height: 1;
     /* Uppercase tracking adds a trailing space the eye reads as a gap. */
-    text-indent: 0.24em;
-    margin-left: -0.24em;
+    text-indent: 0.2em;
+    margin-left: -0.2em;
     font-variant-numeric: tabular-nums;
   }
+  /* Supporting text. It used to be 12px uppercase with heavy tracking, and
+     it carried almost every non-heading line on the site — captions, notes,
+     row values, CTAs. At that size, in caps, none of it was pleasant to
+     read and all of it shouted. Sentence case at 14px, normal tracking. */
   .t-meta {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 400;
-    letter-spacing: 0.11em;
+    letter-spacing: 0.005em;
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A genuine label — a column head, a category, a field name. Uppercase is
+     right here because it is not being read as prose. */
+  .t-label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    line-height: 1.55;
-    text-indent: 0.11em;
-    margin-left: -0.11em;
+    line-height: 1.5;
+    text-indent: 0.14em;
+    margin-left: -0.14em;
     font-variant-numeric: tabular-nums;
   }
   /* Concierge. The rows are display-face questions at reading size; the input
@@ -228,7 +243,20 @@
   .gutter { padding-inline: clamp(1.25rem, 5vw, 6.5rem); }
   /* The concierge is docked over the page, so the last thing on it needs room
      to clear the bar — and an anchored jump needs to land above it. */
-  .dock-clear { padding-bottom: clamp(5.5rem, 12vh, 7.5rem); }
+  /* Room for the phone action bar. Phone only — there is no fixed bar on a
+     desktop screen any more, so reserving space there just left a hole. */
+  /* Progressive disclosure that does not cost the content.
+     "View all" sections render EVERYTHING server-side and hide the overflow
+     with CSS keyed on html.js — so a reader with JavaScript off, and any
+     crawler, gets the complete list, while everyone else gets the short one
+     with a control. Collapsing in React instead left 28 of 36 answers out of
+     the served HTML entirely. */
+  .js-only { display: none; }
+  html.js .js-only { display: revert; }
+  html.js [data-collapsed="true"] .is-extra { display: none; }
+
+  .dock-clear { padding-bottom: clamp(4.5rem, 10vh, 5.5rem); }
+  @media (min-width: 768px) { .dock-clear { padding-bottom: 0; } }
 
   /* The enquiry steps hide the later ones once the script is running. With no
      script every field stays in the DOM and the whole form submits at once. */

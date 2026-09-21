@@ -1,19 +1,24 @@
 import Image from "next/image";
 import { HERO } from "@/lib/assets";
+import { PRICE_RANGE } from "@/lib/content";
 
 /**
  * The hero.
  *
- * One photograph, held for the height of the screen. This replaced a
- * scroll-scrubbed frame sequence: no canvas, no decode engine, no runway to
- * scroll through before the page begins, and nothing for the reader to wait
- * for. The section is exactly one viewport tall, so the first content section
- * begins where the screen ends.
+ * Visual first: one photograph, one line, four facts and two things to do.
+ * No paragraph. A visitor who reads only this screen should already know
+ * what is for sale, roughly what it costs, and how to see it.
  *
- * `priority` and the matching preload in <head> make this the page's first
- * fetch, and the declared intrinsic size means the space is reserved before a
- * byte of it arrives — the layout never shifts when it lands.
+ * The fact strip is deliberately the same four numbers the glance repeats
+ * below — the one repetition worth keeping, because it is what converts.
  */
+const FACTS = [
+  "1 – 4 BHK",
+  "753 – 2,333 sq ft",
+  `${PRICE_RANGE.min} onwards`,
+  "Mature landscape, inside the ring road",
+];
+
 export default function Hero() {
   return (
     <section
@@ -31,17 +36,16 @@ export default function Hero() {
         className="object-cover"
       />
 
-      {/* Two scrims. The vertical pass seats the navigation at the top and the
-          metadata row at the foot; the horizontal pass gives the headline a
-          ground to sit on, because the left of the frame is mid-tone foliage
-          and lawn where dark-on-dark stops being readable. Composited
-          contrast is measured against the rendered pixels, not these values. */}
+      {/* Two scrims: the vertical pass seats the navigation and the fact
+          strip, the horizontal pass gives the headline a ground to sit on.
+          Composited contrast is measured against rendered pixels, not these
+          values — see the contrast suite. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(251,250,247,0.72) 0%, rgba(251,250,247,0.14) 26%, rgba(251,250,247,0.42) 62%, rgba(251,250,247,0.97) 100%)",
+            "linear-gradient(to bottom, rgba(251,250,247,0.70) 0%, rgba(251,250,247,0.12) 24%, rgba(251,250,247,0.46) 60%, rgba(251,250,247,0.98) 100%)",
         }}
       />
       <div
@@ -49,30 +53,41 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(105deg, rgba(251,250,247,0.90) 0%, rgba(251,250,247,0.70) 30%, rgba(251,250,247,0.36) 50%, rgba(251,250,247,0.08) 70%, rgba(251,250,247,0) 82%)",
+            "linear-gradient(105deg, rgba(251,250,247,0.90) 0%, rgba(251,250,247,0.70) 30%, rgba(251,250,247,0.34) 52%, rgba(251,250,247,0.06) 72%, rgba(251,250,247,0) 84%)",
         }}
       />
 
-      <div className="relative gutter pb-[clamp(2.5rem,7vh,5rem)]">
-        <h1 id="hero-heading" className="t-display-xl max-w-[6.3em] text-ink">
-          A place that reveals <em>itself</em> slowly.
+      <div className="relative gutter pb-[clamp(2rem,6vh,4rem)]">
+        <h1 id="hero-heading" className="t-display-xl max-w-[11ch] text-ink">
+          Scribeo Homes
         </h1>
+        <p className="mt-5 max-w-[30ch] text-ink-dim sm:text-[1.0625rem]">
+          Contemporary low-rise residences surrounded by greenery.
+        </p>
 
-        <div className="mt-[clamp(2rem,5vh,3.5rem)] flex items-end justify-between gap-6 border-t hair pt-4">
-          <p className="t-meta max-w-[24ch] text-ink-dim">
-            Contemporary residences set in mature landscape
-          </p>
+        <ul className="mt-[clamp(1.75rem,4vh,2.5rem)] flex flex-wrap items-center gap-x-5 gap-y-2 border-t hair pt-5">
+          {FACTS.map((f, i) => (
+            <li key={f} className="t-meta flex items-center gap-5 text-ink">
+              {i > 0 ? (
+                <span aria-hidden="true" className="hidden h-3 w-px bg-hair sm:block" />
+              ) : null}
+              {f}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-[clamp(1.5rem,4vh,2.25rem)] flex flex-wrap items-center gap-x-7 gap-y-3">
           <a
-            href="#glance"
-            className="t-meta group flex items-center gap-3 whitespace-nowrap text-ink-dim transition-colors duration-300 hover:text-ink"
+            href="#residences"
+            className="t-meta rounded-full bg-ink px-6 py-3 text-paper transition-colors duration-300 hover:bg-travertine"
           >
-            <span>
-              Scroll<span className="hidden sm:inline"> to enter</span>
-            </span>
-            <span
-              aria-hidden="true"
-              className="block h-px w-16 origin-left bg-hair transition-transform duration-500 ease-[var(--ease-out-quiet)] group-hover:scale-x-110"
-            />
+            Explore residences
+          </a>
+          <a
+            href="#enquire"
+            className="t-meta border-b border-travertine/70 pb-1 text-ink transition-colors duration-300 hover:border-travertine"
+          >
+            Book a site visit
           </a>
         </div>
       </div>

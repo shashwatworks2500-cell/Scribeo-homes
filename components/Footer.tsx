@@ -1,68 +1,54 @@
 import { CONTACT } from "@/lib/content";
-import SplitLines from "./SplitLines";
 
 /**
- * The last page of the catalogue.
+ * Minimal footer.
  *
- * A statement at full display size, one thing to do, and then the details in
- * small type underneath — the order a printed brochure closes in, rather than
- * a sitemap with a copyright line.
+ * The visit section directly above already asks for the appointment, so this
+ * does not ask again. Contact details, four links, the qualifications, and
+ * nothing else — the closing statement and the second call to action that
+ * used to live here were the same request made twice in a row.
  */
+const LINKS: [string, string][] = [
+  ["#residences", "Residences"],
+  ["#plans", "Floor plans"],
+  ["#amenities", "Amenities"],
+  ["#location", "Location"],
+  ["#specifications", "Specifications"],
+  ["#faq", "Questions"],
+];
+
 export default function Footer() {
   return (
-    <footer className="gutter dock-clear border-t hair bg-ground pt-[clamp(3rem,9vh,6rem)]">
-      <h2 className="t-display-l max-w-[13ch] text-ink">
-        <SplitLines>Come at seven. Stay for the *light*.</SplitLines>
-      </h2>
-
-      <a
-        href="#enquire"
-        data-cursor="open"
-        className="group mt-[clamp(1.75rem,4vh,2.75rem)] inline-flex items-baseline gap-4 border-b border-travertine/70 pb-2 transition-colors duration-300 hover:border-travertine"
-      >
-        <span className="t-display-s text-ink">Request a private viewing</span>
-        <span aria-hidden="true" className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1">
-          →
-        </span>
-      </a>
-
-      <div className="mt-[clamp(3rem,8vh,5rem)] grid grid-cols-12 gap-y-9 border-t hair pt-[clamp(1.75rem,4vh,2.5rem)]">
+    <footer className="gutter dock-clear border-t hair bg-ground-2 pt-[clamp(2.5rem,7vh,4rem)]">
+      <div className="grid grid-cols-12 gap-y-9 md:gap-x-[clamp(2rem,5vw,4rem)]">
         <div className="col-span-12 md:col-span-4">
-          <p className="t-eyebrow text-ink">Scribeo&nbsp;Homes</p>
-          <p className="t-meta mt-4 max-w-[26ch] text-ink-faint">
-            A contemporary residential development, held within mature landscape.
+          <p className="t-display-s text-ink">Scribeo Homes</p>
+          <p className="t-meta mt-3 max-w-[24ch] text-ink-dim">
+            Contemporary low-rise residences surrounded by greenery.
           </p>
         </div>
 
-        <div className="col-span-6 md:col-span-3">
-          <p className="t-meta text-ink-faint">Enquiries</p>
-          <a href={CONTACT.phoneHref} className="t-display-s mt-3 block text-ink transition-colors hover:text-travertine">
+        <div className="col-span-6 md:col-span-4">
+          <p className="t-label text-ink-faint">Site office</p>
+          <a
+            href={CONTACT.phoneHref}
+            className="t-meta mt-3 block text-ink transition-colors hover:text-travertine"
+          >
             {CONTACT.phoneDisplay}
           </a>
-          <a href={CONTACT.emailHref} className="t-meta mt-3 block break-all text-ink-dim transition-colors hover:text-travertine">
+          <a
+            href={CONTACT.emailHref}
+            className="t-meta block text-ink transition-colors hover:text-travertine"
+          >
             {CONTACT.email}
           </a>
+          <p className="t-meta mt-2 max-w-[22ch] text-ink-dim">{CONTACT.hours}</p>
         </div>
 
-        <div className="col-span-6 md:col-span-2">
-          <p className="t-meta text-ink-faint">Visits</p>
-          <p className="t-meta mt-3 max-w-[18ch] text-ink-dim">{CONTACT.hours}</p>
-        </div>
-
-        <nav aria-label="Footer" className="col-span-12 md:col-span-3">
-          <p className="t-meta text-ink-faint">The page</p>
-          <ul className="mt-3 space-y-1.5">
-            {[
-              ["#landscape", "The landscape"],
-              ["#architecture", "Architecture"],
-              ["#pricing", "Configurations"],
-              ["#residences", "Floor plans"],
-              ["#compare", "Compare"],
-              ["#amenities", "Amenities"],
-              ["#location", "Location"],
-              ["#around", "Life around you"],
-              ["#trust", "In writing"],
-            ].map(([href, label]) => (
+        <nav aria-label="Footer" className="col-span-6 md:col-span-4">
+          <p className="t-label text-ink-faint">The page</p>
+          <ul className="mt-3 space-y-1">
+            {LINKS.map(([href, label]) => (
               <li key={href}>
                 <a href={href} className="t-meta text-ink-dim transition-colors hover:text-travertine">
                   {label}
@@ -73,10 +59,14 @@ export default function Footer() {
         </nav>
       </div>
 
-      <p className="t-meta mt-[clamp(2rem,5vh,3rem)] max-w-[62ch] border-t hair pt-5 text-ink-faint">
-        All imagery is architectural visualisation of a proposed residential development and does
-        not depict a completed building. Floor plans, prices and distances are indicative and to be
-        confirmed on site.
+      <p className="t-meta mt-[clamp(2rem,5vh,3rem)] max-w-[70ch] border-t hair pt-5 text-ink-faint">
+        Imagery is architectural visualisation of a proposed residential development and does not
+        depict a completed building. Plans are indicative and not to scale; dimensions are nominal.
+        Prices and distances are indicative and exclusive of duty, registration and taxes. Approvals,
+        construction status and possession are available from the site office.
+      </p>
+      <p className="t-meta mt-4 pb-[clamp(1.5rem,4vh,2.5rem)] text-ink-faint">
+        © {new Date().getFullYear()} Scribeo Homes
       </p>
     </footer>
   );

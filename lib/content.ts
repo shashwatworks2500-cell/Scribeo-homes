@@ -21,6 +21,8 @@ export const CONTACT = {
 
 export type Config = {
   id: string;
+  /** Key into the asset manifest — the card's photograph. */
+  image: "livingRoom" | "bedroom" | "indoorOutdoor" | "kitchen";
   label: string;
   bhk: string;
   builtUpSqft: number;
@@ -35,6 +37,7 @@ export type Config = {
 export const CONFIGS: Config[] = [
   {
     id: "1bhk",
+    image: "livingRoom",
     label: "One bedroom",
     bhk: "1 BHK",
     builtUpSqft: 753,
@@ -46,6 +49,7 @@ export const CONFIGS: Config[] = [
   },
   {
     id: "2bhk",
+    image: "bedroom",
     label: "Two bedroom",
     bhk: "2 BHK",
     builtUpSqft: 1174,
@@ -57,6 +61,7 @@ export const CONFIGS: Config[] = [
   },
   {
     id: "3bhk",
+    image: "indoorOutdoor",
     label: "Three bedroom",
     bhk: "3 BHK",
     builtUpSqft: 1697,
@@ -68,6 +73,7 @@ export const CONFIGS: Config[] = [
   },
   {
     id: "4bhk",
+    image: "kitchen",
     label: "Four bedroom",
     bhk: "4 BHK",
     builtUpSqft: 2333,
@@ -90,10 +96,18 @@ export const FACTS = [
   ["Approvals", "Confirm with the site office"],
 ] as const;
 
-/** Amenities, grouped the way a visitor actually asks about them. */
+/**
+ * Amenities, in four categories.
+ *
+ * `lead` is what the section shows at rest — the ones worth knowing before
+ * you visit. The rest open behind "View all". Twenty-six provisions listed
+ * at once is a specification sheet, not a reason to come and see the place.
+ */
 export const AMENITIES = [
   {
     group: "Leisure",
+    image: "amClubhouse" as const,
+    lead: ["Residents' clubhouse", "Outdoor lap pool", "Residents' lounge and library", "Indoor games room"],
     items: [
       "Residents' clubhouse",
       "Outdoor lap pool",
@@ -105,6 +119,8 @@ export const AMENITIES = [
   },
   {
     group: "Wellness",
+    image: "amYoga" as const,
+    lead: ["Fitness studio", "Open-air yoga deck", "Jogging and walking loop"],
     items: [
       "Fitness studio",
       "Open-air yoga deck",
@@ -116,6 +132,8 @@ export const AMENITIES = [
   },
   {
     group: "Landscape",
+    image: "amGreen" as const,
+    lead: ["Central green", "Mature tree avenue", "Children's play area", "Reflecting pool"],
     items: [
       "Central green",
       "Mature tree avenue",
@@ -127,6 +145,8 @@ export const AMENITIES = [
   },
   {
     group: "Everyday",
+    image: "amTrail" as const,
+    lead: ["24 × 7 security and CCTV", "Covered and visitor parking", "Power backup to common areas", "EV charging provision"],
     items: [
       "Covered parking",
       "Visitor parking",
@@ -170,7 +190,8 @@ export const DISTANCES = [
 
 export type FaqCategory =
   | "Pricing" | "Buying" | "Finance" | "Construction" | "Amenities" | "Location" | "Documents" | "Booking";
-export type Faq = { q: string; a: string; tags: string[]; cat?: FaqCategory };
+/** `top` marks the eight a buyer asks first; the rest open behind one control. */
+export type Faq = { q: string; a: string; tags: string[]; cat?: FaqCategory; top?: true };
 
 /**
  * Category is derived from the tags each question already carries rather than
@@ -195,21 +216,21 @@ export const categorise = (f: { q: string; a: string; tags: string[] }): FaqCate
 
 /** Searchable enquiry index. Tags widen what a query will match. */
 export const FAQS: Faq[] = [
-  { q: "What configurations are available?", a: "1, 2, 3 and 4 BHK residences, from 753 to 2,333 sq ft of built-up area. Drawn plans for each are in the Residences section.", tags: ["bhk","size","configuration","types","layout","1bhk","2bhk","3bhk","4bhk"] },
-  { q: "What is the price range?", a: "Residences begin at ₹48 Lakh for a 1 BHK and run to ₹1.79 Crore for a 4 BHK. Figures shown on this page are indicative; the site office issues the current price list.", tags: ["price","cost","rate","budget","lakh","crore","how much"] },
+  { q: "What configurations are available?", top: true, a: "1, 2, 3 and 4 BHK residences, from 753 to 2,333 sq ft of built-up area. Drawn plans for each are in the Residences section.", tags: ["bhk","size","configuration","types","layout","1bhk","2bhk","3bhk","4bhk"] },
+  { q: "What is the price range?", top: true, a: "Residences begin at ₹48 Lakh for a 1 BHK and run to ₹1.79 Crore for a 4 BHK. Figures shown on this page are indicative; the site office issues the current price list.", tags: ["price","cost","rate","budget","lakh","crore","how much"] },
   { q: "Is the price all-inclusive?", a: "No. Quoted figures are for the residence only. Stamp duty, registration, GST where applicable, and maintenance deposits are additional. Ask the site office for a full cost sheet.", tags: ["price","inclusive","stamp duty","registration","gst","charges","extra"] },
-  { q: "Can I book a site visit?", a: `Yes. Call ${"+91 63880 42221"} or use the enquiry form at the foot of this page. Visits run daily, 7:00 – 11:00 and 16:00 – 19:00.`, tags: ["visit","site visit","tour","appointment","see","viewing","book"] },
+  { q: "Can I book a site visit?", top: true, a: `Yes. Call ${"+91 63880 42221"} or use the enquiry form at the foot of this page. Visits run daily, 7:00 – 11:00 and 16:00 – 19:00.`, tags: ["visit","site visit","tour","appointment","see","viewing","book"] },
   { q: "What is the booking amount?", a: "A booking amount reserves a specific unit and is adjusted against the first instalment. The current figure is confirmed by the site office at the time of booking.", tags: ["booking","token","advance","reserve","deposit"] },
   { q: "Do you offer a payment plan?", a: "Construction-linked and possession-linked plans are both available. The schedule is issued with the cost sheet so you can see every milestone before committing.", tags: ["payment","plan","instalment","emi","schedule","milestone"] },
-  { q: "Are home loans available?", a: "Yes. The project is prepared for bank and housing-finance approval, and the site office can share the list of empanelled lenders and the documents each requires.", tags: ["loan","bank","finance","mortgage","emi","hdfc","sbi","approval"] },
-  { q: "What documents do I need to book?", a: "Identity and address proof, PAN, passport photographs, and the booking amount. For a loan, lenders additionally ask for income proof and bank statements.", tags: ["documents","kyc","pan","aadhaar","paperwork","id"] },
-  { q: "When is possession?", a: "Possession timelines are confirmed in writing at booking and are also printed on the allotment letter. Ask the site office for the current schedule for your chosen configuration.", tags: ["possession","handover","ready","completion","date","timeline","when"] },
+  { q: "Are home loans available?", top: true, a: "Yes. The project is prepared for bank and housing-finance approval, and the site office can share the list of empanelled lenders and the documents each requires.", tags: ["loan","bank","finance","mortgage","emi","hdfc","sbi","approval"] },
+  { q: "What documents do I need to book?", top: true, a: "Identity and address proof, PAN, passport photographs, and the booking amount. For a loan, lenders additionally ask for income proof and bank statements.", tags: ["documents","kyc","pan","aadhaar","paperwork","id"] },
+  { q: "When is possession?", top: true, a: "Possession timelines are confirmed in writing at booking and are also printed on the allotment letter. Ask the site office for the current schedule for your chosen configuration.", tags: ["possession","handover","ready","completion","date","timeline","when"] },
   { q: "Can I see the construction progress?", a: "Yes. The site is open for progress visits during the hours above, and progress updates are shared with allottees.", tags: ["construction","progress","status","site","update","stage"] },
   { q: "What is the structure built from?", a: "An RCC frame in warm-grey architectural concrete, with a façade of warm limestone and beige sandstone, deep recessed window reveals and horizontal roof slabs.", tags: ["structure","construction","material","rcc","concrete","stone","facade","quality"] },
   { q: "What are the flooring and fittings?", a: "Limestone and warm-neutral stone flooring to living areas, natural teak joinery where a hand touches it, and slim charcoal metal window frames. A full specification sheet is available on request.", tags: ["flooring","fittings","finish","specification","teak","stone","interior","tiles"] },
   { q: "Can I customise the interiors?", a: "Limited customisation is possible if you book early enough in the construction cycle. Structural walls, façade and service routes cannot be altered.", tags: ["custom","customise","change","modify","interior","bespoke"] },
-  { q: "Is parking included?", a: "Covered parking is allotted with each residence, and separate visitor parking is provided within the development. EV charging provision is included.", tags: ["parking","car","garage","ev","visitor","vehicle"] },
-  { q: "What amenities are included?", a: "A clubhouse, lap pool, fitness studio, yoga deck, jogging loop, children's play area, residents' lounge and a central green, alongside everyday provisions such as security, power backup and rainwater harvesting. The full list is in the Amenities section.", tags: ["amenities","facilities","club","pool","gym","features","what do i get"] },
+  { q: "Is parking included?", top: true, a: "Covered parking is allotted with each residence, and separate visitor parking is provided within the development. EV charging provision is included.", tags: ["parking","car","garage","ev","visitor","vehicle"] },
+  { q: "What amenities are included?", top: true, a: "A clubhouse, lap pool, fitness studio, yoga deck, jogging loop, children's play area, residents' lounge and a central green, alongside everyday provisions such as security, power backup and rainwater harvesting. The full list is in the Amenities section.", tags: ["amenities","facilities","club","pool","gym","features","what do i get"] },
   { q: "Is there a clubhouse?", a: "Yes — a residents' clubhouse with a lounge and library, indoor games, a multipurpose hall, and changing rooms serving the pool and fitness studio.", tags: ["clubhouse","club","community","hall","lounge"] },
   { q: "Is there a swimming pool?", a: "Yes. An outdoor lap pool in dark stone with a shaded timber deck, and a separate shallow pool for children.", tags: ["pool","swimming","swim","lap","water"] },
   { q: "Is there a gym?", a: "Yes. A double-height fitness studio with a full glass wall onto the landscape, plus an open-air yoga and wellness deck under the tree canopy.", tags: ["gym","fitness","workout","exercise","yoga","wellness"] },

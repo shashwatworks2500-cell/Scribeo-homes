@@ -1,36 +1,38 @@
 import MotionProvider from "@/components/MotionProvider";
 import Cursor from "@/components/Cursor";
 import Nav from "@/components/Nav";
-import Concierge from "@/components/Concierge";
+import MobileBar from "@/components/MobileBar";
 import Hero from "@/components/Hero";
 import Glance from "@/components/Glance";
-import Statement from "@/components/Statement";
-import Landscape from "@/components/Landscape";
-import Principles from "@/components/Principles";
-import Materials from "@/components/Materials";
-import Configurations from "@/components/Configurations";
+import Intro from "@/components/Intro";
+import Residences from "@/components/Residences";
 import FloorPlans from "@/components/FloorPlans";
-import Compare from "@/components/Compare";
-import DayAt from "@/components/DayAt";
 import Amenities from "@/components/Amenities";
-import Gallery from "@/components/Gallery";
 import Location from "@/components/Location";
-import Around from "@/components/Around";
 import Specs from "@/components/Specs";
 import Faq from "@/components/Faq";
-import Trust from "@/components/Trust";
-import Closer from "@/components/Closer";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 /**
- * The journey, in the order a buyer actually travels it:
- * discover, understand, explore, compare, visualise, trust, enquire.
+ * Nine sections, each answering one question.
  *
- * Chapter numbers are printed in the sections themselves and run 01 to 16,
- * so the page reads as one document rather than a stack of components. The
- * closing invitation carries no number: it is the end of the argument, not
- * another part of it.
+ *   Hero            what is this?
+ *   At a glance     what are the facts?
+ *   Introduction    what does it feel like?
+ *   Residences      what can I buy?
+ *   Floor plans     what does each home look like?
+ *   Amenities       what do I get?
+ *   Location        where is it?
+ *   Specifications  what exactly is included?
+ *   Questions       what else should I know?
+ *   Visit           what do I do next?
+ *
+ * There were sixteen. A landscape chapter, four materials, six principles,
+ * a day in five hours, a neighbourhood read as a week, a comparison table
+ * and a separate gallery all answered "what is it like?" over and over.
+ * Nothing factual was lost — it moved into the glance, the residence
+ * panels, the specifications and the questions, where a buyer looks for it.
  */
 export default function Page() {
   return (
@@ -38,30 +40,21 @@ export default function Page() {
       <MotionProvider />
       <Cursor />
       <Nav />
-      <Concierge />
       <div id="top" />
       <main id="main">
         <Hero />
         <Glance />
-        <Statement />
-        <Landscape />
-        <Principles />
-        <Materials />
-        <Configurations />
+        <Intro />
+        <Residences />
         <FloorPlans />
-        <Compare />
-        <DayAt />
         <Amenities />
-        <Gallery />
         <Location />
-        <Around />
         <Specs />
         <Faq />
-        <Trust />
-        <Closer />
         <Contact />
       </main>
       <Footer />
+      <MobileBar />
     </>
   );
 }

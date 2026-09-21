@@ -1,20 +1,27 @@
 import { GLANCE } from "@/lib/story";
 
 /**
- * The project in one line, immediately after the hero.
+ * Scribeo Homes at a glance.
  *
- * A visitor should know what this is, what it costs and what it is made of
- * before they have decided whether to keep scrolling. Everything here is
- * repeated in full further down; this is the index, not the argument.
+ * The most useful five seconds on the site. Six facts, no sentences: a
+ * visitor who reads nothing else should still be able to say what this is,
+ * what it costs and whether it is worth a visit.
  */
 export default function Glance() {
   return (
-    <section id="glance" aria-label="The project at a glance" className="gutter border-y hair bg-ground-2">
-      <dl className="grid grid-cols-2 gap-x-[clamp(1rem,3vw,2.5rem)] gap-y-7 py-[clamp(1.75rem,4vh,2.75rem)] sm:grid-cols-3 lg:grid-cols-5">
-        {GLANCE.map(({ k, v }) => (
-          <div key={k}>
-            <dt className="t-meta text-ink-faint">{k}</dt>
-            <dd className="t-display-s mt-1.5 text-ink">{v}</dd>
+    <section id="glance" aria-labelledby="glance-heading" className="section-y gutter bg-ground-2">
+      <h2 id="glance-heading" className="t-display-m max-w-[18ch] text-ink">
+        Scribeo Homes at a glance.
+      </h2>
+
+      <dl className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 gap-x-[clamp(1.5rem,4vw,3.5rem)] gap-y-[clamp(2rem,5vh,3rem)] sm:grid-cols-2 lg:grid-cols-3">
+        {GLANCE.map(({ n, k, v }) => (
+          <div key={k} data-reveal className="border-t hair pt-5">
+            <span aria-hidden="true" className="t-numeral block text-ink-faint">
+              {n}
+            </span>
+            <dd className="t-display-s mt-3 text-ink">{v}</dd>
+            <dt className="t-label mt-2 text-ink-faint">{k}</dt>
           </div>
         ))}
       </dl>

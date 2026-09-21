@@ -1,45 +1,74 @@
-import { SPECS } from "@/lib/story";
+import { SPECS, TRUST } from "@/lib/story";
 
 /**
  * Specifications.
  *
- * Only what the supplied project information states. The last group exists
- * because a serious buyer will look for approvals, construction status and
- * possession, and the honest answer is that they were not supplied — saying
- * so is worth more than a confident invention, and it tells them exactly
- * where to get it.
+ * A reference section, not a story. It opens on what the building is made
+ * of and everything else sits behind a native <details>, which works with
+ * JavaScript off and needs no component state. The qualifications the rest
+ * of the page relies on are kept here too, where someone looking for them
+ * would go.
  */
 export default function Specs() {
-  return (
-    <section id="specifications" aria-labelledby="spec-heading" className="section-y gutter">
-      <div className="grid grid-cols-12 gap-y-[clamp(1.5rem,4vh,2.5rem)] md:gap-x-[clamp(2rem,5vw,4.5rem)]">
-        <div className="col-span-12 md:col-span-4">
-          <p data-reveal className="t-eyebrow text-travertine">
-            13 — Specifications
-          </p>
-          <h2 id="spec-heading" className="t-display-m mt-6 max-w-[14ch] text-ink">
-            Exactly what you are buying.
-          </h2>
-          <p data-reveal className="mt-6 measure text-ink-dim">
-            Everything the project information states, and a plain note where it does not.
-          </p>
-        </div>
+  const [first, ...rest] = SPECS;
 
-        <div className="col-span-12 md:col-span-7 md:col-start-6">
-          {SPECS.map((g) => (
-            <div key={g.group} data-reveal className="mb-[clamp(1.75rem,4vh,2.5rem)] last:mb-0">
-              <h3 className="t-eyebrow border-b hair pb-3 text-travertine">{g.group}</h3>
-              <dl>
-                {g.rows.map(([k, v]) => (
-                  <div key={k} className="grid grid-cols-12 gap-x-4 gap-y-1 border-b hair py-3">
-                    <dt className="t-meta col-span-12 text-ink-faint sm:col-span-4">{k}</dt>
-                    <dd className="t-meta col-span-12 text-ink sm:col-span-8">{v}</dd>
-                  </div>
-                ))}
-              </dl>
+  return (
+    <section id="specifications" aria-labelledby="spec-heading" className="section-y gutter bg-ground-2">
+      <h2 id="spec-heading" className="t-display-m max-w-[14ch] text-ink">
+        Specifications.
+      </h2>
+
+      <div className="mt-[clamp(2rem,5vh,3rem)] max-w-[52rem]">
+        <dl className="border-t hair">
+          {first.rows.map(([k, v]) => (
+            <div key={k} data-reveal className="grid grid-cols-12 gap-x-5 gap-y-1 border-b hair py-3.5">
+              <dt className="t-label col-span-12 self-center text-ink-faint sm:col-span-4">{k}</dt>
+              <dd className="t-meta col-span-12 text-ink sm:col-span-8">{v}</dd>
             </div>
           ))}
-        </div>
+        </dl>
+
+        {rest.map((group) => (
+          <details key={group.group} className="group border-b hair">
+            <summary className="t-meta flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-ink marker:hidden">
+              <span>{group.group}</span>
+              <span
+                aria-hidden="true"
+                className="t-display-s shrink-0 text-travertine transition-transform duration-300 group-open:rotate-45"
+              >
+                +
+              </span>
+            </summary>
+            <dl className="pb-2">
+              {group.rows.map(([k, v]) => (
+                <div key={k} className="grid grid-cols-12 gap-x-5 gap-y-1 border-t hair py-3.5">
+                  <dt className="t-label col-span-12 self-center text-ink-faint sm:col-span-4">{k}</dt>
+                  <dd className="t-meta col-span-12 text-ink sm:col-span-8">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </details>
+        ))}
+
+        <details className="group border-b hair">
+          <summary className="t-meta flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-ink marker:hidden">
+            <span>What is indicative, and what is confirmed</span>
+            <span
+              aria-hidden="true"
+              className="t-display-s shrink-0 text-travertine transition-transform duration-300 group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+          <dl className="pb-2">
+            {TRUST.map(({ k, v }) => (
+              <div key={k} className="grid grid-cols-12 gap-x-5 gap-y-1 border-t hair py-3.5">
+                <dt className="t-label col-span-12 self-center text-ink-faint sm:col-span-4">{k}</dt>
+                <dd className="t-meta col-span-12 text-ink sm:col-span-8">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
       </div>
     </section>
   );

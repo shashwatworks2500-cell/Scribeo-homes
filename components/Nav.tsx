@@ -3,51 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-/* Four chapters and one action. The page has more sections than this, but a
-   navigation that lists every one of them is a table of contents, not a way
-   through — the rest are reachable from the concierge and the footer. */
+/* Three chapters and one action. Everything else is reachable by scrolling
+   or from the footer; a header that lists every section is a table of
+   contents, not a way through. */
 const LINKS = [
-  { href: "#landscape", label: "The residences" },
-  { href: "#architecture", label: "Architecture" },
+  { href: "#residences", label: "Residences" },
   { href: "#amenities", label: "Amenities" },
   { href: "#location", label: "Location" },
 ] as const;
 
 type Lenis = { scrollTo: (t: string | HTMLElement, o?: Record<string, unknown>) => void };
-
-/** Focuses the docked concierge rather than opening a second surface. */
-function AskTrigger({ variant = "bar" }: { variant?: "bar" | "icon" | "row" }) {
-  const ask = () => window.dispatchEvent(new CustomEvent("scribeo:ask"));
-  const glass = (
-    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.3">
-      <circle cx="7" cy="7" r="4.6" />
-      <path d="M10.4 10.4 14 14" strokeLinecap="square" />
-    </svg>
-  );
-  if (variant === "icon")
-    return (
-      <button type="button" onClick={ask} aria-label="Ask the concierge" className="text-ink transition-colors duration-200 hover:text-travertine">
-        <svg aria-hidden="true" viewBox="0 0 16 16" className="h-[1.05rem] w-[1.05rem]" fill="none" stroke="currentColor" strokeWidth="1.3">
-          <circle cx="7" cy="7" r="4.6" />
-          <path d="M10.4 10.4 14 14" strokeLinecap="square" />
-        </svg>
-      </button>
-    );
-  if (variant === "row")
-    return (
-      <button type="button" onClick={ask} className="t-meta flex w-full items-center gap-3 border-b border-rule pb-3 text-left text-ink-dim transition-colors duration-200 hover:border-travertine hover:text-ink">
-        {glass}
-        <span>Ask the concierge</span>
-      </button>
-    );
-  return (
-    <button type="button" onClick={ask} className="t-meta flex items-center gap-2.5 border-b border-rule pb-1.5 text-ink-dim transition-colors duration-200 hover:border-travertine hover:text-ink">
-      {glass}
-      <span>Concierge</span>
-      <kbd aria-hidden="true" className="t-numeral text-ink-faint">⌘K</kbd>
-    </button>
-  );
-}
 
 export default function Nav() {
   const [hidden, setHidden] = useState(false);
@@ -192,7 +157,6 @@ export default function Nav() {
                 </li>
               ))}
               <li className="ml-[clamp(0.5rem,1.4vw,1.5rem)]">
-                <AskTrigger />
               </li>
               <li>
                 <a
@@ -208,16 +172,27 @@ export default function Nav() {
           </nav>
 
           <div className="flex items-center gap-5 md:hidden">
-            <AskTrigger variant="icon" />
+            {/* The enquiry stays reachable from the header as well as the
+                action bar at the foot — the two are the same request, and a
+                reader at the top of the page should not have to hunt. */}
+            {!open ? (
+              <a
+                href="#enquire"
+                onClick={(e) => go(e, "#enquire")}
+                className="t-meta border-b border-travertine/70 pb-0.5 text-ink"
+              >
+                Enquire
+              </a>
+            ) : null}
             <button
-            ref={toggleRef}
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            className="t-meta relative z-50 text-ink"
-          >
-            {open ? "Close" : "Menu"}
+              ref={toggleRef}
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              className="t-meta relative z-50 text-ink"
+            >
+              {open ? "Close" : "Menu"}
             </button>
           </div>
         </div>
@@ -239,7 +214,6 @@ export default function Nav() {
       >
         <nav aria-label="Primary" className="gutter flex h-full flex-col justify-center">
           <div className="mb-[clamp(2rem,5vh,3rem)]">
-            <AskTrigger variant="row" />
           </div>
           <ul className="space-y-[clamp(1rem,3.2vh,2rem)]">
             {LINKS.map((l, i) => (

@@ -40,6 +40,17 @@ export default function Cursor() {
     };
     window.addEventListener("pointermove", move, { passive: true });
 
+    /* Park it off screen before the first pointer move. The loop below does
+       nothing until there is a delta to work through, so without this the
+       dot renders at its CSS origin — the top-left corner of the page. */
+    const park = () => {
+      if (dot.current) {
+        dot.current.style.transform =
+          `translate3d(${shown.current.x}px, ${shown.current.y}px, 0) translate(-50%, -50%)`;
+      }
+    };
+    park();
+
     /* On the page's single loop, last: nothing reads the cursor's position.
        It also stops doing arithmetic once the dot has caught up, so a still
        pointer costs nothing. */

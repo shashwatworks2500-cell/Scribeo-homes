@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { DUR, RISE, STAGGER, prefersReducedMotion } from "@/lib/motion";
+import { ORDER, onFrame } from "@/lib/frame";
 
 /**
  * Owns the page's scroll and reveal systems.
@@ -18,11 +19,35 @@ export default function MotionProvider() {
     const root = document.documentElement;
     const reduced = prefersReducedMotion();
 
+    /* Scroll restoration is off (see BOOT in app/layout), so the page owns
+       where it lands. That is true whether or not motion is reduced, so the
+       destination handling is set up before anything else and falls back to
+       an instant native scroll when there is no Lenis to ask. */
+    const jump = (hash: string, smooth: boolean) => {
+      const el = hash && hash.length > 1 ? document.querySelector<HTMLElement>(hash) : null;
+      const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
+      if (lenis) lenis.scrollTo(el ?? 0, { offset: 0, immediate: !smooth, force: true });
+      else if (el) el.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+      else window.scrollTo(0, 0);
+    };
+    /* Back and forward move between the sections the reader visited, rather
+       than leaving the site. Nav pushes the entry; this consumes it. */
+    const onPop = () => jump(location.hash, !reduced);
+    window.addEventListener("popstate", onPop);
+    /* An explicit #hash is honoured once the page has settled enough for the
+       destination to be where it will finally be — not before. */
+    const settle = window.setTimeout(() => {
+      if (location.hash) jump(location.hash, false);
+    }, 260);
+
     // Reduced motion: no smooth scroll, no reveals. Mark ready so the
     // failsafe in layout.tsx does not strip the (already visible) content.
     if (reduced) {
       root.dataset.motion = "ready";
-      return;
+      return () => {
+        window.removeEventListener("popstate", onPop);
+        window.clearTimeout(settle);
+      };
     }
 
     gsap.registerPlugin(ScrollTrigger);
@@ -47,9 +72,26 @@ export default function MotionProvider() {
     const onScroll = () => ScrollTrigger.update();
     lenis.on("scroll", onScroll);
 
-    const raf = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(raf);
+    /* Lenis goes first in the frame; everything that reads scroll is ordered
+       after it (see lib/frame.ts). lagSmoothing off so returning to a
+       backgrounded tab does not produce one enormous catch-up step. */
+    const stopFrame = onFrame((time) => lenis.raf(time * 1000), ORDER.scroll);
     gsap.ticker.lagSmoothing(0);
+
+    /* A phone's address bar sliding away fires a resize. Rebuilding every
+       trigger for that throws the reader down the page for no reason, so
+       ScrollTrigger is told to ignore a height-only change on touch. */
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
+    /* Deliberately NOT re-anchoring the reader to their content on resize.
+       Measured: a 1440x900 -> 1200x820 resize part-way down leaves scrollY
+       exactly where it was and nothing jumps; what changes is that narrower
+       text is taller, so the content above the reader grows. That is what
+       every browser does and what readers expect. An anchor that moved the
+       page to keep the same paragraph under the eye could not reliably win
+       against the scroll position ScrollTrigger and Lenis each set while
+       finishing a refresh, and a half-working one introduces exactly the
+       jump this page must never have. */
 
     // Expose for in-page anchors without a global singleton elsewhere.
     (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
@@ -119,10 +161,24 @@ export default function MotionProvider() {
     root.dataset.motion = "ready";
     ScrollTrigger.refresh();
 
+    /* Refresh again once the webfonts land. Every start and end above was
+       measured against fallback metrics; the text reflows when Cormorant and
+       Jost arrive, and each of those numbers is then wrong by the difference.
+       This is why a trigger could fire in the wrong place on a cold load. */
+    document.fonts?.ready.then(() => ScrollTrigger.refresh());
+
+    /* And once the hero has painted, because its runway is the tallest
+       measurement on the page. */
+    const onHeroReady = () => ScrollTrigger.refresh();
+    window.addEventListener("hero:ready", onHeroReady, { once: true });
+
     return () => {
       ctx.revert();
       lenis.off("scroll", onScroll);
-      gsap.ticker.remove(raf);
+      window.removeEventListener("hero:ready", onHeroReady);
+      window.removeEventListener("popstate", onPop);
+      window.clearTimeout(settle);
+      stopFrame();
       lenis.destroy();
       delete (window as unknown as { __lenis?: Lenis }).__lenis;
       delete root.dataset.motion;

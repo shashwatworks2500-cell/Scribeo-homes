@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
+import { ORDER, onFrame } from "@/lib/frame";
 
 /**
  * A cursor that says what a thing will do.
@@ -39,22 +40,26 @@ export default function Cursor() {
     };
     window.addEventListener("pointermove", move, { passive: true });
 
-    let raf = 0;
+    /* On the page's single loop, last: nothing reads the cursor's position.
+       It also stops doing arithmetic once the dot has caught up, so a still
+       pointer costs nothing. */
     const tick = () => {
+      const dx = pos.current.x - shown.current.x;
+      const dy = pos.current.y - shown.current.y;
+      if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) return;
       // Trails the pointer rather than tracking it exactly: the lag is the
       // whole effect, and it keeps the element off the input thread.
-      shown.current.x += (pos.current.x - shown.current.x) * 0.22;
-      shown.current.y += (pos.current.y - shown.current.y) * 0.22;
+      shown.current.x += dx * 0.22;
+      shown.current.y += dy * 0.22;
       if (dot.current) {
         dot.current.style.transform = `translate3d(${shown.current.x}px, ${shown.current.y}px, 0) translate(-50%, -50%)`;
       }
-      raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
+    const stopFrame = onFrame(tick, ORDER.pointer);
 
     return () => {
       window.removeEventListener("pointermove", move);
-      cancelAnimationFrame(raf);
+      stopFrame();
       setOn(false);
     };
   }, []);

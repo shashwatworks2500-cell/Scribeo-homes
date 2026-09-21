@@ -122,6 +122,15 @@ export const viewport: Viewport = {
    the page renders as complete static content. Content is never lost to JS. */
 const BOOT = `
 document.documentElement.classList.add('js');
+// The hero is a scroll-driven film, so the scroll position IS the playhead.
+// Letting the browser restore a saved offset drops the reader into the middle
+// of the shot on every refresh — and it restores against a layout that has not
+// been measured yet, so the scrubber reads the wrong progress as well. Taking
+// this over before the browser can act on it is the only way the film reliably
+// starts at its first frame. An explicit #hash is still honoured, once the
+// page has settled enough to scroll to it accurately.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+if (!location.hash) { try { window.scrollTo(0, 0); } catch (e) {} }
 setTimeout(function(){
   if(document.documentElement.dataset.motion!=='ready'){
     document.documentElement.classList.remove('js');

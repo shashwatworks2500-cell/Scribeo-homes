@@ -110,10 +110,19 @@ export default function PlanViewer({ plan, label, fullscreen = false, onClose }:
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
         onDoubleClick={() => zoomTo(k > 1 ? 1 : 2)}
-        className={`relative w-full touch-none overflow-hidden border border-paper-hair bg-paper ${
+        /* touch-action, not touch-none. At rest this viewer does not pan —
+           onPointerDown returns immediately below zoom 1 — but declaring
+           `none` told the browser to hand it every gesture anyway, so a
+           finger that landed on the drawing could not scroll the page past
+           it. `pan-y` lets the page keep vertical scrolling and only takes
+           the gesture once there is something to drag. */
+        style={{
+          ...(fullscreen ? {} : { aspectRatio: "595 / 575" }),
+          touchAction: k > 1 ? "none" : "pan-y",
+        }}
+        className={`relative w-full overflow-hidden border border-paper-hair bg-paper ${
           fullscreen ? "flex-1" : ""
         } ${k > 1 ? "cursor-grab active:cursor-grabbing" : ""}`}
-        style={fullscreen ? undefined : { aspectRatio: "595 / 575" }}
       >
         <svg
           viewBox={`0 0 ${plan.vbW} ${plan.vbH}`}

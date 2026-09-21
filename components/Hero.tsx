@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import gsap from "gsap";
 import { HERO } from "@/lib/assets";
 import { FrameSequence, supportsAvif } from "@/lib/sequence";
+import { ORDER, onFrame } from "@/lib/frame";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /** Broadcast so the entry curtain can lift on real readiness, not a timer. */
@@ -39,7 +40,7 @@ export default function Hero() {
     let seq: FrameSequence | null = null;
     let disposed = false;
     let progress = 0;
-    let raf = 0;
+    let stopFrame: (() => void) | null = null;
 
     const sizeCanvas = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -50,16 +51,16 @@ export default function Hero() {
       canvas.height = Math.round(h * dpr);
     };
 
-    /* Paint on rAF rather than inside the scroll callback: scroll events can
-       outpace the compositor, and painting twice in one frame is wasted work. */
+    /* Paint once per frame rather than inside the scroll callback: scroll
+       events can outpace the compositor, and painting twice in one frame is
+       wasted work. This runs on the page's single loop, ordered after Lenis
+       has advanced the scroll position and ScrollTrigger has read it, so the
+       frame painted is always the frame for where the page actually is. */
     let dirty = true;
     const tick = () => {
-      if (disposed) return;
-      if (dirty && seq) {
-        seq.draw(ctx, progress);
-        dirty = false;
-      }
-      raf = requestAnimationFrame(tick);
+      if (disposed || !dirty || !seq) return;
+      seq.draw(ctx, progress);
+      dirty = false;
     };
 
     const boot = async () => {
@@ -70,7 +71,7 @@ export default function Hero() {
       seq = new FrameSequence(wide ? set.desktop : set.mobile);
 
       sizeCanvas();
-      raf = requestAnimationFrame(tick);
+      stopFrame = onFrame(tick, ORDER.scrubbed);
 
       // Pass 1 — first frame. Painted BEFORE the canvas is revealed, not
       // after: an opaque canvas that has not been drawn to is a black
@@ -144,7 +145,7 @@ export default function Hero() {
 
     return () => {
       disposed = true;
-      cancelAnimationFrame(raf);
+      stopFrame?.();
       trigger.kill();
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onOrient);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /* Four chapters and one action. The page has more sections than this, but a
    navigation that lists every one of them is a table of contents, not a way
@@ -57,29 +58,53 @@ export default function Nav() {
   const [overHero, setOverHero] = useState(true);
   const [open, setOpen] = useState(false);
   const lastY = useRef(0);
+  const openRef = useRef(false);
   const progressRef = useRef<HTMLSpanElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
   /* Reveal on scroll up, retreat on scroll down. The bar never occupies the
-     frame while the reader is moving forward through the page. */
+     frame while the reader is moving forward through the page.
+
+     The handler used to run a querySelector and two forced layout reads —
+     getBoundingClientRect and scrollHeight — on every scroll event, then
+     write a transform straight after them. That is a read/write thrash on
+     the hottest path on the page, for two numbers that only change when the
+     page is re-measured. They are cached here and refreshed on the one event
+     that can invalidate them. */
+  const metrics = useRef({ heroH: 0, max: 1 });
   useEffect(() => {
+    const measure = () => {
+      const hero = document.querySelector("section[aria-labelledby='hero-heading']");
+      metrics.current.heroH = hero ? hero.getBoundingClientRect().height : 0;
+      metrics.current.max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    };
+    measure();
     const onScroll = () => {
       const y = window.scrollY;
+      const { heroH, max } = metrics.current;
       setSolid(y > 24);
-      const hero = document.querySelector("section[aria-labelledby='hero-heading']");
-      setOverHero(!hero || y < hero.getBoundingClientRect().height - 120);
+      setOverHero(!heroH || y < heroH - 120);
       // Reading progress. Orientation only — it never moves anything else.
       if (progressRef.current) {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+        progressRef.current.style.transform = `scaleX(${Math.min(1, y / max)})`;
       }
-      if (!open) setHidden(y > lastY.current && y > 220);
+      if (!openRef.current) setHidden(y > lastY.current && y > 220);
       lastY.current = y;
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", measure, { passive: true });
+    ScrollTrigger.addEventListener("refresh", measure);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measure);
+      ScrollTrigger.removeEventListener("refresh", measure);
+    };
+  }, []);
+
+  useEffect(() => {
+    openRef.current = open;
   }, [open]);
 
   // Escape closes, focus returns to the control that opened it.
@@ -118,7 +143,18 @@ export default function Nav() {
     setOpen(false);
     const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
     if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1.3 });
-    else el.scrollIntoView({ behavior: "smooth", block: "start" });
+    else
+      el.scrollIntoView({
+        // No Lenis means either the bundle has not booted or motion is
+        // reduced; in the second case a smooth glide is the wrong answer.
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start",
+      });
+    /* Record where we went. Without this the address bar never changes, so
+       Back leaves the site instead of returning to the previous section and
+       the reader cannot copy a link to what they are looking at.
+       MotionProvider listens for popstate and scrolls accordingly. */
+    if (location.hash !== href) history.pushState(null, "", href);
   };
 
   return (

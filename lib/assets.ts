@@ -175,69 +175,25 @@ export const A = {
 } as const;
 
 /**
- * Hero frame sequence.
+ * The hero still.
  *
- * Frames are sampled at equal cumulative visual distance rather than equal
- * time, so scrolling at a constant rate produces a constant rate of visual
- * change. AVIF is preferred; the WebP set is the fallback for browsers
- * without AVIF support.
+ * This was a 133-frame film scrubbed by scroll, with its own decode engine,
+ * an encoder script and 20MB of frames. It is now one photograph, by request.
+ * `width`/`height` are the file's real pixel dimensions and are declared so
+ * the browser reserves the space before the bytes arrive.
  */
-/* Frame counts come from the encode manifests rather than being written out
-   here. They were hardcoded and drifted the moment the sequence was
-   re-encoded: the manifest grew to 177 frames while this still said 154, so
-   the scrub would have ended a fifth of the way before the end of the film
-   with nothing to show for it. Now there is one source of truth. */
-import desktopFrames from "@/scripts/frames/desktop.json";
-import mobileFrames from "@/scripts/frames/mobile.json";
-
-/* The film opens on bare ground: the first third is groundworks, and a
-   visitor landing on the page met a dirt plot. The sequence now starts where
-   the architecture is first readable.
-
-   The two tiers are sampled independently by visual distance, so the same
-   moment is not the same frame number in both. The manifests hold each
-   frame's index in the source film, which is what makes the two starts
-   comparable: desktop f045 is source frame 92, mobile f023 is source frame
-   91 — the same shot, one frame apart. Move DESKTOP_FROM and re-derive
-   MOBILE_FROM from the manifests rather than guessing a proportion. */
-/* The hero directory is versioned, and that is not cosmetic.
-   /hero/** is served `public, max-age=31536000, immutable` — a year, never
-   revalidated, not even on a hard reload. The frame names are positional
-   (f045.webp), not content-addressed, so re-encoding the hero from a new
-   source film overwrote every path with different pictures while the old
-   bytes stayed pinned in every browser that had already been to the site.
-   Those visitors then scrubbed through a mixture of two different films:
-   the frames they had cached from the old one, and the frames they had not,
-   fetched fresh from the new one. It cannot be reproduced on a cold profile,
-   which is why every automated pass came back clean.
-
-   Bump HERO_REV whenever the frames are re-encoded. A new path cannot
-   collide with anything already cached, which is what makes `immutable`
-   honest rather than a trap. */
-const HERO_REV = "r2";
-
-const DESKTOP_FROM = 45;
-const MOBILE_FROM = 23;
-
-const DESKTOP_COUNT = (desktopFrames as number[]).length - DESKTOP_FROM + 1;
-const MOBILE_COUNT = (mobileFrames as number[]).length - MOBILE_FROM + 1;
-
 export const HERO = {
-  avif: {
-    desktop: { dir: `/hero/${HERO_REV}/avif/desktop`, count: DESKTOP_COUNT, from: DESKTOP_FROM },
-    mobile: { dir: `/hero/${HERO_REV}/avif/mobile`, count: MOBILE_COUNT, from: MOBILE_FROM },
-  },
-  webp: {
-    desktop: { dir: `/hero/${HERO_REV}/webp/desktop`, count: DESKTOP_COUNT, from: DESKTOP_FROM },
-    mobile: { dir: `/hero/${HERO_REV}/webp/mobile`, count: MOBILE_COUNT, from: MOBILE_FROM },
-  },
-  poster: `/hero/${HERO_REV}/poster.webp`,
-} as const;
-
-/* The frames the page actually paints first, so the preload in <head> cannot
-   drift from DESKTOP_FROM / MOBILE_FROM and fetch a file nothing requests. */
-const pad = (n: number) => String(n).padStart(3, "0");
-export const HERO_FIRST = {
-  desktop: `/hero/${HERO_REV}/avif/desktop/f${pad(DESKTOP_FROM)}.avif`,
-  mobile: `/hero/${HERO_REV}/avif/mobile/f${pad(MOBILE_FROM)}.avif`,
+  src: "/hero-still/streetscape.webp",
+  fallback: "/hero-still/streetscape.jpg",
+  /* The supplied file was 1000x560 — a 900px decode stretched across a
+     1440px hero. Resampled to 2400 with lanczos and a light unsharp so the
+     browser is not doing the upscaling with a bilinear filter. It adds no
+     detail that was not there; it only stops the enlargement looking soft.
+     Replacing the source with a higher-resolution original is a drop-in. */
+  w: 2400,
+  h: 1344,
+  alt:
+    "A residential street at sunset: two-storey homes with pitched roofs and " +
+    "covered porches set behind lawns and young trees, under a sky of pink and " +
+    "gold cloud.",
 } as const;

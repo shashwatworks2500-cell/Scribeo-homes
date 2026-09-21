@@ -1,4 +1,3 @@
-import Curtain from "@/components/Curtain";
 import MotionProvider from "@/components/MotionProvider";
 import Cursor from "@/components/Cursor";
 import Nav from "@/components/Nav";
@@ -36,7 +35,6 @@ import Footer from "@/components/Footer";
 export default function Page() {
   return (
     <>
-      <Curtain />
       <MotionProvider />
       <Cursor />
       <Nav />

@@ -167,8 +167,8 @@ export default function MotionProvider() {
        This is why a trigger could fire in the wrong place on a cold load. */
     document.fonts?.ready.then(() => ScrollTrigger.refresh());
 
-    /* And once the hero has painted, because its runway is the tallest
-       measurement on the page. */
+    /* And once the hero photograph has decoded, because it is the largest
+       element above the fold and everything below it moves when it lands. */
     const onHeroReady = () => ScrollTrigger.refresh();
     window.addEventListener("hero:ready", onHeroReady, { once: true });
 

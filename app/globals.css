@@ -52,45 +52,6 @@
   --ease-in-out-quiet: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-:root {
-  /* Hero scroll runway, in dvh so the box and the sticky child inside it
-     agree on what a viewport is — with vh they disagree by the height of a
-     mobile browser's chrome, and the difference shows up as dead scroll.
-     205vh was three-quarters of a minute of thumb for one shot. 180 desktop
-     and 155 portrait keep enough travel to scrub the film without stepping
-     (80vh and 55vh respectively, across 154 and 95 frames) and end promptly
-     once it has played. */
-  --hero-runway: 180dvh;
-}
-@media (max-width: 767px) {
-  :root { --hero-runway: 155dvh; }
-}
-
-/* Hero media stage.
-
-   The film is 16:9. Covering a portrait viewport with it throws most of the
-   frame away: at 390x844 the crop keeps only the middle 26% of the width,
-   and for the opening shot — an empty clearing ringed by forest — that
-   middle 26% is bare ground. A phone visitor met a blank brown rectangle,
-   and the empty-land-to-community arc the whole scrub is built on was
-   never visible to them.
-
-   Below square, the film becomes a band instead: 4:3 keeps 75% of the frame
-   width, enough for the clearing, both converging treelines and the full
-   run of houses, and the type takes the ground beneath it. At square and
-   wider the stage fills the viewport as before. Driven by aspect ratio, not
-   width, so a portrait tablet gets the band too. */
-.hero-stage {
-  position: absolute;
-  inset: 0;
-}
-@media (max-aspect-ratio: 1 / 1) {
-  .hero-stage {
-    inset: 13svh 0 auto 0;
-    aspect-ratio: 4 / 3;
-  }
-}
-
 @layer base {
   *,
   *::before,
@@ -314,13 +275,6 @@
 @media (min-width: 768px) and (min-height: 620px) {
   .pin-stage { height: 78vh; }
   .pin-stage--short { height: 74vh; }
-}
-
-/* Curtain failsafe: if the boot script's timer fires before React lifts the
-   curtain, remove it outright. The page underneath is fully server-rendered,
-   so this degrades to a complete, scrollable site rather than a blank screen. */
-html[data-curtain="failsafe"] #entry-curtain {
-  display: none !important;
 }
 
 /* ── Reduced motion ──────────────────────────────────────────

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 import { CONFIGS, CONTACT, FAQS, PRICE_RANGE } from "@/lib/content";
-import { HERO, HERO_FIRST } from "@/lib/assets";
+import { HERO } from "@/lib/assets";
 import "./globals.css";
 
 /* Display: high-contrast garamond. Echoes the inscribed roman capitals on the
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: SITE_NAME,
     url: SITE_URL,
-    images: [{ url: HERO.poster, width: 1920, height: 1080, alt: "Scribeo Homes at first light" }],
+    images: [{ url: HERO.src, width: HERO.w, height: HERO.h, alt: "Scribeo Homes at first light" }],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
@@ -60,7 +60,7 @@ const JSON_LD = {
       name: SITE_NAME,
       url: SITE_URL,
       description: SITE_DESCRIPTION,
-      image: `${SITE_URL}${HERO.poster}`,
+      image: `${SITE_URL}${HERO.src}`,
       telephone: CONTACT.phoneDisplay,
       email: CONTACT.email,
       numberOfAvailableAccommodationUnits: CONFIGS.length,
@@ -90,7 +90,7 @@ const JSON_LD = {
   name: SITE_NAME,
   url: SITE_URL,
   description: SITE_DESCRIPTION,
-  image: `${SITE_URL}${HERO.poster}`,
+  image: `${SITE_URL}${HERO.src}`,
   publisher: {
     "@type": "Organization",
     name: SITE_NAME,
@@ -136,17 +136,6 @@ setTimeout(function(){
     document.documentElement.classList.remove('js');
   }
 },2500);
-// Curtain failsafe. The curtain lifts from a React effect; if hydration never
-// happens (a chunk 404s, a slow network drops a script), that effect never
-// runs and the curtain would cover a fully-rendered page forever. This timer
-// is plain inline script with no dependency on the bundle, so it fires
-// regardless. CSS keyed on the attribute removes the curtain.
-setTimeout(function(){
-  if(document.documentElement.dataset.curtain!=='lifted'){
-    document.documentElement.dataset.curtain='failsafe';
-    document.documentElement.style.overflow='';
-  }
-},4500);
 `;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -154,25 +143,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
-        {/* First hero frame, preloaded per tier. `type` means a browser without
-            AVIF skips it rather than fetching a file it cannot decode; `media`
-            keeps phones off the 1536px set. */}
-        <link
-          rel="preload"
-          as="image"
-          href={HERO_FIRST.desktop}
-          type="image/avif"
-          media="(min-width: 768px)"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href={HERO_FIRST.mobile}
-          type="image/avif"
-          media="(max-width: 767px)"
-          fetchPriority="high"
-        />
+        {/* The hero photograph is the largest paint on the page, so it is
+            fetched at high priority rather than waiting to be discovered. */}
+        <link rel="preload" as="image" href={HERO.src} type="image/webp" fetchPriority="high" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}

@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { HERO } from "@/lib/assets";
 import { PRICE_RANGE } from "@/lib/content";
@@ -90,6 +92,29 @@ export default function Hero() {
             Book a site visit
           </a>
         </div>
+
+        {/* The concierge, offered rather than imposed. Deliberately smaller
+            than the property statement above it: a reader who wants to browse
+            never has to notice it, and a reader with a question does not have
+            to hunt for the answer. */}
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent("scribeo:ask"))}
+          aria-label="Open the concierge"
+          aria-keyshortcuts="Meta+K Control+K"
+          className="group mt-[clamp(1.25rem,3vh,1.75rem)] flex w-full max-w-[26rem] items-center gap-3 rounded-full border border-hair bg-paper/70 px-4 py-2.5 text-left backdrop-blur-sm transition-colors duration-300 hover:border-rule focus-visible:border-rule"
+        >
+          <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 text-ink-faint" fill="none" stroke="currentColor" strokeWidth="1.3">
+            <circle cx="7" cy="7" r="4.6" />
+            <path d="M10.4 10.4 14 14" strokeLinecap="square" />
+          </svg>
+          <span className="t-meta flex-1 truncate text-ink-dim">
+            Ask about price, plans, amenities, location…
+          </span>
+          <kbd aria-hidden="true" className="t-meta hidden shrink-0 text-ink-faint sm:block">
+            ⌘K
+          </kbd>
+        </button>
       </div>
     </section>
   );

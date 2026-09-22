@@ -61,7 +61,9 @@ export default function FloorPlans() {
           role="tablist"
           aria-label="Configuration"
           onKeyDown={onKeyDown}
-          className="inline-flex rounded-full border border-hair p-1"
+          /* -mx-gutter + px lets the row bleed to the screen edge and scroll
+             itself on a narrow phone, instead of widening the page. */
+          className="-mx-[clamp(1.1rem,5vw,2rem)] flex max-w-full snap-x gap-1 overflow-x-auto px-[clamp(1.1rem,5vw,2rem)] sm:mx-0 sm:inline-flex sm:rounded-full sm:border sm:border-hair sm:p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {CONFIGS.map((c, i) => (
             <button
@@ -73,8 +75,10 @@ export default function FloorPlans() {
               aria-selected={i === active}
               tabIndex={i === active ? 0 : -1}
               onClick={() => setActive(i)}
-              className={`t-meta rounded-full px-4 py-2 transition-colors duration-300 ${
-                i === active ? "bg-travertine text-paper" : "text-ink-dim hover:text-ink"
+              className={`t-meta shrink-0 snap-start rounded-full px-4 py-2 transition-colors duration-300 ${
+                i === active
+                  ? "bg-travertine text-paper shadow-[inset_0_0_0_1px_var(--color-travertine)]"
+                  : "border border-hair text-ink-dim hover:border-rule hover:text-ink sm:border-transparent"
               }`}
             >
               {c.bhk}

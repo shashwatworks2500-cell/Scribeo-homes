@@ -174,9 +174,16 @@ export default function Residences() {
                   className="object-cover transition-transform duration-[900ms] ease-[var(--ease-out-quiet)] group-hover:scale-[1.03]"
                 />
               </div>
+              {/* Hierarchy, in the order a buyer reads it: what it is, what
+                  it is called, how big, what it costs, how to see the plan. */}
               <p className="t-display-s mt-5 text-ink">{c.bhk}</p>
-              <p className="t-meta mt-1 text-ink-dim">
-                {c.builtUpSqft.toLocaleString("en-IN")} sq ft · from {c.priceFrom}
+              <p className="t-meta text-ink-faint">{c.label}</p>
+              <p className="t-display-s mt-3 text-ink">
+                {c.builtUpSqft.toLocaleString("en-IN")} <span className="t-meta">sq ft</span>
+              </p>
+              <p className="t-display-s text-ink">
+                <span className="t-meta text-ink-faint">From </span>
+                {c.priceFrom}
               </p>
               <span className="t-meta mt-3 inline-flex items-baseline gap-2 border-b border-travertine/60 pb-0.5 text-ink transition-colors duration-300 group-hover:border-travertine">
                 View plan
@@ -188,6 +195,10 @@ export default function Residences() {
           </li>
         ))}
       </ul>
+
+      <p className="t-meta mt-6 text-ink-faint">
+        Indicative pricing · taxes and statutory charges additional
+      </p>
 
       {open ? <Detail config={open} onClose={() => setOpen(null)} /> : null}
     </section>

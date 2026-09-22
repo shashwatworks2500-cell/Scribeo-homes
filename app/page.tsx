@@ -1,6 +1,7 @@
 import MotionProvider from "@/components/MotionProvider";
 import Cursor from "@/components/Cursor";
 import Nav from "@/components/Nav";
+import Concierge from "@/components/Concierge";
 import MobileBar from "@/components/MobileBar";
 import Hero from "@/components/Hero";
 import Glance from "@/components/Glance";
@@ -8,6 +9,7 @@ import Intro from "@/components/Intro";
 import Residences from "@/components/Residences";
 import FloorPlans from "@/components/FloorPlans";
 import Amenities from "@/components/Amenities";
+import Gallery from "@/components/Gallery";
 import Location from "@/components/Location";
 import Specs from "@/components/Specs";
 import Faq from "@/components/Faq";
@@ -40,6 +42,7 @@ export default function Page() {
       <MotionProvider />
       <Cursor />
       <Nav />
+      <Concierge />
       <div id="top" />
       <main id="main">
         <Hero />
@@ -48,6 +51,7 @@ export default function Page() {
         <Residences />
         <FloorPlans />
         <Amenities />
+        <Gallery />
         <Location />
         <Specs />
         <Faq />

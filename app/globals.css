@@ -317,3 +317,20 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Concierge entrance. 200–320ms, opacity and a short rise — nothing scales,
+   nothing bounces, and the panel is interactive from the first frame. */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.concierge-panel {
+  box-shadow: 0 30px 80px -40px rgba(22, 20, 15, 0.7);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .concierge-panel { animation: riseIn 260ms var(--ease-out-quiet) both; }
+}

@@ -20,8 +20,8 @@ export default function Glance() {
             <span aria-hidden="true" className="t-numeral block text-ink-faint">
               {n}
             </span>
-            <dd className="t-display-s mt-3 text-ink">{v}</dd>
-            <dt className="t-label mt-2 text-ink-faint">{k}</dt>
+            <dt className="t-label mt-3 text-ink-faint">{k}</dt>
+            <dd className="t-display-s mt-2 text-ink">{v}</dd>
           </div>
         ))}
       </dl>

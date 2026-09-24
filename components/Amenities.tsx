@@ -6,77 +6,81 @@ import { A } from "@/lib/assets";
 import { AMENITIES } from "@/lib/content";
 
 /**
- * Amenities, in four categories.
+ * Amenities.
  *
- * Twenty-six provisions used to be listed at once across a pinned stage.
- * That is a specification sheet, not a reason to visit. Each category now
- * shows one photograph and the three or four worth knowing before you come;
- * the rest open in place for anyone who wants the full list.
+ * Four categories, one open at a time: the navigation stays visible on the
+ * left so the reader always knows what else there is, and only the panel on
+ * the right changes. Twenty-six provisions listed at once is a specification
+ * sheet; four choices with the important ones named is a decision.
  */
 export default function Amenities() {
-  const [open, setOpen] = useState<string | null>(null);
+  const [i, setI] = useState(0);
+  const group = AMENITIES[i];
+  const asset = A[group.image];
 
   return (
-    <section id="amenities" aria-labelledby="amen-heading" className="section-y gutter">
-      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <h2 id="amen-heading" className="t-display-m max-w-[14ch] text-ink">
-          What you get.
-        </h2>
-        <p className="t-meta max-w-[30ch] text-ink-dim">
-          Shared provisions, built in the same materials as the homes.
-        </p>
-      </div>
+    <section id="amenities" aria-labelledby="amen-heading" className="section-y-lg bg-ground">
+      <div className="shell gutter">
+        <div className="grid grid-cols-12 gap-y-4 md:gap-x-[clamp(2rem,5vw,4rem)]">
+          <h2 id="amen-heading" className="t-display-m col-span-12 text-ink md:col-span-5">
+            Amenities
+          </h2>
+          <p className="t-body col-span-12 max-w-[34ch] self-end text-ink-dim md:col-span-6 md:col-start-7">
+            Shared provisions, built in the same materials as the homes.
+          </p>
+        </div>
 
-      <div className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 gap-x-[clamp(1.5rem,3vw,2.5rem)] gap-y-[clamp(2.5rem,6vh,3.5rem)] sm:grid-cols-2">
-        {AMENITIES.map((group) => {
-          const shown = open === group.group;
-          const lead: readonly string[] = group.lead;
-          const rest = group.items.filter((i) => !lead.includes(i));
-          const asset = A[group.image];
-          return (
-            <article key={group.group} data-reveal>
-              <div data-reveal-clip className="relative aspect-[16/10] overflow-hidden bg-ground-2">
-                <Image
-                  src={asset.src}
-                  alt={asset.alt}
-                  fill
-                  sizes="(max-width: 640px) 100vw, 48vw"
-                  quality={80}
-                  className="object-cover"
+        <div className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-12 gap-y-7 lg:gap-x-[clamp(2rem,5vw,4rem)]">
+          {/* Category navigation. A row that scrolls itself on a phone, a
+              column that stays put beside the panel on a wide screen. */}
+          <div
+            role="tablist"
+            aria-label="Amenity category"
+            aria-orientation="vertical"
+            className="-mx-[clamp(1.25rem,5vw,6.5rem)] col-span-12 flex gap-[clamp(1.25rem,3vw,2rem)] overflow-x-auto px-[clamp(1.25rem,5vw,6.5rem)] lg:mx-0 lg:col-span-3 lg:flex-col lg:gap-0 lg:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {AMENITIES.map((g, n) => (
+              <button
+                key={g.group}
+                role="tab"
+                aria-selected={n === i}
+                aria-controls="amenity-panel"
+                tabIndex={n === i ? 0 : -1}
+                onClick={() => setI(n)}
+                className={`t-display-s relative shrink-0 whitespace-nowrap pb-3 text-left transition-colors duration-300 lg:border-b lg:border-[var(--color-hair)] lg:py-4 ${
+                  n === i ? "text-ink" : "text-ink-faint hover:text-ink-dim"
+                }`}
+              >
+                {g.group}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-px origin-left bg-ink transition-transform duration-400 ease-[var(--ease-out-quiet)]"
+                  style={{ transform: `scaleX(${n === i ? 1 : 0})` }}
                 />
-              </div>
-              <h3 className="t-display-s mt-5 text-ink">{group.group}</h3>
-              <ul data-collapsed={!shown} className="mt-3 flex flex-wrap gap-x-2 gap-y-2">
-                {group.items.map((item) => (
-                  <li
-                    key={item}
-                    className={`t-meta rounded-full border border-hair px-3 py-1 text-ink-dim ${
-                      lead.includes(item) ? "" : "is-extra"
-                    }`}
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              </button>
+            ))}
+          </div>
 
-              {rest.length ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setOpen(shown ? null : group.group)}
-                    aria-expanded={shown}
-                    className="js-only t-meta mt-4 inline-flex items-baseline gap-2 border-b border-hair pb-0.5 text-ink-dim transition-colors duration-300 hover:border-travertine hover:text-ink"
-                  >
-                    {shown ? "Show fewer" : `View all ${group.items.length}`}
-                    <span aria-hidden="true" className="text-travertine">
-                      {shown ? "−" : "+"}
-                    </span>
-                  </button>
-                </>
-              ) : null}
-            </article>
-          );
-        })}
+          <div id="amenity-panel" role="tabpanel" key={group.group} className="col-span-12 lg:col-span-9">
+            <div className="relative aspect-[16/9] overflow-hidden bg-ground-2 motion-safe:animate-[fadeIn_420ms_var(--ease-out-quiet)_both]">
+              <Image
+                src={asset.src}
+                alt={asset.alt}
+                fill
+                sizes="(max-width: 1024px) 100vw, 68vw"
+                quality={82}
+                className="object-cover"
+              />
+            </div>
+            <ul className="mt-6 grid gap-x-8 gap-y-2 motion-safe:animate-[riseIn_420ms_var(--ease-out-quiet)_both] sm:grid-cols-2">
+              {group.items.map((item) => (
+                <li key={item} className="t-body border-b hair py-2.5 text-ink-dim">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
   );

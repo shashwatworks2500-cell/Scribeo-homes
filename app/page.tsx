@@ -1,7 +1,6 @@
 import MotionProvider from "@/components/MotionProvider";
-import Cursor from "@/components/Cursor";
 import Nav from "@/components/Nav";
-import Concierge from "@/components/Concierge";
+import Search from "@/components/Search";
 import MobileBar from "@/components/MobileBar";
 import Hero from "@/components/Hero";
 import Glance from "@/components/Glance";
@@ -13,6 +12,7 @@ import Gallery from "@/components/Gallery";
 import Location from "@/components/Location";
 import Specs from "@/components/Specs";
 import Faq from "@/components/Faq";
+import Closer from "@/components/Closer";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -40,9 +40,8 @@ export default function Page() {
   return (
     <>
       <MotionProvider />
-      <Cursor />
       <Nav />
-      <Concierge />
+      <Search />
       <div id="top" />
       <main id="main">
         <Hero />
@@ -55,6 +54,7 @@ export default function Page() {
         <Location />
         <Specs />
         <Faq />
+        <Closer />
         <Contact />
       </main>
       <Footer />

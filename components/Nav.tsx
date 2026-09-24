@@ -14,10 +14,10 @@ const LINKS = [
 
 type Lenis = { scrollTo: (t: string | HTMLElement, o?: Record<string, unknown>) => void };
 
-const askConcierge = () => window.dispatchEvent(new CustomEvent("scribeo:ask"));
+const openSearch = () => window.dispatchEvent(new CustomEvent("scribeo:search"));
 
-/** The concierge entry. A named feature with its shortcut, not a search icon. */
-function ConciergeButton({ variant, onPick }: { variant: "bar" | "row"; onPick?: () => void }) {
+/** Search. A refined utility control, not a marketing CTA. */
+function SearchButton({ variant, onPick }: { variant: "bar" | "row"; onPick?: () => void }) {
   const glass = (
     <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.3">
       <circle cx="7" cy="7" r="4.6" />
@@ -30,25 +30,26 @@ function ConciergeButton({ variant, onPick }: { variant: "bar" | "row"; onPick?:
         type="button"
         onClick={() => {
           onPick?.();
-          askConcierge();
+          openSearch();
         }}
         className="t-display-s flex w-full items-center gap-3 border-b hair pb-4 text-left text-ink"
       >
         {glass}
-        <span>Concierge</span>
+        <span>Search</span>
       </button>
     );
   return (
     <button
       type="button"
-      onClick={askConcierge}
-      aria-label="Open the concierge"
+      onClick={openSearch}
+      aria-label="Search residences"
       aria-keyshortcuts="Meta+K Control+K"
-      className="t-meta group flex items-center gap-2.5 rounded-full border border-hair px-3.5 py-1.5 text-ink-dim transition-colors duration-300 hover:border-rule hover:text-ink"
+      className="group flex items-center gap-2.5 text-ink-dim transition-colors duration-200 hover:text-ink"
     >
-      {glass}
-      <span>Concierge</span>
-      <kbd aria-hidden="true" className="t-meta text-ink-faint transition-colors group-hover:text-ink-dim">⌘K</kbd>
+      <span className="block transition-transform duration-300 ease-[var(--ease-out-quiet)] group-hover:-translate-y-px">
+        {glass}
+      </span>
+      <span className="t-nav">Search</span>
     </button>
   );
 }
@@ -173,7 +174,7 @@ export default function Nav() {
           borderBottom: `1px solid ${solid && !open && !overHero ? "var(--color-hair)" : "transparent"}`,
         }}
       >
-        <div className="gutter flex h-[clamp(4rem,9vh,5.5rem)] items-center justify-between">
+        <div className="shell gutter flex h-[clamp(3.75rem,8vh,4.75rem)] items-center justify-between">
           <a
             href="#top"
             onClick={(e) => go(e, "#top")}
@@ -189,21 +190,21 @@ export default function Nav() {
                   <a
                     href={l.href}
                     onClick={(e) => go(e, l.href)}
-                    className="t-meta text-ink-dim transition-colors duration-200 hover:text-ink"
+                    className="t-nav text-ink-dim transition-colors duration-200 hover:text-ink"
                   >
                     {l.label}
                   </a>
                 </li>
               ))}
               <li className="ml-[clamp(0.5rem,1.4vw,1.5rem)]">
-                <ConciergeButton variant="bar" />
+                <SearchButton variant="bar" />
               </li>
               <li>
                 <a
                   href="#enquire"
                   onClick={(e) => go(e, "#enquire")}
                   data-cursor="open"
-                  className="t-meta border-b border-travertine pb-1.5 text-ink transition-colors duration-200 hover:text-travertine"
+                  className="t-nav text-ink transition-colors duration-200 hover:text-travertine"
                 >
                   Enquire
                 </a>
@@ -254,7 +255,7 @@ export default function Nav() {
       >
         <nav aria-label="Primary" className="gutter flex h-full flex-col justify-center">
           <div className="mb-[clamp(2rem,5vh,3rem)]">
-            <ConciergeButton variant="row" onPick={() => setOpen(false)} />
+            <SearchButton variant="row" onPick={() => setOpen(false)} />
           </div>
           <ul className="space-y-[clamp(1rem,3.2vh,2rem)]">
             {LINKS.map((l, i) => (

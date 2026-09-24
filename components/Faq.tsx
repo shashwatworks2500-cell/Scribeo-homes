@@ -1,67 +1,70 @@
-"use client";
-
-import { useState } from "react";
 import { FAQS } from "@/lib/content";
 
 /**
  * Questions.
  *
- * Eight at rest — the ones a buyer asks first — and the remaining
- * twenty-eight behind one control. This was a thirty-six question index with
- * its own search field and eight category filters, which is a good tool and
- * far too much furniture for a page whose job is to get someone to visit.
+ * Title left, accordion right, one answer open at a time — enforced by the
+ * browser, not by React. A set of <details> sharing a `name` is an exclusive
+ * accordion in HTML, so it needs no state, works with JavaScript off, and
+ * every answer is in the served document for a crawler to read.
  *
- * Native <details> throughout, so every answer is in the served HTML and
- * open to search engines and to a reader with JavaScript off.
+ * The first eight show at rest. The remaining twenty-eight are rendered and
+ * hidden with CSS keyed on html.js, so turning JavaScript off reveals them
+ * rather than losing them.
  */
 export default function Faq() {
-  const [all, setAll] = useState(false);
-  /* Every question is rendered; the overflow is hidden with CSS, not
-     omitted, so the answers stay in the served HTML with JavaScript off. */
   const ordered = [...FAQS.filter((f) => f.top), ...FAQS.filter((f) => !f.top)];
 
   return (
-    <section id="faq" aria-labelledby="faq-heading" className="section-y gutter">
-      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <h2 id="faq-heading" className="t-display-m max-w-[14ch] text-ink">
-          Questions.
-        </h2>
-        <p className="t-meta max-w-[30ch] text-ink-dim">
-          Anything not answered here, the site office will answer on the phone.
-        </p>
-      </div>
+    <section id="faq" aria-labelledby="faq-heading" className="section-y-lg bg-ground">
+      <div className="shell gutter grid grid-cols-12 gap-y-8 lg:gap-x-[clamp(2rem,5vw,4rem)]">
+        <div className="col-span-12 lg:col-span-4">
+          <h2 id="faq-heading" className="t-display-m text-ink">
+            Questions
+          </h2>
+          <p className="t-body mt-5 max-w-[30ch] text-ink-dim">
+            Anything not answered here, the site office will answer on the phone.
+          </p>
+        </div>
 
-      <div
-        data-collapsed={!all}
-        className="mt-[clamp(2rem,5vh,3rem)] max-w-[52rem] border-t hair"
-      >
-        {ordered.map((f) => (
-          <details key={f.q} className={`group border-b hair ${f.top ? "" : "is-extra"}`}>
-            <summary className="flex cursor-pointer list-none items-baseline justify-between gap-5 py-4 marker:hidden">
-              <span className="t-display-s text-ink">{f.q}</span>
-              <span
-                aria-hidden="true"
-                className="t-display-s shrink-0 text-travertine transition-transform duration-300 group-open:rotate-45"
-              >
-                +
-              </span>
-            </summary>
-            <p className="measure-wide pb-5 text-ink-dim">{f.a}</p>
-          </details>
-        ))}
-      </div>
+        <div id="faq-list" data-collapsed className="col-span-12 border-t hair lg:col-span-8">
+          {ordered.map((f) => (
+            <details
+              key={f.q}
+              name="scribeo-faq"
+              className={`group border-b hair ${f.top ? "" : "is-extra"}`}
+            >
+              <summary className="flex cursor-pointer list-none items-baseline justify-between gap-5 py-5 marker:hidden">
+                <span className="t-display-s text-ink">{f.q}</span>
+                <span
+                  aria-hidden="true"
+                  className="t-display-s shrink-0 text-travertine transition-transform duration-300 ease-[var(--ease-out-quiet)] group-open:rotate-45"
+                >
+                  +
+                </span>
+              </summary>
+              <p className="t-body measure-wide pb-6 text-ink-dim">{f.a}</p>
+            </details>
+          ))}
 
-      <button
-        type="button"
-        onClick={() => setAll((v) => !v)}
-        aria-expanded={all}
-        className="js-only t-meta mt-6 inline-flex items-baseline gap-2 border-b border-hair pb-0.5 text-ink-dim transition-colors duration-300 hover:border-travertine hover:text-ink"
-      >
-        {all ? "Show the first eight" : `View all ${FAQS.length} questions`}
-        <span aria-hidden="true" className="text-travertine">
-          {all ? "−" : "+"}
-        </span>
-      </button>
+          {/* Plain checkbox, no script: checking it clears the collapse. */}
+          <input id="faq-all" type="checkbox" className="peer sr-only" />
+          <label
+            htmlFor="faq-all"
+            className="btn-text mt-6 cursor-pointer text-ink-dim peer-checked:hidden"
+          >
+            View all {FAQS.length} questions
+            <span aria-hidden="true" className="arrow text-travertine">→</span>
+          </label>
+          <label
+            htmlFor="faq-all"
+            className="btn-text mt-6 hidden cursor-pointer text-ink-dim peer-checked:inline-flex"
+          >
+            Show the first eight
+            <span aria-hidden="true" className="arrow text-travertine">→</span>
+          </label>
+        </div>
+      </div>
     </section>
   );
 }

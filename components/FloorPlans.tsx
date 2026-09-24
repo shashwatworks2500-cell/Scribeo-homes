@@ -50,7 +50,8 @@ export default function FloorPlans() {
   };
 
   return (
-    <section id="plans" aria-labelledby="plans-heading" className="section-y gutter bg-ground-2">
+    <section id="plans" aria-labelledby="plans-heading" className="section-y-lg bg-ground-2">
+      <div className="shell gutter">
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
         <h2 id="plans-heading" className="t-display-m max-w-[13ch] text-ink">
           Floor plans.
@@ -63,7 +64,7 @@ export default function FloorPlans() {
           onKeyDown={onKeyDown}
           /* -mx-gutter + px lets the row bleed to the screen edge and scroll
              itself on a narrow phone, instead of widening the page. */
-          className="-mx-[clamp(1.1rem,5vw,2rem)] flex max-w-full snap-x gap-1 overflow-x-auto px-[clamp(1.1rem,5vw,2rem)] sm:mx-0 sm:inline-flex sm:rounded-full sm:border sm:border-hair sm:p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="-mx-[clamp(1.25rem,5vw,6.5rem)] flex max-w-full gap-[clamp(1.25rem,3vw,2rem)] overflow-x-auto px-[clamp(1.25rem,5vw,6.5rem)] sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {CONFIGS.map((c, i) => (
             <button
@@ -75,24 +76,26 @@ export default function FloorPlans() {
               aria-selected={i === active}
               tabIndex={i === active ? 0 : -1}
               onClick={() => setActive(i)}
-              className={`t-meta shrink-0 snap-start rounded-full px-4 py-2 transition-colors duration-300 ${
-                i === active
-                  ? "bg-travertine text-paper shadow-[inset_0_0_0_1px_var(--color-travertine)]"
-                  : "border border-hair text-ink-dim hover:border-rule hover:text-ink sm:border-transparent"
+              className={`t-display-s relative shrink-0 pb-3 transition-colors duration-300 ${
+                i === active ? "text-ink" : "text-ink-faint hover:text-ink-dim"
               }`}
             >
               {c.bhk}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-px origin-left bg-ink transition-transform duration-400 ease-[var(--ease-out-quiet)]"
+                style={{ transform: `scaleX(${i === active ? 1 : 0})` }}
+              />
             </button>
           ))}
         </div>
       </div>
 
       <div className="mt-[clamp(2rem,5vh,3rem)] grid grid-cols-12 gap-y-8 lg:gap-x-[clamp(2rem,5vw,4rem)]">
-        <div className="col-span-12 lg:col-span-8">
-          <PlanViewer key={cfg.id} plan={PLANS[cfg.id]} label={cfg.bhk} />
-        </div>
-
-        <div className="col-span-12 lg:col-span-4">
+        {/* Information first in the source so a screen reader and a phone
+            both meet the numbers before the drawing; the grid puts it left
+            of a 65% canvas on a wide screen. */}
+        <div className="order-2 col-span-12 lg:order-1 lg:col-span-4">
           <p className="t-label text-travertine">{cfg.label}</p>
           <p className="t-display-m mt-3 text-ink">
             {cfg.builtUpSqft.toLocaleString("en-IN")} <span className="t-display-s">sq ft</span>
@@ -115,18 +118,20 @@ export default function FloorPlans() {
             onClick={() =>
               window.dispatchEvent(new CustomEvent("scribeo:enquire", { detail: { config: cfg.bhk } }))
             }
-            className="group mt-7 inline-flex items-baseline gap-3 border-b border-travertine pb-2"
+            className="btn btn-primary mt-7"
           >
-            <span className="t-display-s text-ink">Request this plan</span>
-            <span aria-hidden="true" className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
+            Request This Plan
           </button>
 
           <p className="t-meta mt-6 text-ink-faint">
             Plans are indicative and not to scale. Dimensions are nominal.
           </p>
         </div>
+
+        <div className="order-1 col-span-12 lg:order-2 lg:col-span-8">
+          <PlanViewer key={cfg.id} plan={PLANS[cfg.id]} label={cfg.bhk} />
+        </div>
+      </div>
       </div>
     </section>
   );

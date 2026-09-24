@@ -1,206 +1,155 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { A } from "@/lib/assets";
-import { CONFIGS, CONTACT, type Config } from "@/lib/content";
-import { PLANS, roomDims } from "@/lib/plans";
+import { CONFIGS } from "@/lib/content";
+import { PLANS } from "@/lib/plans";
 
 /**
- * Find your residence.
+ * Residences.
  *
- * Four cards, four facts each: what it is, how big, what it costs, what it
- * looks like. Everything else — the plan, the room dimensions, the price
- * band — opens in a panel, so the page stays a place to choose from rather
- * than a document to read.
+ * One selector, one residence at a time. Four stacked cards would make the
+ * reader scroll to compare what a tab row lets them flick between, and the
+ * numbers that decide a purchase — area, price, bedrooms — sit in the same
+ * place every time so they can be read across configurations by eye.
  *
- * Dimensions come from the drawn plans, so the card and the drawing cannot
- * disagree.
+ * On a phone the tabs scroll themselves at the screen edge; they never widen
+ * the page.
  */
-
-const KEY_ROOMS = ["Living & Dining", "Master Bedroom", "Bedroom", "Kitchen", "Balcony"];
-
-function keyDimensions(id: string) {
-  const rooms = PLANS[id]?.rooms ?? [];
-  return KEY_ROOMS.flatMap((name) => {
-    const room = rooms.find((r) => r.name === name);
-    return room ? [{ name: room.name, dims: roomDims(room) }] : [];
-  });
-}
-
 const bedrooms = (id: string) => (PLANS[id]?.rooms ?? []).filter((r) => /bedroom/i.test(r.name)).length;
-const baths = (id: string) => (PLANS[id]?.rooms ?? []).filter((r) => /bath/i.test(r.name)).length;
-
-function Detail({ config, onClose }: { config: Config; onClose: () => void }) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
-    lenis?.stop();
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      lenis?.start();
-      document.body.style.overflow = prev;
-    };
-  }, [onClose]);
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${config.bhk} — ${config.label}`}
-      className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center"
-    >
-      <button
-        type="button"
-        aria-label="Close"
-        onClick={onClose}
-        className="absolute inset-0 bg-ink/25 backdrop-blur-[2px]"
-      />
-      <div className="relative max-h-[92svh] w-full overflow-y-auto overscroll-contain bg-paper sm:max-w-[46rem]">
-        <div className="gutter py-[clamp(1.75rem,4vh,2.75rem)]">
-          <div className="flex items-start justify-between gap-6">
-            <div>
-              <p className="t-label text-travertine">{config.label}</p>
-              <h3 className="t-display-m mt-2 text-ink">{config.bhk}</h3>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="t-meta -mr-1 shrink-0 border-b border-hair pb-0.5 text-ink-dim transition-colors hover:border-rule hover:text-ink"
-            >
-              Close
-            </button>
-          </div>
-
-          <div className="mt-7 border border-paper-hair bg-ground-2">
-            <Image
-              src={config.plan}
-              alt={`${config.bhk} floor plan`}
-              width={843}
-              height={722}
-              className="h-auto w-full"
-            />
-          </div>
-
-          <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
-            {[
-              ["Built-up", `${config.builtUpSqft.toLocaleString("en-IN")} sq ft`],
-              ["Bedrooms", String(bedrooms(config.id))],
-              ["Bathrooms", String(baths(config.id))],
-              ["Price band", `${config.priceFrom} – ${config.priceTo}`],
-            ].map(([k, v]) => (
-              <div key={k}>
-                <dt className="t-label text-ink-faint">{k}</dt>
-                <dd className="t-display-s mt-1.5 text-ink">{v}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <dl className="mt-7 border-t hair">
-            {keyDimensions(config.id).map(({ name, dims }) => (
-              <div key={name} className="flex items-baseline justify-between gap-6 border-b hair py-3">
-                <dt className="t-meta text-ink-dim">{name}</dt>
-                <dd className="t-meta text-ink">{dims}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4">
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                window.dispatchEvent(new CustomEvent("scribeo:enquire", { detail: { config: config.bhk } }));
-              }}
-              className="group inline-flex items-baseline gap-3 border-b border-travertine pb-2"
-            >
-              <span className="t-display-s text-ink">Request details</span>
-              <span aria-hidden="true" className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1">
-                →
-              </span>
-            </button>
-            <a
-              href={CONTACT.phoneHref}
-              className="t-meta border-b border-hair pb-1 text-ink-dim transition-colors hover:border-rule hover:text-ink"
-            >
-              Or call {CONTACT.phoneDisplay}
-            </a>
-          </div>
-
-          <p className="t-meta mt-6 text-ink-faint">
-            Plans are indicative and not to scale; dimensions are nominal. Prices are indicative.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Residences() {
-  const [open, setOpen] = useState<Config | null>(null);
+  const [active, setActive] = useState(2);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const c = CONFIGS[active];
+
+  useEffect(() => {
+    const onPick = (e: Event) => {
+      const id = (e as CustomEvent<{ id?: string }>).detail?.id;
+      const i = CONFIGS.findIndex((x) => x.id === id);
+      if (i >= 0) setActive(i);
+    };
+    window.addEventListener("scribeo:config", onPick);
+    return () => window.removeEventListener("scribeo:config", onPick);
+  }, []);
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const last = CONFIGS.length - 1;
+    let next: number | null = null;
+    if (e.key === "ArrowRight") next = active === last ? 0 : active + 1;
+    if (e.key === "ArrowLeft") next = active === 0 ? last : active - 1;
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = last;
+    if (next === null) return;
+    e.preventDefault();
+    setActive(next);
+    tabs.current[next]?.focus();
+  };
+
+  const asset = A[c.image];
 
   return (
-    <section id="residences" aria-labelledby="res-heading" className="section-y gutter">
-      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <h2 id="res-heading" className="t-display-m max-w-[14ch] text-ink">
-          Find your residence.
-        </h2>
-        <p className="t-meta max-w-[30ch] text-ink-dim">
-          Four layouts, 753 to 2,333 sq ft. Open one for its plan and room sizes.
-        </p>
-      </div>
+    <section id="residences" aria-labelledby="res-heading" className="section-y-lg bg-ground">
+      <div className="shell gutter">
+        <div className="grid grid-cols-12 gap-y-4 md:gap-x-[clamp(2rem,5vw,4rem)]">
+          <h2 id="res-heading" className="t-display-m col-span-12 text-ink md:col-span-5">
+            Residences
+          </h2>
+          <p className="t-body col-span-12 max-w-[34ch] self-end text-ink-dim md:col-span-6 md:col-start-7">
+            Four configurations, 753 to 2,333 sq ft, in a single low-rise development.
+          </p>
+        </div>
 
-      <ul className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 gap-x-[clamp(1.25rem,3vw,2.5rem)] gap-y-[clamp(2rem,5vh,3rem)] sm:grid-cols-2 lg:grid-cols-4">
-        {CONFIGS.map((c) => (
-          <li key={c.id} data-reveal>
+        <div
+          role="tablist"
+          aria-label="Configuration"
+          onKeyDown={onKeyDown}
+          className="-mx-[clamp(1.25rem,5vw,6.5rem)] mt-[clamp(2.5rem,6vh,4rem)] flex gap-[clamp(1.5rem,4vw,3rem)] overflow-x-auto border-b hair px-[clamp(1.25rem,5vw,6.5rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {CONFIGS.map((x, i) => (
             <button
-              type="button"
-              onClick={() => setOpen(c)}
-              className="group block w-full text-left"
-              aria-label={`${c.bhk}, ${c.builtUpSqft} square feet, from ${c.priceFrom} — view plan`}
+              key={x.id}
+              ref={(el) => { tabs.current[i] = el; }}
+              role="tab"
+              aria-selected={i === active}
+              aria-controls="residence-panel"
+              tabIndex={i === active ? 0 : -1}
+              onClick={() => setActive(i)}
+              className={`relative flex shrink-0 items-baseline gap-3 pb-4 transition-colors duration-300 ${
+                i === active ? "text-ink" : "text-ink-faint hover:text-ink-dim"
+              }`}
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-ground-2">
-                <Image
-                  src={A[c.image].src}
-                  alt={A[c.image].alt}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 24vw"
-                  quality={80}
-                  className="object-cover transition-transform duration-[900ms] ease-[var(--ease-out-quiet)] group-hover:scale-[1.03]"
-                />
-              </div>
-              {/* Hierarchy, in the order a buyer reads it: what it is, what
-                  it is called, how big, what it costs, how to see the plan. */}
-              <p className="t-display-s mt-5 text-ink">{c.bhk}</p>
-              <p className="t-meta text-ink-faint">{c.label}</p>
-              <p className="t-display-s mt-3 text-ink">
-                {c.builtUpSqft.toLocaleString("en-IN")} <span className="t-meta">sq ft</span>
-              </p>
-              <p className="t-display-s text-ink">
-                <span className="t-meta text-ink-faint">From </span>
-                {c.priceFrom}
-              </p>
-              <span className="t-meta mt-3 inline-flex items-baseline gap-2 border-b border-travertine/60 pb-0.5 text-ink transition-colors duration-300 group-hover:border-travertine">
-                View plan
-                <span aria-hidden="true" className="text-travertine transition-transform duration-300 group-hover:translate-x-0.5">
-                  →
-                </span>
-              </span>
+              <span className="t-numeral">{String(i + 1).padStart(2, "0")}</span>
+              <span className="t-display-s">{x.bhk}</span>
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-[-1px] h-px origin-left bg-ink transition-transform duration-400 ease-[var(--ease-out-quiet)]"
+                style={{ transform: `scaleX(${i === active ? 1 : 0})` }}
+              />
             </button>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
 
-      <p className="t-meta mt-6 text-ink-faint">
-        Indicative pricing · taxes and statutory charges additional
-      </p>
+        <div
+          id="residence-panel"
+          role="tabpanel"
+          key={c.id}
+          className="mt-[clamp(2rem,5vh,3rem)] grid grid-cols-12 gap-y-8 motion-safe:animate-[riseIn_420ms_var(--ease-out-quiet)_both] lg:gap-x-[clamp(2rem,5vw,4rem)]"
+        >
+          <figure className="col-span-12 lg:col-span-7">
+            <div className="relative aspect-[3/2] overflow-hidden bg-ground-2">
+              <Image
+                src={asset.src}
+                alt={asset.alt}
+                fill
+                sizes="(max-width: 1024px) 100vw, 56vw"
+                quality={82}
+                className="object-cover"
+              />
+            </div>
+          </figure>
 
-      {open ? <Detail config={open} onClose={() => setOpen(null)} /> : null}
+          <div className="col-span-12 lg:col-span-5 lg:self-center">
+            <p className="t-display-l text-ink">{c.bhk}</p>
+            <p className="t-meta text-ink-faint">{c.label}</p>
+
+            <dl className="mt-8 border-t hair">
+              {[
+                ["Bedrooms", String(bedrooms(c.id))],
+                ["Built-up area", `${c.builtUpSqft.toLocaleString("en-IN")} sq ft`],
+                ["Price", `From ${c.priceFrom}`],
+              ].map(([k, v]) => (
+                <div key={k} className="flex items-baseline justify-between gap-6 border-b hair py-4">
+                  <dt className="t-label text-ink-faint">{k}</dt>
+                  <dd className="t-display-s text-ink">{v}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+              <a
+                href="#plans"
+                className="btn btn-primary"
+                onClick={() => window.dispatchEvent(new CustomEvent("scribeo:config", { detail: { id: c.id } }))}
+              >
+                View Floor Plan
+              </a>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => window.dispatchEvent(new CustomEvent("scribeo:enquire", { detail: { config: c.bhk } }))}
+              >
+                Book a Site Visit
+              </button>
+            </div>
+
+            <p className="t-meta mt-6 text-ink-faint">
+              Indicative pricing · taxes and statutory charges additional
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

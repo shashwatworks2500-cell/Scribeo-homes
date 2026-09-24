@@ -43,7 +43,7 @@ export default function Intro() {
               <h3 data-reveal className="t-display-m mt-5 max-w-[16ch] text-ink">
                 {title}
               </h3>
-              <p data-reveal className="mt-5 measure text-ink-dim">
+              <p data-reveal className="t-body mt-5 measure text-ink-dim">
                 {line}
               </p>
             </div>

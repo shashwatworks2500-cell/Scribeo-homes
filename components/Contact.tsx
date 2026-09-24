@@ -21,11 +21,19 @@ import SplitLines from "./SplitLines";
 const TIMES = ["Morning, 7:00 – 11:00", "Evening, 16:00 – 19:00", "Either suits me"] as const;
 const STEPS = ["What are you looking for?", "When would you like to come?", "Who shall we call?"] as const;
 
+/** Tomorrow, so the picker cannot offer a date that has already passed. */
+const tomorrow = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+};
+
 export default function Contact() {
   const uid = useId();
   const [step, setStep] = useState(0);
   const [config, setConfig] = useState<string>("");
   const [time, setTime] = useState<string>("");
+  const [date, setDate] = useState<string>("");
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState("");
   const headingRef = useRef<HTMLParagraphElement | null>(null);
@@ -58,17 +66,19 @@ export default function Contact() {
     const f = new FormData(e.currentTarget);
     const name = String(f.get("name") ?? "").trim();
     const phone = String(f.get("phone") ?? "").trim();
-    if (!name || !phone) {
-      setErr("A name and a phone number are all we need to call you back.");
-      return;
-    }
+    const email = String(f.get("email") ?? "").trim();
+    if (!name) return setErr("Please tell us your name.");
+    if (!phone) return setErr("Please add a phone number so we can call you back.");
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return setErr("Please check the email address.");
+    if (!config) { setErr("Please choose a configuration."); setStep(0); return; }
+    if (!date) { setErr("Please choose a date for your visit."); setStep(1); return; }
     const body = [
       `Name: ${name}`,
       `Phone: ${phone}`,
-      f.get("email") ? `Email: ${f.get("email")}` : null,
-      `Looking for: ${config || "Not sure yet"}`,
-      `Preferred visit: ${time || "No preference"}`,
-      f.get("message") ? `\n${f.get("message")}` : null,
+      `Email: ${email}`,
+      `Looking for: ${config}`,
+      `Preferred date: ${date}`,
+      time ? `Preferred time: ${time}` : null,
     ]
       .filter(Boolean)
       .join("\n");
@@ -175,12 +185,37 @@ export default function Contact() {
                   {/* Step 2 */}
                   <fieldset className={step === 1 ? "" : "hidden"}>
                     <legend className="sr-only">When would you like to come?</legend>
-                    <div className="flex flex-wrap gap-2">
-                      {TIMES.map((t) => (
-                        <button key={t} type="button" onClick={() => { setTime(t); go(2); }} className={chip(time === t)}>
-                          {t}
-                        </button>
-                      ))}
+                    <div className="grid gap-[clamp(1.25rem,3vh,1.75rem)] sm:max-w-sm">
+                      <div>
+                        <label htmlFor={`${uid}-date`} className="t-label text-ink-faint">
+                          Preferred date
+                        </label>
+                        <input
+                          id={`${uid}-date`}
+                          name="date"
+                          type="date"
+                          required
+                          min={tomorrow()}
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          className={field}
+                        />
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {TIMES.map((t) => (
+                          <button key={t} type="button" onClick={() => setTime(t)} className={chip(time === t)}>
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-secondary self-start"
+                        onClick={() => go(2)}
+                        disabled={!date}
+                      >
+                        Continue
+                      </button>
                     </div>
                   </fieldset>
 
@@ -205,15 +240,10 @@ export default function Contact() {
                           <label htmlFor={`${uid}-email`} className="t-meta text-ink-faint">
                             Email
                           </label>
-                          <input id={`${uid}-email`} name="email" type="email" autoComplete="email" className={field} placeholder="Optional" />
+                          <input id={`${uid}-email`} name="email" required type="email" autoComplete="email" className={field} placeholder="you@example.com" />
                         </div>
                       </div>
-                      <div>
-                        <label htmlFor={`${uid}-message`} className="t-meta text-ink-faint">
-                          Anything else
-                        </label>
-                        <textarea id={`${uid}-message`} name="message" rows={2} className={`${field} resize-y`} placeholder="A question, or a time that suits you" />
-                      </div>
+                      
                     </div>
 
                     {err ? (
@@ -223,11 +253,8 @@ export default function Contact() {
                     ) : null}
 
                     <div className="mt-[clamp(1.5rem,4vh,2.25rem)] flex flex-wrap items-center gap-x-6 gap-y-3">
-                      <button type="submit" className="group inline-flex items-baseline gap-4 border-b border-travertine/70 pb-2 transition-colors duration-300 hover:border-travertine">
-                        <span className="t-display-s text-ink">Request the viewing</span>
-                        <span aria-hidden="true" className="t-meta text-travertine transition-transform duration-300 group-hover:translate-x-1">
-                          →
-                        </span>
+                      <button type="submit" className="btn btn-primary">
+                        Book a Site Visit
                       </button>
                       <p className="t-meta text-ink-faint">Opens your email app</p>
                     </div>
@@ -237,7 +264,7 @@ export default function Contact() {
                 {/* A summary of what has been answered, and a way back to change it. */}
                 {step > 0 ? (
                   <div className="mt-[clamp(1.5rem,4vh,2.25rem)] flex flex-wrap items-center gap-x-5 gap-y-2 border-t hair pt-4">
-                    <button type="button" onClick={() => go(step - 1)} className="t-meta text-ink-dim transition-colors hover:text-ink">
+                    <button type="button" onClick={() => go(step - 1)} className="btn-text text-ink-dim">
                       ← Back
                     </button>
                     {config ? <span className="t-meta text-ink-faint">Looking for: <span className="text-ink">{config}</span></span> : null}

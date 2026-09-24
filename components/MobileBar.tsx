@@ -1,44 +1,61 @@
 "use client";
 
-import { CONTACT } from "@/lib/content";
+import { useEffect, useState } from "react";
 
 /**
  * The phone action bar.
  *
- * Three ways to start a conversation, fixed to the foot of a phone screen
- * and nowhere else. Deliberately quiet: a hairline, the page's own ground,
- * and the same type as the rest of the site — it should read as part of the
- * page rather than an advertisement stuck on top of it.
- *
- * Sits below the fold of every section because `.dock-clear` reserves the
- * space, and inside the safe area on a notched phone.
+ * Exactly two actions, per the specification. It appears once the hero has
+ * been passed — offering to book before the reader has seen anything would
+ * be pushy — and stands down whenever an overlay owns the screen or the
+ * soft keyboard is up, so it can never sit on top of what it interrupts.
  */
-const wa = `https://wa.me/91${CONTACT.phone}`;
-
 export default function MobileBar() {
-  const item =
-    "t-meta flex-1 py-4 text-center text-ink transition-colors duration-200 active:text-travertine";
+  const [past, setPast] = useState(false);
+  const [keyboard, setKeyboard] = useState(false);
+
+  useEffect(() => {
+    const hero = document.querySelector('[aria-labelledby="hero-heading"]');
+    const onScroll = () => setPast(window.scrollY > (hero?.getBoundingClientRect().height ?? 600) * 0.75);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    /* A soft keyboard shrinks the visual viewport without a resize event.
+       When it is up, the bar would sit on the keyboard rather than the page. */
+    const vv = window.visualViewport;
+    const onVV = () => setKeyboard(!!vv && vv.height < window.innerHeight * 0.75);
+    vv?.addEventListener("resize", onVV);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      vv?.removeEventListener("resize", onVV);
+    };
+  }, []);
+
+  const hidden = !past || keyboard;
 
   return (
     <nav
-      aria-label="Contact"
-      className="fixed inset-x-0 bottom-0 z-40 border-t hair bg-paper/95 backdrop-blur-md md:hidden"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      data-mobile-bar
+      aria-label="Book or enquire"
+      aria-hidden={hidden}
+      className="fixed inset-x-0 bottom-0 z-40 border-t hair bg-ground/95 backdrop-blur-md transition-transform duration-500 ease-[var(--ease-out-quiet)] md:hidden"
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom)",
+        transform: hidden ? "translateY(110%)" : "none",
+        visibility: hidden ? "hidden" : "visible",
+      }}
     >
-      <div className="flex divide-x divide-[var(--color-hair)]">
-        <a href={CONTACT.phoneHref} className={item}>
-          Call
-        </a>
-        <a href={wa} target="_blank" rel="noopener noreferrer" className={item}>
-          WhatsApp
-        </a>
+      <div className="flex gap-3 px-4 py-3">
         <button
           type="button"
+          className="btn btn-primary flex-1"
           onClick={() => window.dispatchEvent(new CustomEvent("scribeo:enquire"))}
-          className={`${item} font-medium`}
         >
-          Book a visit
+          Book a Site Visit
         </button>
+        <a href="#enquire" className="btn btn-secondary flex-1">
+          Enquire
+        </a>
       </div>
     </nav>
   );

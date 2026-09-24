@@ -1,35 +1,37 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { CATEGORIES, GALLERY } from "@/lib/gallery";
+import { GALLERY } from "@/lib/gallery";
 
 /**
- * The gallery.
+ * The development.
  *
- * Six pictures at rest, the whole collection behind one control. Thirty-seven
- * images shown at once is an archive; six chosen ones are an argument, and
- * anyone who wants the archive is one tap away from it.
+ * A cinematic chapter rather than a grid: one large frame at a time, a
+ * counter, and previous/next. Thirty-seven thumbnails is an archive; a
+ * sequence you move through is a walk around the place.
  *
- * The filter only appears once the full set is open — a row of categories
- * above six images is furniture with nothing to do.
+ * Full size takes the dark ground, closes on Escape, and moves on the arrow
+ * keys. It marks the document as overlaid so the phone action bar stands
+ * down while it is open.
  */
 export default function Gallery() {
-  const [all, setAll] = useState(false);
-  const [cat, setCat] = useState<string>("All");
-  const [lightbox, setLightbox] = useState<number | null>(null);
+  const [i, setI] = useState(0);
+  const [full, setFull] = useState(false);
+  const item = GALLERY[i];
 
-  const shown = useMemo(() => {
-    if (!all) return GALLERY.filter((g) => g.pick);
-    return cat === "All" ? GALLERY : GALLERY.filter((g) => g.category === cat);
-  }, [all, cat]);
+  const step = useCallback((d: number) => setI((n) => (n + d + GALLERY.length) % GALLERY.length), []);
 
   useEffect(() => {
-    if (lightbox === null) return;
+    if (!full) {
+      document.documentElement.removeAttribute("data-overlay");
+      return;
+    }
+    document.documentElement.setAttribute("data-overlay", "gallery");
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightbox(null);
-      if (e.key === "ArrowRight") setLightbox((i) => (i === null ? i : (i + 1) % shown.length));
-      if (e.key === "ArrowLeft") setLightbox((i) => (i === null ? i : (i - 1 + shown.length) % shown.length));
+      if (e.key === "Escape") setFull(false);
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1);
     };
     document.addEventListener("keydown", onKey);
     const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
@@ -41,121 +43,94 @@ export default function Gallery() {
       lenis?.start();
       document.body.style.overflow = prev;
     };
-  }, [lightbox, shown.length]);
+  }, [full, step]);
 
-  const open = lightbox === null ? null : shown[lightbox];
+  const counter = `${String(i + 1).padStart(2, "0")} / ${GALLERY.length}`;
 
   return (
-    <section id="gallery" aria-labelledby="gal-heading" className="section-y gutter">
-      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <h2 id="gal-heading" className="t-display-m max-w-[14ch] text-ink">
-          The development.
-        </h2>
-        <p className="t-meta max-w-[30ch] text-ink-dim">
-          Architectural visualisation of a proposed development.
-        </p>
+    <section id="gallery" aria-labelledby="gal-heading" className="section-y-lg bg-ground-2">
+      <div className="shell gutter">
+        <div className="grid grid-cols-12 gap-y-4 md:gap-x-[clamp(2rem,5vw,4rem)]">
+          <h2 id="gal-heading" className="t-display-m col-span-12 text-ink md:col-span-5">
+            The development
+          </h2>
+          <p className="t-body col-span-12 max-w-[34ch] self-end text-ink-dim md:col-span-6 md:col-start-7">
+            Architectural visualisation of a proposed development.
+          </p>
+        </div>
+
+        <figure className="mt-[clamp(2.5rem,6vh,4rem)]">
+          <button
+            type="button"
+            onClick={() => setFull(true)}
+            aria-label={`${item.caption} — view full size`}
+            className="block w-full"
+          >
+            <div className="relative aspect-[3/2] w-full overflow-hidden bg-ground-3 sm:aspect-[16/9]">
+              <Image
+                key={item.src}
+                src={item.src}
+                alt={item.alt}
+                fill
+                sizes="(max-width: 1400px) 100vw, 1400px"
+                quality={84}
+                priority={false}
+                className={`motion-safe:animate-[fadeIn_420ms_var(--ease-out-quiet)_both] ${
+                  item.drawing ? "object-contain p-4" : "object-cover"
+                }`}
+              />
+            </div>
+          </button>
+          <figcaption className="mt-5 flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
+            <div>
+              <p className="t-body text-ink">{item.caption}</p>
+              <p className="t-meta text-ink-faint">
+                {item.category} · {counter}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button type="button" onClick={() => step(-1)} aria-label="Previous image" className="btn btn-secondary px-5">
+                ←
+              </button>
+              <button type="button" onClick={() => step(1)} aria-label="Next image" className="btn btn-secondary px-5">
+                →
+              </button>
+              <button type="button" onClick={() => setFull(true)} className="btn-text ml-2">
+                View all
+                <span aria-hidden="true" className="arrow text-travertine">→</span>
+              </button>
+            </div>
+          </figcaption>
+        </figure>
       </div>
 
-      {all ? (
-        <div role="group" aria-label="Filter the gallery" className="mt-[clamp(1.75rem,4vh,2.5rem)] flex flex-wrap gap-2">
-          {CATEGORIES.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setCat(c)}
-              aria-pressed={cat === c}
-              className={`t-meta rounded-full border px-3.5 py-1.5 transition-colors duration-300 ${
-                cat === c
-                  ? "border-travertine bg-travertine text-paper"
-                  : "border-hair text-ink-dim hover:border-rule hover:text-ink"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      ) : null}
-
-      <ul className="mt-[clamp(1.75rem,4vh,2.5rem)] grid grid-cols-2 gap-[clamp(0.75rem,2vw,1.5rem)] lg:grid-cols-3">
-        {shown.map((item, i) => (
-          <li key={item.src} data-reveal>
-            <button
-              type="button"
-              onClick={() => setLightbox(i)}
-              className="group block w-full text-left"
-              aria-label={`${item.caption} — open larger`}
-            >
-              <div className="relative aspect-[4/3] overflow-hidden bg-ground-2">
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  sizes="(max-width: 640px) 50vw, 32vw"
-                  quality={78}
-                  className={`transition-transform duration-[900ms] ease-[var(--ease-out-quiet)] group-hover:scale-[1.03] ${
-                    item.drawing ? "object-contain p-2" : "object-cover"
-                  }`}
-                />
-              </div>
-              <p className="t-meta mt-2.5 text-ink-dim">{item.caption}</p>
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <button
-        type="button"
-        onClick={() => {
-          setAll((v) => !v);
-          setCat("All");
-        }}
-        aria-expanded={all}
-        className="t-meta mt-6 inline-flex items-baseline gap-2 border-b border-hair pb-0.5 text-ink-dim transition-colors duration-300 hover:border-travertine hover:text-ink"
-      >
-        {all ? "Show a selection" : `View all ${GALLERY.length}`}
-        <span aria-hidden="true" className="text-travertine">
-          {all ? "−" : "+"}
-        </span>
-      </button>
-
-      {open ? (
+      {full ? (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={open.caption}
-          className="fixed inset-0 z-[80] flex items-center justify-center p-[clamp(0.75rem,3vw,3rem)]"
+          aria-label={item.caption}
+          className="fixed inset-0 z-[90] flex flex-col bg-charcoal motion-safe:animate-[fadeIn_200ms_var(--ease-out-quiet)]"
         >
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={() => setLightbox(null)}
-            className="absolute inset-0 bg-ink/70 backdrop-blur-[2px]"
-          />
-          <figure className="relative max-h-full w-full max-w-[72rem]">
-            <div className="relative mx-auto aspect-[3/2] w-full bg-ink/40">
-              <Image
-                src={open.src}
-                alt={open.alt}
-                fill
-                sizes="90vw"
-                quality={88}
-                className={open.drawing ? "object-contain p-4" : "object-contain"}
-              />
+          <div className="flex items-center justify-between gap-5 px-[clamp(1rem,4vw,2.5rem)] py-[clamp(1rem,3vh,1.5rem)]">
+            <p className="t-label text-on-dark-dim">{counter}</p>
+            <button
+              type="button"
+              onClick={() => setFull(false)}
+              className="t-meta min-h-11 rounded-[6px] border border-[rgba(244,242,237,0.35)] px-4 text-ground transition-colors hover:border-ground"
+            >
+              Close
+            </button>
+          </div>
+          <div className="relative flex-1">
+            <Image src={item.src} alt={item.alt} fill sizes="100vw" quality={88} className="object-contain p-[clamp(0.5rem,3vw,3rem)]" />
+          </div>
+          <div className="flex items-center justify-between gap-5 px-[clamp(1rem,4vw,2.5rem)] pb-[clamp(1rem,3vh,2rem)]">
+            <p className="t-meta text-on-dark-dim">{item.caption}</p>
+            <div className="flex gap-3">
+              <button type="button" onClick={() => step(-1)} aria-label="Previous image" className="t-meta min-h-11 min-w-11 rounded-[6px] border border-[rgba(244,242,237,0.35)] px-4 text-ground transition-colors hover:border-ground">←</button>
+              <button type="button" onClick={() => step(1)} aria-label="Next image" className="t-meta min-h-11 min-w-11 rounded-[6px] border border-[rgba(244,242,237,0.35)] px-4 text-ground transition-colors hover:border-ground">→</button>
             </div>
-            <figcaption className="t-meta mt-3 flex items-baseline justify-between gap-5 text-ground/80">
-              <span>{open.caption}</span>
-              <span className="shrink-0 text-ground/50">
-                {(lightbox ?? 0) + 1} / {shown.length}
-              </span>
-            </figcaption>
-          </figure>
-          <button
-            type="button"
-            onClick={() => setLightbox(null)}
-            className="t-meta absolute right-[clamp(0.75rem,3vw,3rem)] top-[clamp(0.75rem,3vw,3rem)] rounded-full border border-ground/30 px-4 py-2 text-ground/80 transition-colors hover:border-ground/70 hover:text-ground"
-          >
-            Close
-          </button>
+          </div>
         </div>
       ) : null}
     </section>

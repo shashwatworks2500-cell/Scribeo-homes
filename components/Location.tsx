@@ -30,7 +30,7 @@ export default function Location() {
         <h2 id="loc-heading" className="t-display-m max-w-[16ch] text-ink">
           Everything important, close by.
         </h2>
-        <p className="t-meta max-w-[30ch] text-ink-dim">
+        <p className="t-body max-w-[32ch] text-ink-dim">
           Inside the ring road, with parkland and green belt on three sides.
         </p>
       </div>
@@ -106,11 +106,11 @@ export default function Location() {
               type="button"
               onClick={() => setAll((v) => !v)}
               aria-expanded={all}
-              className="js-only t-meta mt-5 inline-flex items-baseline gap-2 border-b border-hair pb-0.5 text-ink-dim transition-colors duration-300 hover:border-travertine hover:text-ink"
+              className="js-only btn-text mt-5 text-ink-dim"
             >
               {all ? "Show fewer" : `View all ${DISTANCES.length} distances`}
-              <span aria-hidden="true" className="text-travertine">
-                {all ? "−" : "+"}
+              <span aria-hidden="true" className="arrow text-travertine">
+                →
               </span>
             </button>
           ) : null}

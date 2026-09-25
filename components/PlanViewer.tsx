@@ -1,33 +1,40 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Icon from "./Icon";
 import { M, PAD, roomArea, roomDims, type Plan, type Room } from "@/lib/plans";
 
 /**
  * Floor plan viewer.
  *
  * The drawing is an SVG on a fixed grid — 46px to the metre inside an 86px
- * margin — so the same numbers that drew each room place a hotspot over it.
- * Rendering the drawing as an <image> inside an <svg> of that same viewBox
- * means the overlay registers exactly rather than being nudged into place,
- * at any zoom, on any screen.
+ * margin — so the same numbers that drew each room place a hotspot over it,
+ * registered exactly at any zoom.
  *
- * Zoom and pan are one transform on one group: no layout is touched while
- * dragging, so it stays on the compositor. Pointer Events cover mouse, touch
- * and pen with one code path.
+ * The sheet has two parts: the canvas, and a strip along its foot that
+ * carries the read-out on the left and − + Reset on the right. The controls
+ * float on the paper at the bottom right, but the canvas ends above them, so
+ * they never cover any part of the drawing, zoomed or not.
+ *
+ * Scrolling: at rest the canvas lets vertical swipes through to the page
+ * (touch-action: pan-y). Zoomed, a drag pans the drawing instead, and the
+ * strip says how to get the page back: Reset. Nothing ever captures the
+ * mouse wheel, so a desktop reader scrolling past can never be caught.
  */
-type Props = { plan: Plan; label: string; fullscreen?: boolean; onClose?: () => void };
+type Props = { plan: Plan; label: string };
 
 const MIN = 1;
-const MAX = 3.2;
+const MAX = 3;
+const STEP = 0.5;
 
-export default function PlanViewer({ plan, label, fullscreen = false, onClose }: Props) {
+export default function PlanViewer({ plan, label }: Props) {
   const [k, setK] = useState(1);
   const [tx, setTx] = useState(0);
   const [ty, setTy] = useState(0);
-  const [hover, setHover] = useState<Room | null>(null);
+  const [room, setRoom] = useState<Room | null>(null);
+  const [dragging, setDragging] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const drag = useRef<{ x: number; y: number; tx: number; ty: number; id: number } | null>(null);
+  const drag = useRef<{ x: number; y: number; tx: number; ty: number; id: number; moved: boolean } | null>(null);
 
   const reset = useCallback(() => {
     setK(1);
@@ -35,94 +42,73 @@ export default function PlanViewer({ plan, label, fullscreen = false, onClose }:
     setTy(0);
   }, []);
 
-  // A new plan starts where the last one did, at rest.
-  useEffect(() => reset(), [plan.id, reset]);
+  useEffect(() => {
+    reset();
+    setRoom(null);
+  }, [plan.id, reset]);
 
-  /* Pan is clamped so the drawing can never be dragged out of its own frame:
-     at 1x there is nothing to pan, and at 3x you can reach the edges and no
-     further. Without this the plan gets lost and the only way back is reset. */
-  const clamp = useCallback(
-    (nx: number, ny: number, scale: number) => {
-      const el = wrapRef.current;
-      if (!el) return { x: 0, y: 0 };
-      const { width, height } = el.getBoundingClientRect();
-      const maxX = (Math.max(0, scale - 1) * width) / 2;
-      const maxY = (Math.max(0, scale - 1) * height) / 2;
-      return { x: Math.max(-maxX, Math.min(maxX, nx)), y: Math.max(-maxY, Math.min(maxY, ny)) };
-    },
-    [],
-  );
+  /* Pan is clamped so the drawing can never be dragged out of its own frame. */
+  const clamp = useCallback((nx: number, ny: number, scale: number) => {
+    const el = wrapRef.current;
+    if (!el) return { x: 0, y: 0 };
+    const { width, height } = el.getBoundingClientRect();
+    const maxX = (Math.max(0, scale - 1) * width) / 2;
+    const maxY = (Math.max(0, scale - 1) * height) / 2;
+    return { x: Math.max(-maxX, Math.min(maxX, nx)), y: Math.max(-maxY, Math.min(maxY, ny)) };
+  }, []);
 
   const zoomTo = useCallback(
     (next: number) => {
       const scale = Math.max(MIN, Math.min(MAX, next));
-      setK(scale);
       const c = clamp(tx, ty, scale);
+      setK(scale);
       setTx(c.x);
       setTy(c.y);
     },
     [clamp, tx, ty],
   );
 
+  /* A drag only starts once the pointer has travelled a few pixels, so a tap
+     on a room still selects it while the plan is zoomed. */
   const onPointerDown = (e: React.PointerEvent) => {
     if (k <= 1) return;
-    (e.target as Element).setPointerCapture?.(e.pointerId);
-    drag.current = { x: e.clientX, y: e.clientY, tx, ty, id: e.pointerId };
+    drag.current = { x: e.clientX, y: e.clientY, tx, ty, id: e.pointerId, moved: false };
   };
   const onPointerMove = (e: React.PointerEvent) => {
     const d = drag.current;
     if (!d || d.id !== e.pointerId) return;
-    const c = clamp(d.tx + (e.clientX - d.x), d.ty + (e.clientY - d.y), k);
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (!d.moved) {
+      if (Math.hypot(dx, dy) < 4) return;
+      d.moved = true;
+      wrapRef.current?.setPointerCapture?.(e.pointerId);
+      setDragging(true);
+    }
+    const c = clamp(d.tx + dx, d.ty + dy, k);
     setTx(c.x);
     setTy(c.y);
   };
   const endDrag = (e: React.PointerEvent) => {
-    if (drag.current?.id === e.pointerId) drag.current = null;
+    if (drag.current?.id !== e.pointerId) return;
+    drag.current = null;
+    setDragging(false);
   };
 
-  // Escape leaves fullscreen; the plan keeps its own keys otherwise.
-  useEffect(() => {
-    if (!fullscreen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose?.();
-    };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const l = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
-    l?.stop();
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-      l?.start();
-    };
-  }, [fullscreen, onClose]);
-
-  const btn =
-    "t-meta grid h-9 min-w-9 place-items-center rounded-full border border-rule px-3 text-ink-dim transition-colors duration-200 hover:border-travertine hover:text-ink disabled:opacity-35 disabled:hover:border-rule disabled:hover:text-ink-dim";
+  const zoomed = k > 1;
+  const readout = room ? `${room.name} · ${roomDims(room)} · ${roomArea(room)}` : `${plan.w.toFixed(1)} × ${plan.h.toFixed(1)} m overall`;
 
   return (
-    <div className={fullscreen ? "flex h-full flex-col" : ""}>
+    <div className="border border-paper-hair bg-paper">
       <div
         ref={wrapRef}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        onDoubleClick={() => zoomTo(k > 1 ? 1 : 2)}
-        /* touch-action, not touch-none. At rest this viewer does not pan —
-           onPointerDown returns immediately below zoom 1 — but declaring
-           `none` told the browser to hand it every gesture anyway, so a
-           finger that landed on the drawing could not scroll the page past
-           it. `pan-y` lets the page keep vertical scrolling and only takes
-           the gesture once there is something to drag. */
-        style={{
-          ...(fullscreen ? {} : { aspectRatio: "595 / 575" }),
-          touchAction: k > 1 ? "none" : "pan-y",
-        }}
-        className={`relative w-full overflow-hidden border border-paper-hair bg-paper ${
-          fullscreen ? "flex-1" : ""
-        } ${k > 1 ? "cursor-grab active:cursor-grabbing" : ""}`}
+        onDoubleClick={() => zoomTo(zoomed ? 1 : 2)}
+        style={{ touchAction: zoomed ? "none" : "pan-y" }}
+        className={`relative aspect-[6/5] w-full overflow-hidden ${zoomed ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""}`}
       >
         <svg
           viewBox={`0 0 ${plan.vbW} ${plan.vbH}`}
@@ -132,13 +118,13 @@ export default function PlanViewer({ plan, label, fullscreen = false, onClose }:
           className="h-full w-full select-none"
           style={{
             transform: `translate3d(${tx}px, ${ty}px, 0) scale(${k})`,
-            transition: drag.current ? "none" : "transform 520ms var(--ease-out-quiet)",
+            transition: dragging ? "none" : "transform 480ms var(--ease-out-quiet)",
           }}
         >
           <image href={`/plans/plan-${plan.id}.svg`} x="0" y="0" width={plan.vbW} height={plan.vbH} />
           <g>
             {plan.rooms.map((r) => {
-              const on = hover?.name === r.name;
+              const on = room?.name === r.name;
               return (
                 <rect
                   key={r.name}
@@ -146,14 +132,15 @@ export default function PlanViewer({ plan, label, fullscreen = false, onClose }:
                   y={PAD + r.y * M}
                   width={r.w * M}
                   height={r.h * M}
-                  fill={on ? "rgba(125,96,56,0.17)" : "transparent"}
-                  stroke={on ? "#7d6038" : "transparent"}
+                  fill={on ? "rgba(79,90,63,0.16)" : "transparent"}
+                  stroke={on ? "#4f5a3f" : "transparent"}
                   strokeWidth={2.4}
-                  className="transition-[fill,stroke] duration-200"
-                  onPointerEnter={() => setHover(r)}
-                  onPointerLeave={() => setHover((h) => (h?.name === r.name ? null : h))}
-                  onFocus={() => setHover(r)}
-                  onBlur={() => setHover(null)}
+                  className="cursor-pointer outline-none transition-[fill,stroke] duration-200"
+                  onPointerEnter={(e) => e.pointerType === "mouse" && setRoom(r)}
+                  onPointerLeave={(e) => e.pointerType === "mouse" && setRoom((h) => (h?.name === r.name ? null : h))}
+                  onClick={() => setRoom((h) => (h?.name === r.name ? null : r))}
+                  onFocus={() => setRoom(r)}
+                  onBlur={() => setRoom(null)}
                   tabIndex={0}
                   role="button"
                   aria-label={`${r.name}, ${roomDims(r)}, ${roomArea(r)}`}
@@ -162,44 +149,52 @@ export default function PlanViewer({ plan, label, fullscreen = false, onClose }:
             })}
           </g>
         </svg>
-
-        {/* The read-out sits outside the transformed group so zoom never
-            shrinks the text you are zooming in to read. */}
-        <div
-          aria-live="polite"
-          className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-[clamp(0.6rem,1.6vw,1rem)]"
-        >
-          <span
-            className={`t-meta rounded-full bg-paper/92 px-3 py-1.5 text-paper-ink transition-opacity duration-200 ${
-              hover ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            {hover ? `${hover.name} · ${roomDims(hover)} · ${roomArea(hover)}` : "​"}
-          </span>
-          <span className="t-meta rounded-full bg-paper/92 px-3 py-1.5 text-paper-dim">
-            {plan.w.toFixed(1)} × {plan.h.toFixed(1)} m
-          </span>
-        </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <button type="button" onClick={() => zoomTo(k - 0.5)} disabled={k <= MIN} className={btn} aria-label="Zoom out">
-          −
-        </button>
-        <button type="button" onClick={() => zoomTo(k + 0.5)} disabled={k >= MAX} className={btn} aria-label="Zoom in">
-          +
-        </button>
-        <button type="button" onClick={reset} disabled={k === 1 && tx === 0 && ty === 0} className={btn}>
-          Reset
-        </button>
-        {onClose ? (
-          <button type="button" onClick={onClose} className={`${btn} ml-auto`}>
-            {fullscreen ? "Close" : "Fullscreen"}
+      <div className="flex flex-col gap-3 px-[clamp(0.75rem,2vw,1.25rem)] pb-[clamp(0.75rem,2vw,1.25rem)] pt-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <p aria-live="polite" className="t-meta text-paper-ink">
+            {readout}
+          </p>
+          <p className="t-meta text-paper-dim">
+            <span className="hidden md:inline">
+              {zoomed ? "Drag to pan · Reset returns to the full plan" : "Point at a room for its size · double-click to zoom"}
+            </span>
+            <span className="md:hidden">
+              {zoomed ? "Drag to move the plan · Reset to scroll the page" : "Tap a room for its size"}
+            </span>
+          </p>
+        </div>
+        <div className="flex items-center gap-2 self-end sm:self-auto">
+          <button
+            type="button"
+            onClick={() => zoomTo(k - STEP)}
+            disabled={k <= MIN}
+            aria-label="Zoom out"
+            className="btn btn-secondary btn-square"
+          >
+            <Icon name="minus" className="h-4 w-4" />
           </button>
-        ) : null}
-        <span className="t-meta ml-auto hidden text-ink-faint sm:inline">
-          {k > 1 ? "Drag to pan · double-click to reset" : "Hover a room · double-click to zoom"}
-        </span>
+          <button
+            type="button"
+            onClick={() => zoomTo(k + STEP)}
+            disabled={k >= MAX}
+            aria-label="Zoom in"
+            className="btn btn-secondary btn-square"
+          >
+            <Icon name="plus" className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={reset}
+            disabled={!zoomed && tx === 0 && ty === 0}
+            aria-label="Reset zoom"
+            className="btn btn-secondary"
+          >
+            <Icon name="reset" className="h-4 w-4" />
+            Reset
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -8,8 +8,9 @@ import { CONFIGS, PRICE_RANGE, type Config } from "@/lib/content";
  * describe, and no option exists that no residence can satisfy.
  *
  * There is deliberately no availability filter: no availability data was
- * supplied for this development, and a control that cannot be answered
- * truthfully is worse than an absent one.
+ * supplied for this development. The Availability group in the overlay
+ * carries the project's own fallback wording instead of a control that
+ * could not be answered truthfully.
  */
 
 export type Filters = { bhk: string[]; area: string | null; price: string | null };

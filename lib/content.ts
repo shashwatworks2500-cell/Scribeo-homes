@@ -22,7 +22,7 @@ export const CONTACT = {
 export type Config = {
   id: string;
   /** Key into the asset manifest — the card's photograph. */
-  image: "livingRoom" | "bedroom" | "indoorOutdoor" | "kitchen";
+  image: "livingRoom" | "bedroom" | "bedroomAlt" | "kitchen";
   label: string;
   bhk: string;
   builtUpSqft: number;
@@ -61,7 +61,7 @@ export const CONFIGS: Config[] = [
   },
   {
     id: "3bhk",
-    image: "indoorOutdoor",
+    image: "bedroomAlt",
     label: "Three bedroom",
     bhk: "3 BHK",
     builtUpSqft: 1697,
@@ -99,14 +99,17 @@ export const FACTS = [
 /**
  * Amenities, in four categories.
  *
- * `lead` is what the section shows at rest — the ones worth knowing before
- * you visit. The rest open behind "View all". Twenty-six provisions listed
- * at once is a specification sheet, not a reason to come and see the place.
+ * `description` is assembled only from statements this file already makes —
+ * the FAQ answers on the clubhouse, pool, gym, landscape and security, and
+ * the specification rows — so the section describes each category without
+ * adding a single claim. `lead` is the short list worth knowing first.
  */
 export const AMENITIES = [
   {
     group: "Leisure",
     image: "amClubhouse" as const,
+    description:
+      "A residents' clubhouse with a lounge and library, indoor games and a multipurpose hall, beside an outdoor lap pool in dark stone with a shaded timber deck.",
     lead: ["Residents' clubhouse", "Outdoor lap pool", "Residents' lounge and library", "Indoor games room"],
     items: [
       "Residents' clubhouse",
@@ -120,6 +123,8 @@ export const AMENITIES = [
   {
     group: "Wellness",
     image: "amYoga" as const,
+    description:
+      "A double-height fitness studio with a full glass wall onto the landscape, and an open-air yoga and wellness deck under the tree canopy.",
     lead: ["Fitness studio", "Open-air yoga deck", "Jogging and walking loop"],
     items: [
       "Fitness studio",
@@ -133,6 +138,8 @@ export const AMENITIES = [
   {
     group: "Landscape",
     image: "amGreen" as const,
+    description:
+      "Established trees retained and reinforced rather than a newly turfed site, with a central green at the heart of the development.",
     lead: ["Central green", "Mature tree avenue", "Children's play area", "Reflecting pool"],
     items: [
       "Central green",
@@ -146,6 +153,8 @@ export const AMENITIES = [
   {
     group: "Everyday",
     image: "amTrail" as const,
+    description:
+      "Gated access with 24 × 7 manned security and CCTV, covered and visitor parking, power backup to common areas and rainwater harvesting.",
     lead: ["24 × 7 security and CCTV", "Covered and visitor parking", "Power backup to common areas", "EV charging provision"],
     items: [
       "Covered parking",

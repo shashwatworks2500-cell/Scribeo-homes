@@ -41,14 +41,14 @@ export const metadata: Metadata = {
     type: "website",
     siteName: SITE_NAME,
     url: SITE_URL,
-    images: [{ url: HERO.src, width: HERO.w, height: HERO.h, alt: "Scribeo Homes at first light" }],
+    images: [{ url: HERO.src, width: HERO.w, height: HERO.h, alt: HERO.alt }],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
 };
 
 /* Structured data. Deliberately minimal: name, description, canonical URL and
-   the poster frame. No address, price, unit count or rating — none of those
+   the hero photograph. No address, price, unit count or rating — none of those
    exist in the supplied material, and inventing them for a rich result would
    be fabricating property facts. */
 const JSON_LD = {
@@ -63,7 +63,6 @@ const JSON_LD = {
       image: `${SITE_URL}${HERO.src}`,
       telephone: CONTACT.phoneDisplay,
       email: CONTACT.email,
-      numberOfAvailableAccommodationUnits: CONFIGS.length,
       /* Each configuration as an Accommodation, with the areas the page
          prints. Prices are deliberately absent from the markup: they are
          indicative placeholders on this site, and an indicative figure
@@ -102,7 +101,6 @@ const JSON_LD = {
       contactType: "sales",
       telephone: CONTACT.phoneDisplay,
       email: CONTACT.email,
-      availableLanguage: ["en", "hi"],
     },
   },
     },
@@ -110,9 +108,7 @@ const JSON_LD = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fbfaf7",
-  // The page went light; this still said dark, which is what the browser uses
-  // to pick form-control and scrollbar rendering.
+  themeColor: "#f4f2ed",
   colorScheme: "light",
 };
 
@@ -122,13 +118,9 @@ export const viewport: Viewport = {
    the page renders as complete static content. Content is never lost to JS. */
 const BOOT = `
 document.documentElement.classList.add('js');
-// The hero is a scroll-driven film, so the scroll position IS the playhead.
-// Letting the browser restore a saved offset drops the reader into the middle
-// of the shot on every refresh — and it restores against a layout that has not
-// been measured yet, so the scrubber reads the wrong progress as well. Taking
-// this over before the browser can act on it is the only way the film reliably
-// starts at its first frame. An explicit #hash is still honoured, once the
-// page has settled enough to scroll to it accurately.
+// The page decides where it lands: the top, or an explicit #hash once the
+// layout has settled (MotionProvider). A browser-restored offset would be
+// applied before fonts and images have measured, and land in the wrong place.
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (!location.hash) { try { window.scrollTo(0, 0); } catch (e) {} }
 setTimeout(function(){
@@ -143,9 +135,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
-        {/* The hero photograph is the largest paint on the page, so it is
-            fetched at high priority rather than waiting to be discovered. */}
-        <link rel="preload" as="image" href={HERO.src} type="image/webp" fetchPriority="high" />
+        {/* The hero photograph is preloaded by next/image itself (priority), at
+            the optimised URL it actually renders. A hand-written preload of
+            the source file fetched a second copy nothing used. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}

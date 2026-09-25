@@ -3,51 +3,51 @@
 /* ───────────────────────────────────────────────────────────
    Scribeo Homes — design tokens
 
-   Light ground. The ground is a warm near-white rather than #fff:
-   the supplied renders are sunlit and warm-neutral, and beside a pure
-   white the concrete reads grey and the whole page goes cold. #fbfaf7
-   is white to the eye and lets the photography keep its temperature.
+   The specified palette, and nothing that competes with it: warm
+   architectural white, soft stone, charcoal, two text tiers, a warm
+   low-contrast border, and one muted natural green used sparingly — labels,
+   arrows, focus, the selected state — to tie the interface to the landscape.
 
-   Every text colour below was measured against every surface below.
-   The worst pairing in the set is ink-faint on ground-3 at 4.53:1,
-   so all body, meta and eyebrow text clears WCAG AA at any size:
+   Every text colour was measured against every surface it sits on
+   (contrast ratio, WCAG 2):
 
-                 ground   ground-2   ground-3      paper
-     ink          17.63      16.31      14.92      15.89
-     ink-dim       7.64       7.07       6.47       6.89
-     ink-faint     5.35       4.95       4.53       4.82
-     travertine    5.59       5.16       4.72       5.03
+                   ground   ground-2   charcoal
+     ink           16.02     14.37        —
+     ink-dim       5.07      4.55         —
+     accent        6.55      5.87         —
+     error         6.90      6.19         —
+     on-dark          —         —      16.02
+     on-dark-dim      —         —      8.27  
+     on-dark-faint    —         —      5.34  
+     on-dark-error    —         —      10.19 
 
-   travertine is used solid, never at an alpha: on the dark ground an
-   80% accent still cleared AA, on this one it lands at 3.66 and fails.
-   --color-rule is the form-field underline, held at 3:1 as a UI
-   component; --color-hair is decorative division only.
+   #686761 on the soft stone is the tightest pairing, so there is no third,
+   paler tier: one lighter than it cannot clear AA there. Labels are told
+   apart from body by size, tracking and case instead.
+
+   --color-rule is a UI-component boundary (form underline, secondary button,
+   chip): 3.52:1 on the ground, 3.16:1 on the stone. --color-hair is
+   decorative division only.
    ─────────────────────────────────────────────────────────── */
 @theme {
-  /* Specified palette. Warm architectural white, soft stone, charcoal. */
   --color-ground: #f4f2ed;
   --color-ground-2: #e9e6de;
-  --color-ground-3: #e9e6de;
   --color-charcoal: #171717;
   --color-hair: #d6d1c5;
-  --color-rule: #8a857a;
+  --color-rule: #848076;
 
   --color-ink: #171717;
   --color-ink-dim: #686761;
-  /* Measured, not chosen: #686761 on the secondary ground is 4.55:1, so a
-     third tier lighter than it cannot clear AA. Labels are distinguished
-     from body by size, tracking and case instead of by a paler grey. */
-  --color-ink-faint: #686761;
+  --color-accent: #4f5a3f;
+  /* Validation. Muted, never a saturated red; always paired with an icon
+     and words, never colour alone. */
+  --color-error: #8a3a2c;
 
-  /* Type on charcoal. Alpha'd white read between 1.2 and 3.9:1 once
-     composited; these are solid and measured — 7.9:1 and 5.1:1. */
   --color-on-dark: #f4f2ed;
   --color-on-dark-dim: #b3b0a8;
   --color-on-dark-faint: #8f8c85;
-
-  --color-travertine: #7d6038;
-  --color-timber: #8a5c33;
-  --color-olive: #4a5238;
+  --color-on-dark-hair: #3b3a37;
+  --color-on-dark-error: #e8b9a8;
 
   /* The floor plan keeps its own sheet so the drawing reads as a drawing
      and not as a hole in the page; a hairline gives it an edge. */
@@ -63,6 +63,17 @@
   --ease-in-out-quiet: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* Page margin. 20px on a phone (350px of content at 390, 390px at 430), and
+   9vw from 1024 up — the inset the hero statement is specified at, so the
+   navigation, the hero and the grid share one left edge. Content itself
+   stops at 1400px; past that the margin grows instead. */
+:root {
+  --gutter: clamp(1.25rem, 5vw, 3.5rem);
+}
+@media (min-width: 1024px) {
+  :root { --gutter: 9vw; }
+}
+
 @layer base {
   *,
   *::before,
@@ -73,7 +84,8 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: auto; /* Lenis owns scrolling; never fight it */
-    scroll-padding-bottom: clamp(5.5rem, 12vh, 7.5rem);
+    scroll-padding-top: 5rem;
+    scroll-padding-bottom: 6rem;
   }
 
   body {
@@ -82,130 +94,117 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-weight: 300;
-    font-size: clamp(0.9375rem, 0.35vw + 0.85rem, 1.0625rem);
-    line-height: 1.7;
+    font-size: 1rem;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    /* Kerning and common ligatures on everywhere; they are the difference
-       between type that is set and type that is merely rendered. */
     font-kerning: normal;
     font-variant-ligatures: common-ligatures contextual;
-    /* Quotes and hyphens hang into the margin where supported, so the text
-       block reads as optically flush rather than mathematically flush. */
-    hanging-punctuation: first last;
     text-rendering: optimizeLegibility;
   }
 
-  /* Paragraphs avoid single-word last lines. Headings balance instead. */
   p, li, dd, figcaption {
     text-wrap: pretty;
   }
 
   h1, h2, h3, h4 {
-    font-family: var(--font-display);
-    font-weight: 300;
     margin: 0;
-    text-wrap: balance;
-    /* Discretionary ligatures are worth having in a garamond at display size. */
-    font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
-  }
-
-  /* Display italic is a voice, not an emphasis: no extra weight, slightly
-     looser so the slant does not crowd the roman beside it. */
-  h1 em, h2 em, h3 em, .t-display-xl em, .t-display-l em, .t-display-m em {
-    font-style: italic;
     font-weight: 300;
-    letter-spacing: 0.005em;
-    color: var(--color-travertine);
+    text-wrap: balance;
   }
 
   p { margin: 0; }
-  img, video, canvas { display: block; max-width: 100%; }
-  button { font: inherit; color: inherit; }
+  img, video, canvas, svg { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:disabled { cursor: default; }
 
   ::selection {
-    background: var(--color-travertine);
+    background: var(--color-accent);
     color: var(--color-ground);
   }
 
-  /* Visible focus, on every interactive element, in brand colour. */
+  /* Visible focus on every interactive element — accent on the light ground,
+     warm white on charcoal and over the photograph. */
   :focus-visible {
-    outline: 2px solid var(--color-travertine);
-    outline-offset: 4px;
-    border-radius: 1px;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  .on-dark :focus-visible {
+    outline-color: var(--color-on-dark);
   }
 }
 
 @layer utilities {
-  /* ── Type scale ───────────────────────────────────────── */
-  .t-display-xl {
+  /* ── Type ─────────────────────────────────────────────────
+     Two roles. The serif carries the hero, section headings and editorial
+     statements; everything that is read, compared or operated — navigation,
+     body, prices, specifications, FAQ, forms, buttons — is the sans. Sizes
+     are the specified scale: one set for phones, one from 768px. */
+  .t-hero,
+  .t-major,
+  .t-section,
+  .t-sub {
     font-family: var(--font-display);
-    font-size: clamp(2.875rem, 8.4vw, 8.5rem);
-    line-height: 0.92;
-    letter-spacing: -0.028em;
     font-weight: 300;
-    word-spacing: 0.02em;
+    font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
   }
-  .t-display-l {
-    font-family: var(--font-display);
-    font-size: clamp(2.125rem, 5.6vw, 5rem);
-    line-height: 1.0;
-    letter-spacing: -0.021em;
-    font-weight: 300;
+  /* Hero: 42–58px on a phone, clamp(3.75rem, 7vw, 8rem) from 768. */
+  .t-hero {
+    font-size: clamp(2.625rem, 11vw, 3.625rem);
+    line-height: 0.96;
+    letter-spacing: -0.024em;
   }
-  .t-display-m {
-    font-family: var(--font-display);
-    font-size: clamp(1.625rem, 3.4vw, 2.875rem);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
-    font-weight: 300;
+  /* Major editorial heading: 38–48px, then clamp(3rem, 5.5vw, 6.5rem). */
+  .t-major {
+    font-size: clamp(2.375rem, 10vw, 3rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
   }
-  .t-display-s {
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 1.9vw, 1.75rem);
-    line-height: 1.22;
-    letter-spacing: -0.008em;
-    font-weight: 300;
+  /* Section heading: 32–42px, then clamp(2.5rem, 4vw, 5rem). */
+  .t-section {
+    font-size: clamp(2rem, 8.6vw, 2.625rem);
+    line-height: 1.04;
+    letter-spacing: -0.016em;
   }
-  /* Question rows: display face, but sized for a list of thirty-six rather
-     than for a section heading. */
-  .t-faq {
-    font-family: var(--font-display);
-    font-size: clamp(1.0625rem, 0.45vw + 0.96rem, 1.3125rem);
-    line-height: 1.3;
-    letter-spacing: -0.006em;
-    font-weight: 300;
+  /* Subheading: clamp(1.5rem, 2vw, 2.25rem). */
+  .t-sub {
+    font-size: clamp(1.5rem, 2vw, 2.25rem);
+    line-height: 1.16;
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 768px) {
+    .t-hero { font-size: clamp(3.75rem, 7vw, 8rem); }
+    .t-major { font-size: clamp(3rem, 5.5vw, 6.5rem); }
+    .t-section { font-size: clamp(2.5rem, 4vw, 5rem); }
   }
 
-  .t-eyebrow {
+  /* Body: 16–19px. */
+  .t-body {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    line-height: 1;
-    /* Uppercase tracking adds a trailing space the eye reads as a gap. */
-    text-indent: 0.2em;
-    margin-left: -0.2em;
-    font-variant-numeric: tabular-nums;
+    font-size: clamp(1rem, 0.25vw + 0.95rem, 1.1875rem);
+    line-height: 1.65;
+    letter-spacing: 0.002em;
   }
-  /* Supporting text. It used to be 12px uppercase with heavy tracking, and
-     it carried almost every non-heading line on the site — captions, notes,
-     row values, CTAs. At that size, in caps, none of it was pleasant to
-     read and all of it shouted. Sentence case at 14px, normal tracking. */
-  .t-meta {
+  /* A row you read and act on — a question, a destination, a specification,
+     a tab. Body size, one weight up, tighter leading. */
+  .t-item {
     font-family: var(--font-sans);
-    font-size: 0.875rem;
+    font-size: clamp(1rem, 0.25vw + 0.95rem, 1.1875rem);
     font-weight: 400;
-    letter-spacing: 0.005em;
-    line-height: 1.6;
-    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    letter-spacing: 0.002em;
   }
-
-  /* A genuine label — a column head, a category, a field name. Uppercase is
-     right here because it is not being read as prose. */
-  /* Navigation. 12–13px with slight tracking, per the specification. */
+  /* A figure worth reading at a glance — an area, a price, a count. Sans,
+     light, tabular, so values line up when you compare them. */
+  .t-value {
+    font-family: var(--font-sans);
+    font-size: clamp(1.25rem, 0.8vw + 1rem, 1.75rem);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  /* Navigation: 12–13px with slight tracking. */
   .t-nav {
     font-family: var(--font-sans);
     font-size: 0.8125rem;
@@ -213,13 +212,16 @@
     letter-spacing: 0.05em;
     line-height: 1;
   }
-  /* Body, 16–19px per the specification. */
-  .t-body {
+  /* Metadata: 11–13px, sentence case. */
+  .t-meta {
     font-family: var(--font-sans);
-    font-size: clamp(1rem, 0.25vw + 0.95rem, 1.1875rem);
-    line-height: 1.65;
-    letter-spacing: 0.002em;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
   }
+  /* Labels: 10–12px, uppercase — a column head, a category, a field name. */
   .t-label {
     font-family: var(--font-sans);
     font-size: 0.75rem;
@@ -227,66 +229,57 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     line-height: 1.5;
-    text-indent: 0.14em;
-    margin-left: -0.14em;
     font-variant-numeric: tabular-nums;
   }
-  /* Concierge. The rows are display-face questions at reading size; the input
-     matches them so what you type looks like what it will find. */
-  .t-concierge {
-    font-family: var(--font-display);
-    font-size: clamp(1.125rem, 0.5vw + 1rem, 1.5rem);
-    line-height: 1.28;
-    letter-spacing: -0.008em;
-    font-weight: 300;
+  .t-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1;
   }
-  .t-concierge-input {
-    font-family: var(--font-display);
-    font-size: clamp(1.0625rem, 0.4vw + 0.97rem, 1.3125rem);
-    line-height: 1.3;
-    letter-spacing: -0.006em;
-    font-weight: 300;
-  }
-  .t-lede {
-    font-size: clamp(1.0625rem, 0.6vw + 0.95rem, 1.3125rem);
-    line-height: 1.62;
-    font-weight: 300;
-    letter-spacing: 0.002em;
-  }
-
-  /* Figures inside running prose read better as oldstyle; they sit on the
-     x-height instead of standing up like capitals mid-sentence. */
-  .t-oldstyle { font-variant-numeric: oldstyle-nums proportional-nums; }
   .t-numeral {
     font-family: var(--font-sans);
     font-size: 0.6875rem;
     font-weight: 400;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     font-variant-numeric: tabular-nums;
   }
 
   /* ── Layout ───────────────────────────────────────────── */
-  .gutter { padding-inline: clamp(1.25rem, 5vw, 6.5rem); }
-  /* 12-column grid, content capped at 1400px; full-bleed sections opt out. */
-  .shell { margin-inline: auto; max-width: 1400px; }
-  /* The concierge is docked over the page, so the last thing on it needs room
-     to clear the bar — and an anchored jump needs to land above it. */
-  /* Room for the phone action bar. Phone only — there is no fixed bar on a
-     desktop screen any more, so reserving space there just left a hole. */
-  /* Progressive disclosure that does not cost the content.
-     "View all" sections render EVERYTHING server-side and hide the overflow
-     with CSS keyed on html.js — so a reader with JavaScript off, and any
-     crawler, gets the complete list, while everyone else gets the short one
-     with a control. Collapsing in React instead left 28 of 36 answers out of
-     the served HTML entirely. */
-  .js-only { display: none; }
-  html.js .js-only { display: revert; }
+  .gutter { padding-inline: var(--gutter); }
+  /* 12-column grid; content never wider than 1400px. */
+  .shell { margin-inline: auto; max-width: calc(1400px + 2 * var(--gutter)); }
+  .measure { max-width: 36ch; }
+  .measure-wide { max-width: 42rem; }
+  .hair { border-color: var(--color-hair); }
+
+  /* Section rhythm. Two tiers, so spacing follows hierarchy:
+     phones 72–110px, desktop 120–180px. */
+  .section-y { padding-block: clamp(4.5rem, 18vw, 6.875rem); }
+  .section-y-lg { padding-block: clamp(5rem, 22vw, 6.875rem); }
+  @media (min-width: 1024px) {
+    .section-y { padding-block: clamp(7.5rem, 9vw, 9.5rem); }
+    .section-y-lg { padding-block: clamp(8.75rem, 10vw, 11.25rem); }
+  }
+
+  /* Progressive disclosure that does not cost the content. Collapsible lists
+     render everything server-side and hide the overflow with CSS keyed on
+     html.js, so a reader with JavaScript off, and any crawler, gets all of it. */
+  /* Controls that only work with scripting are removed when it is off, and
+     otherwise left to their own display utilities. */
+  html:not(.js) .js-only { display: none !important; }
   html.js [data-collapsed="true"] .is-extra { display: none; }
-  /* The FAQ's own collapse: a checkbox, so it works with scripting off. */
   html.js #faq-list[data-collapsed]:not(:has(#faq-all:checked)) .is-extra { display: none; }
 
-  /* The button system. Exactly three types; nothing else is a button.
-     Radius 6px, never a pill. 50px desktop, 48px minimum on touch. */
+  /* Horizontal scrollers that bleed to the screen edge on a phone. */
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* ── Buttons. Exactly three types. ───────────────────────
+     Primary: dark filled. Secondary: transparent, subtle border. Text: a
+     label and an arrow. 6px radius, never a pill; 50px tall, 48px minimum. */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -294,94 +287,136 @@
     gap: 0.625rem;
     min-height: 3.125rem;
     padding-inline: 1.5rem;
+    border: 1px solid transparent;
     border-radius: 6px;
     font-family: var(--font-sans);
     font-size: 0.8125rem;
+    font-weight: 400;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     line-height: 1;
+    white-space: nowrap;
     transition: background-color 280ms var(--ease-out-quiet),
                 border-color 280ms var(--ease-out-quiet),
                 color 280ms var(--ease-out-quiet),
+                opacity 280ms var(--ease-out-quiet),
                 transform 120ms var(--ease-out-quiet);
   }
-  .btn:active { transform: scale(0.98); }
+  .btn:active:not(:disabled) { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.4; }
+  /* Square: the same secondary button holding an icon instead of a word. */
+  .btn-square { padding-inline: 0; min-width: 3.125rem; }
   .btn-primary { background: var(--color-ink); color: var(--color-ground); }
-  .btn-primary:hover { background: var(--color-travertine); }
-  .btn-secondary { border: 1px solid var(--color-rule); color: var(--color-ink); }
-  .btn-secondary:hover { border-color: var(--color-ink); background: var(--color-ground-2); }
+  .btn-primary:hover:not(:disabled) { background: var(--color-accent); }
+  .btn-secondary { border-color: var(--color-rule); color: var(--color-ink); background: transparent; }
+  .btn-secondary:hover:not(:disabled) { border-color: var(--color-ink); background: var(--color-ground-2); }
   .btn-text {
     display: inline-flex;
-    align-items: baseline;
-    gap: 0.625rem;
+    align-items: center;
+    gap: 0.5rem;
     min-height: 2.75rem;
     font-family: var(--font-sans);
     font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     color: var(--color-ink);
   }
-  .btn-text .arrow { transition: transform 280ms var(--ease-out-quiet); }
+  .btn-text .arrow { color: var(--color-accent); transition: transform 280ms var(--ease-out-quiet); }
   .btn-text:hover .arrow { transform: translateX(4px); }
-  /* On charcoal. */
-  .on-dark .btn-primary { background: var(--color-ground); color: var(--color-ink); }
-  .on-dark .btn-primary:hover { background: #fff; }
-  .on-dark .btn-secondary { border-color: rgba(244,242,237,0.35); color: var(--color-ground); }
-  .on-dark .btn-secondary:hover { border-color: var(--color-ground); background: rgba(244,242,237,0.06); }
+  .btn .arrow { transition: transform 280ms var(--ease-out-quiet); }
+  .btn:hover .arrow { transform: translateX(4px); }
 
-  .dock-clear { padding-bottom: clamp(4.5rem, 10vh, 5.5rem); }
+  /* On charcoal and over the photograph. */
+  .on-dark .btn-primary { background: var(--color-on-dark); color: var(--color-ink); }
+  .on-dark .btn-primary:hover:not(:disabled) { background: #ffffff; }
+  .on-dark .btn-secondary { border-color: rgba(244, 242, 237, 0.6); color: var(--color-on-dark); }
+  .on-dark .btn-secondary:hover:not(:disabled) { border-color: var(--color-on-dark); background: rgba(244, 242, 237, 0.1); }
+  .on-dark .btn-text { color: var(--color-on-dark); }
+  .on-dark .btn-text .arrow { color: var(--color-on-dark-dim); }
+
+  /* Room for the phone action bar at the very end of the page. */
+  .dock-clear { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
   @media (min-width: 768px) { .dock-clear { padding-bottom: 0; } }
 
-  /* The enquiry steps hide the later ones once the script is running. With no
-     script every field stays in the DOM and the whole form submits at once. */
-  .js .js-only-hidden { display: none; }
-  html:not(.js) .js-only-hidden { display: block !important; }
-  /* Section rhythm. Measured, not chosen: at 11rem a 750px-tall viewport
-     could land entirely inside the gap between two sections and show 2% ink,
-     which is what "the scroll is not consistent" looks like — you push and
-     nothing changes. This still breathes; it no longer strands anyone. */
-  /* 120–180px desktop, 72–110px mobile, per the specification. */
-  .section-y { padding-block: clamp(4.5rem, 9vh, 7.5rem); }
-  .section-y-lg { padding-block: clamp(5.5rem, 12vh, 11.25rem); }
-  .measure { max-width: 36ch; }
-  .measure-wide { max-width: 48ch; }
-  .hair { border-color: var(--color-hair); }
-
-  /* ── Motion primitives ───────────────────────────────────
-     Static baseline first: every .reveal element is fully
-     legible with no JS. GSAP only ever removes the veil.     */
+  /* ── Reveal primitives ───────────────────────────────────
+     Static baseline first: every element is fully legible with no JS. The
+     motion layer only ever removes the veil, and a failsafe in layout.tsx
+     takes the veil away if the motion layer never boots. */
   [data-reveal],
   [data-reveal-clip] { opacity: 1; }
-  .js [data-reveal] { opacity: 0; will-change: opacity, transform; }
-  .js [data-reveal-clip] { clip-path: inset(0 0 100% 0); will-change: clip-path; }
-
-  .film-grain::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.055;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+  .js [data-reveal] { opacity: 0; }
+  .js [data-reveal-clip] { clip-path: inset(0 0 100% 0); }
 }
 
-/* Pinned stages.
-
-   The height has to exist in CSS rather than arriving with a React state
-   flip: ScrollTrigger measures the element when it creates the pin, and if
-   that happens before the height lands it pins the full column — 2808px on a
-   900px screen — and the plate stretches to four screens tall. Same media
-   query the components use to decide whether to pin at all, so the two can
-   never disagree. */
-.pin-stage { height: auto; }
-.pin-plate { height: 100%; }
-@media (min-width: 768px) and (min-height: 620px) {
-  .pin-stage { height: 78vh; }
-  .pin-stage--short { height: 74vh; }
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes heroIn {
+  from { opacity: 0; transform: scale(1.03); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes navIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes scrollCue {
+  0%   { transform: translateY(0); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: translateY(2rem); opacity: 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Content swap — a residence, an amenity. The outgoing panel fades and
+   lifts away, the incoming one settles in: 140ms out, 300ms in. */
+.swap-out { animation: swapOut 140ms var(--ease-in-out-quiet) both; }
+.swap-in  { animation: swapIn 300ms var(--ease-out-quiet) both; }
+@keyframes swapOut {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+@keyframes swapIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* The hero: one choreography, 1000ms end to end. Visual, brand, headline,
+   facts, actions — then the navigation settles. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-visual  { animation: heroIn 900ms var(--ease-out-quiet) both; }
+  .hero-brand   { animation: riseIn 450ms var(--ease-out-quiet) 100ms both; }
+  .hero-title   { animation: riseIn 600ms var(--ease-out-quiet) 180ms both; }
+  .hero-facts   { animation: riseIn 450ms var(--ease-out-quiet) 340ms both; }
+  .hero-actions { animation: riseIn 450ms var(--ease-out-quiet) 440ms both; }
+  .hero-cue     { animation: fadeIn 400ms var(--ease-out-quiet) 600ms both; }
+  .nav-settle   { animation: navIn 450ms var(--ease-out-quiet) 550ms both; }
+  .hero-cue-line { animation: scrollCue 2400ms var(--ease-in-out-quiet) 1000ms infinite; }
+}
+
+/* One surface at a time. While an overlay owns the screen — search, the
+   gallery at full size, the phone menu — the phone action bar stands down
+   so it cannot sit on top of it or steal a tap meant for it. */
+html[data-overlay] [data-mobile-bar] { display: none; }
+
+/* ── Accordion ────────────────────────────────────────────────
+   Native <details>. With scripting, lib/disclosure.ts animates the height
+   300ms both ways; without it the browser opens them instantly and every
+   answer is still in the document. */
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+.chevron { transition: transform 300ms var(--ease-out-quiet); }
+details[open] > summary .chevron { transform: rotate(180deg); }
 
 /* ── Reduced motion ──────────────────────────────────────────
-   Not a follow-up: the no-motion experience is a first-class
-   render. Everything is visible, nothing scrubs, nothing moves. */
+   A first-class render, not a follow-up. Everything is present, nothing
+   scrubs, nothing travels; state changes still happen, instantly. */
 @media (prefers-reduced-motion: reduce) {
   .js [data-reveal] { opacity: 1 !important; transform: none !important; }
   .js [data-reveal-clip] { clip-path: none !important; }
@@ -389,38 +424,6 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-}
-
-/* Concierge entrance. 200–320ms, opacity and a short rise — nothing scales,
-   nothing bounces, and the panel is interactive from the first frame. */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes riseIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: none; }
-}
-.concierge-panel {
-  box-shadow: 0 30px 80px -40px rgba(22, 20, 15, 0.7);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .concierge-panel { animation: riseIn 260ms var(--ease-out-quiet) both; }
-}
-
-/* One surface at a time. While an overlay owns the screen — search, the
-   gallery lightbox, a plan at full size — the phone action bar stands down
-   so it cannot sit on top of it or steal a tap meant for it. */
-html[data-overlay] [data-mobile-bar] { display: none; }
-
-/* Hero entrance and the scroll cue. */
-@keyframes heroIn {
-  from { opacity: 0; transform: scale(1.03); }
-  to   { opacity: 1; transform: none; }
-}
-@keyframes scrollCue {
-  0%   { transform: translateY(0); opacity: 0; }
-  30%  { opacity: 1; }
-  100% { transform: translateY(2rem); opacity: 0; }
 }

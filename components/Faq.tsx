@@ -1,69 +1,63 @@
 import { FAQS } from "@/lib/content";
+import Accordion from "./Accordion";
+import Icon from "./Icon";
 
 /**
- * Questions.
+ * Questions. Large editorial title on the left, accordion on the right; on a
+ * phone the title comes first.
  *
- * Title left, accordion right, one answer open at a time — enforced by the
- * browser, not by React. A set of <details> sharing a `name` is an exclusive
- * accordion in HTML, so it needs no state, works with JavaScript off, and
- * every answer is in the served document for a crawler to read.
+ * Only one answer is open at a time. The rows are <details> sharing a
+ * `name`, which the browser enforces on its own with scripting off; with it
+ * on, Accordion animates both rows — 300ms opening, 300ms closing — and
+ * holds the page still so nothing jumps.
  *
- * The first eight show at rest. The remaining twenty-eight are rendered and
- * hidden with CSS keyed on html.js, so turning JavaScript off reveals them
- * rather than losing them.
+ * The first eight show at rest. The other twenty-eight are rendered and
+ * hidden with CSS keyed on html.js, so a reader without JavaScript, and any
+ * crawler, still gets all thirty-six.
  */
 export default function Faq() {
   const ordered = [...FAQS.filter((f) => f.top), ...FAQS.filter((f) => !f.top)];
 
   return (
     <section id="faq" aria-labelledby="faq-heading" className="section-y-lg bg-ground">
-      <div className="shell gutter grid grid-cols-12 gap-y-8 lg:gap-x-[clamp(2rem,5vw,4rem)]">
-        <div className="col-span-12 lg:col-span-4">
-          <h2 id="faq-heading" className="t-display-m text-ink">
-            Questions
-          </h2>
-          <p className="t-body mt-5 max-w-[30ch] text-ink-dim">
-            Anything not answered here, the site office will answer on the phone.
-          </p>
+      <div className="shell gutter grid gap-y-10 lg:grid-cols-12 lg:gap-x-[clamp(2rem,4vw,4rem)]">
+        <div className="lg:col-span-4">
+          <div className="lg:sticky lg:top-28">
+            <h2 id="faq-heading" data-reveal className="t-section text-ink">
+              Questions
+            </h2>
+            <p className="t-body mt-5 max-w-[30ch] text-ink-dim">
+              Anything not answered here, the site office will answer on the phone.
+            </p>
+          </div>
         </div>
 
-        <div id="faq-list" data-collapsed className="col-span-12 border-t hair lg:col-span-8">
+        <Accordion exclusive id="faq-list" data-collapsed className="border-t hair lg:col-span-8">
           {ordered.map((f) => (
-            <details
-              key={f.q}
-              name="scribeo-faq"
-              className={`group border-b hair ${f.top ? "" : "is-extra"}`}
-            >
-              <summary className="flex cursor-pointer list-none items-baseline justify-between gap-5 py-5 marker:hidden">
-                <span className="t-display-s text-ink">{f.q}</span>
-                <span
-                  aria-hidden="true"
-                  className="t-display-s shrink-0 text-travertine transition-transform duration-300 ease-[var(--ease-out-quiet)] group-open:rotate-45"
-                >
-                  +
-                </span>
+            <details key={f.q} name="scribeo-faq" className={`border-b hair ${f.top ? "" : "is-extra"}`}>
+              <summary className="flex min-h-16 cursor-pointer items-center justify-between gap-6 py-4">
+                <span className="t-item text-ink">{f.q}</span>
+                <Icon name="chevron-down" className="chevron h-5 w-5 text-ink-dim" />
               </summary>
-              <p className="t-body measure-wide pb-6 text-ink-dim">{f.a}</p>
+              <p className="t-body measure-wide pb-7 pr-10 text-ink-dim">{f.a}</p>
             </details>
           ))}
 
           {/* Plain checkbox, no script: checking it clears the collapse. */}
           <input id="faq-all" type="checkbox" className="peer sr-only" />
-          <label
-            htmlFor="faq-all"
-            className="btn-text mt-6 cursor-pointer text-ink-dim peer-checked:hidden"
-          >
-            View all {FAQS.length} questions
-            <span aria-hidden="true" className="arrow text-travertine">→</span>
+          <label htmlFor="faq-all" className="js-only mt-5 block w-fit cursor-pointer peer-checked:!hidden">
+            <span className="btn-text">
+              View all {FAQS.length} questions
+              <Icon name="chevron-down" className="arrow h-4 w-4" />
+            </span>
           </label>
-          <label
-            htmlFor="faq-all"
-            className="btn-text mt-6 hidden cursor-pointer text-ink-dim peer-checked:inline-flex"
-          >
-            Show the first eight
-            <span aria-hidden="true" className="arrow text-travertine">→</span>
+          <label htmlFor="faq-all" className="mt-5 hidden w-fit cursor-pointer peer-checked:!block">
+            <span className="btn-text">
+              Show the first eight
+              <Icon name="chevron-down" className="arrow h-4 w-4 rotate-180" />
+            </span>
           </label>
-        </div>
+        </Accordion>
       </div>
     </section>
   );

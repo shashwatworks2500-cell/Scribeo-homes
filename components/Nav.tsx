@@ -1,276 +1,176 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Icon from "./Icon";
+import { closeOverlay, openOverlay } from "@/lib/overlay";
+import { getLenis as lenis, goTo, openSearch } from "@/lib/nav";
 
-/* Three chapters and one action. Everything else is reachable by scrolling
-   or from the footer; a header that lists every section is a table of
-   contents, not a way through. */
+/**
+ * The header. Brand left, three chapters centred, Search and Enquire right —
+ * nothing else. Fixed, and always there: Search, the chapters and the enquiry
+ * are reachable from any point on the page, not only on the way back up.
+ *
+ * Over the hero it is transparent with warm white type on the photograph's
+ * own top shade; the moment the page moves it becomes a warm, nearly solid
+ * surface with charcoal type.
+ */
 const LINKS = [
   { href: "#residences", label: "Residences" },
   { href: "#amenities", label: "Amenities" },
   { href: "#location", label: "Location" },
 ] as const;
 
-type Lenis = { scrollTo: (t: string | HTMLElement, o?: Record<string, unknown>) => void };
-
-const openSearch = () => window.dispatchEvent(new CustomEvent("scribeo:search"));
-
-/** Search. A refined utility control, not a marketing CTA. */
-function SearchButton({ variant, onPick }: { variant: "bar" | "row"; onPick?: () => void }) {
-  const glass = (
-    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.3">
-      <circle cx="7" cy="7" r="4.6" />
-      <path d="M10.4 10.4 14 14" strokeLinecap="square" />
-    </svg>
-  );
-  if (variant === "row")
-    return (
-      <button
-        type="button"
-        onClick={() => {
-          onPick?.();
-          openSearch();
-        }}
-        className="t-display-s flex w-full items-center gap-3 border-b hair pb-4 text-left text-ink"
-      >
-        {glass}
-        <span>Search</span>
-      </button>
-    );
-  return (
-    <button
-      type="button"
-      onClick={openSearch}
-      aria-label="Search residences"
-      aria-keyshortcuts="Meta+K Control+K"
-      className="group flex items-center gap-2.5 text-ink-dim transition-colors duration-200 hover:text-ink"
-    >
-      <span className="block transition-transform duration-300 ease-[var(--ease-out-quiet)] group-hover:-translate-y-px">
-        {glass}
-      </span>
-      <span className="t-nav">Search</span>
-    </button>
-  );
-}
-
 export default function Nav() {
-  const [hidden, setHidden] = useState(false);
   const [solid, setSolid] = useState(false);
-  /* Over the hero film the bar is transparent; over the page it is not. The
-     switch is the hero's own height, read once per scroll rather than
-     measured per frame. */
-  const [overHero, setOverHero] = useState(true);
   const [open, setOpen] = useState(false);
-  const lastY = useRef(0);
-  const openRef = useRef(false);
-  const progressRef = useRef<HTMLSpanElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
-  /* Reveal on scroll up, retreat on scroll down. The bar never occupies the
-     frame while the reader is moving forward through the page.
-
-     The handler used to run a querySelector and two forced layout reads —
-     getBoundingClientRect and scrollHeight — on every scroll event, then
-     write a transform straight after them. That is a read/write thrash on
-     the hottest path on the page, for two numbers that only change when the
-     page is re-measured. They are cached here and refreshed on the one event
-     that can invalidate them. */
-  const metrics = useRef({ heroH: 0, max: 1 });
   useEffect(() => {
-    const measure = () => {
-      const hero = document.querySelector("section[aria-labelledby='hero-heading']");
-      metrics.current.heroH = hero ? hero.getBoundingClientRect().height : 0;
-      metrics.current.max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    };
-    measure();
-    const onScroll = () => {
-      const y = window.scrollY;
-      const { heroH, max } = metrics.current;
-      setSolid(y > 24);
-      setOverHero(!heroH || y < heroH - 120);
-      // Reading progress. Orientation only — it never moves anything else.
-      if (progressRef.current) {
-        progressRef.current.style.transform = `scaleX(${Math.min(1, y / max)})`;
-      }
-      if (!openRef.current) setHidden(y > lastY.current && y > 220);
-      lastY.current = y;
-    };
+    const onScroll = () => setSolid(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", measure, { passive: true });
-    ScrollTrigger.addEventListener("refresh", measure);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", measure);
-      ScrollTrigger.removeEventListener("refresh", measure);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    openRef.current = open;
-  }, [open]);
+  const shut = useCallback(() => closeOverlay("menu"), []);
 
-  // Escape closes, focus returns to the control that opened it.
+  /* The phone menu is an overlay like any other: it holds the page still,
+     hides the action bar, answers Escape and Back, and gives focus back to
+     the button that opened it. Widening past the phone layout closes it, so
+     a rotated tablet can never be left with a locked page behind a panel
+     that is no longer displayed. */
   useEffect(() => {
     if (!open) return;
+    openOverlay("menu", () => setOpen(false));
+    const root = document.documentElement;
+    root.setAttribute("data-overlay", "menu");
+    lenis()?.stop();
+    document.body.style.overflow = "hidden";
+    panelRef.current?.querySelector<HTMLElement>("button, a")?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-        toggleRef.current?.focus();
-      }
+      if (e.key === "Escape") void shut();
     };
+    const wide = window.matchMedia("(min-width: 768px)");
+    const onWide = () => wide.matches && void shut();
     document.addEventListener("keydown", onKey);
-    panelRef.current?.querySelector<HTMLElement>("a")?.focus();
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  // Lock the page behind the mobile panel, Lenis included.
-  useEffect(() => {
-    const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
-    if (open) {
-      lenis?.stop();
-      document.body.style.overflow = "hidden";
-    } else {
-      lenis?.start();
-      document.body.style.overflow = "";
-    }
+    wide.addEventListener("change", onWide);
     return () => {
+      document.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onWide);
+      if (root.getAttribute("data-overlay") === "menu") root.removeAttribute("data-overlay");
       document.body.style.overflow = "";
+      lenis()?.start();
+      toggleRef.current?.focus();
     };
-  }, [open]);
+  }, [open, shut]);
 
-  const go = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    const el = document.querySelector<HTMLElement>(href);
-    if (!el) return;
+  const follow = async (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    setOpen(false);
-    const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
-    if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1.3 });
-    else
-      el.scrollIntoView({
-        // No Lenis means either the bundle has not booted or motion is
-        // reduced; in the second case a smooth glide is the wrong answer.
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-        block: "start",
-      });
-    /* Record where we went. Without this the address bar never changes, so
-       Back leaves the site instead of returning to the previous section and
-       the reader cannot copy a link to what they are looking at.
-       MotionProvider listens for popstate and scrolls accordingly. */
-    if (location.hash !== href) history.pushState(null, "", href);
+    if (open) await shut();
+    goTo(href);
   };
+
+  const light = !solid && !open;
+  const tone = light ? "text-on-dark" : "text-ink";
+  const quiet = light ? "text-on-dark hover:text-white" : "text-ink-dim hover:text-ink";
 
   return (
     <>
       <header
-        className="fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color] duration-500"
+        className="nav-settle fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-500 ease-[var(--ease-out-quiet)]"
         style={{
-          transform: hidden ? "translateY(-100%)" : "translateY(0)",
-          transitionTimingFunction: "var(--ease-in-out-quiet)",
-          backgroundColor: solid && !open && !overHero ? "rgba(251,250,247,0.88)" : "transparent",
-          backdropFilter: solid && !open && !overHero ? "blur(10px)" : "none",
-          borderBottom: `1px solid ${solid && !open && !overHero ? "var(--color-hair)" : "transparent"}`,
+          backgroundColor: light ? "transparent" : "rgba(244, 242, 237, 0.97)",
+          backdropFilter: solid && !open ? "blur(8px)" : "none",
+          borderColor: solid && !open ? "var(--color-hair)" : "transparent",
         }}
       >
-        <div className="shell gutter flex h-[clamp(3.75rem,8vh,4.75rem)] items-center justify-between">
+        <div className="gutter grid h-16 grid-cols-[1fr_auto] items-center gap-6 md:h-[4.75rem] md:grid-cols-[1fr_auto_1fr]">
           <a
             href="#top"
-            onClick={(e) => go(e, "#top")}
-            className="t-eyebrow text-ink transition-colors duration-200 hover:text-travertine"
+            onClick={(e) => follow(e, "#top")}
+            className={`t-eyebrow justify-self-start whitespace-nowrap transition-colors duration-300 ${tone}`}
           >
-            Scribeo&nbsp;Homes
+            Scribeo Homes
           </a>
 
           <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-[clamp(1.25rem,2.2vw,2.5rem)]">
+            <ul className="flex items-center gap-[clamp(1.75rem,3vw,3rem)]">
               {LINKS.map((l) => (
                 <li key={l.href}>
                   <a
                     href={l.href}
-                    onClick={(e) => go(e, l.href)}
-                    className="t-nav text-ink-dim transition-colors duration-200 hover:text-ink"
+                    onClick={(e) => follow(e, l.href)}
+                    className={`t-nav inline-flex min-h-11 items-center transition-colors duration-300 ${quiet}`}
                   >
                     {l.label}
                   </a>
                 </li>
               ))}
-              <li className="ml-[clamp(0.5rem,1.4vw,1.5rem)]">
-                <SearchButton variant="bar" />
-              </li>
-              <li>
-                <a
-                  href="#enquire"
-                  onClick={(e) => go(e, "#enquire")}
-                  data-cursor="open"
-                  className="t-nav text-ink transition-colors duration-200 hover:text-travertine"
-                >
-                  Enquire
-                </a>
-              </li>
             </ul>
           </nav>
 
-          <div className="flex items-center gap-5 md:hidden">
-            {/* The enquiry stays reachable from the header as well as the
-                action bar at the foot — the two are the same request, and a
-                reader at the top of the page should not have to hunt. */}
-            {!open ? (
-              <a
-                href="#enquire"
-                onClick={(e) => go(e, "#enquire")}
-                className="t-meta border-b border-travertine/70 pb-0.5 text-ink"
-              >
-                Enquire
-              </a>
-            ) : null}
+          <div className="flex items-center justify-self-end gap-[clamp(1.25rem,2.4vw,2.25rem)]">
+            <button
+              type="button"
+              onClick={() => (open ? shut().then(openSearch) : openSearch())}
+              aria-keyshortcuts="Meta+K Control+K"
+              className={`group inline-flex min-h-11 items-center gap-2 transition-colors duration-300 ${quiet}`}
+            >
+              <span className="transition-transform duration-300 ease-[var(--ease-out-quiet)] group-hover:-translate-y-px group-hover:translate-x-px">
+                <Icon name="search" className="h-4 w-4" />
+              </span>
+              <span className="t-nav">Search</span>
+            </button>
+            <a
+              href="#enquire"
+              onClick={(e) => follow(e, "#enquire")}
+              className={`t-nav hidden min-h-11 items-center transition-colors duration-300 md:inline-flex ${tone} ${
+                light ? "hover:text-white" : "hover:text-accent"
+              }`}
+            >
+              <span className={`border-b pb-1 ${light ? "border-on-dark/60" : "border-ink/40"}`}>Enquire</span>
+            </a>
             <button
               ref={toggleRef}
               type="button"
-              onClick={() => setOpen((v) => !v)}
+              onClick={() => (open ? void shut() : setOpen(true))}
               aria-expanded={open}
               aria-controls="mobile-menu"
-              className="t-meta relative z-50 text-ink"
+              className={`t-nav inline-flex min-h-11 items-center md:hidden ${tone}`}
             >
               {open ? "Close" : "Menu"}
             </button>
           </div>
         </div>
-        <span aria-hidden="true" className="block h-px w-full bg-transparent">
-          <span
-            ref={progressRef}
-            className="block h-px w-full origin-left bg-travertine"
-            style={{ transform: "scaleX(0)" }}
-          />
-        </span>
       </header>
 
-      {/* Mobile panel: full-bleed, typographic, same register as the page. */}
-      <div
-        id="mobile-menu"
-        ref={panelRef}
-        hidden={!open}
-        className="fixed inset-0 z-40 bg-ground md:hidden"
-      >
-        <nav aria-label="Primary" className="gutter flex h-full flex-col justify-center">
-          <div className="mb-[clamp(2rem,5vh,3rem)]">
-            <SearchButton variant="row" onPick={() => setOpen(false)} />
-          </div>
-          <ul className="space-y-[clamp(1rem,3.2vh,2rem)]">
+      <div id="mobile-menu" ref={panelRef} hidden={!open} data-lenis-prevent className="fixed inset-0 z-40 overflow-y-auto bg-ground md:hidden">
+        <nav aria-label="Menu" className="gutter flex min-h-full flex-col justify-center py-24">
+          <ul className="border-t hair">
             {LINKS.map((l, i) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  onClick={(e) => go(e, l.href)}
-                  className="t-display-m flex items-baseline gap-5 text-ink"
-                >
-                  <span className="t-numeral text-travertine">{String(i + 1).padStart(2, "0")}</span>
-                  {l.label}
+              <li key={l.href} className="border-b hair">
+                <a href={l.href} onClick={(e) => follow(e, l.href)} className="flex min-h-16 items-center gap-5 text-ink">
+                  <span className="t-numeral text-accent">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="t-value">{l.label}</span>
                 </a>
               </li>
             ))}
+            <li className="border-b hair">
+              <a href="#enquire" onClick={(e) => follow(e, "#enquire")} className="flex min-h-16 items-center gap-5 text-ink">
+                <span className="t-numeral text-accent">04</span>
+                <span className="t-value">Enquire</span>
+              </a>
+            </li>
           </ul>
+          <button
+            type="button"
+            onClick={() => shut().then(openSearch)}
+            className="btn btn-secondary mt-10 self-start"
+          >
+            <Icon name="search" className="h-4 w-4" />
+            Search
+          </button>
         </nav>
       </div>
     </>

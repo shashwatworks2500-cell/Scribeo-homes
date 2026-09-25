@@ -13,8 +13,8 @@ import { A, type Asset } from "@/lib/assets";
 
 /** 01 — The whole project in six facts. Read in five seconds, not five minutes. */
 export const GLANCE: { n: string; k: string; v: string }[] = [
-  { n: "01", k: "Configurations", v: "1 – 4 BHK" },
-  { n: "02", k: "Built-up area", v: "753 – 2,333 sq ft" },
+  { n: "01", k: "Configurations", v: "1–4 BHK" },
+  { n: "02", k: "Built-up area", v: "753–2,333 sq ft" },
   { n: "03", k: "Price", v: "₹48 L – ₹1.79 Cr" },
   { n: "04", k: "Type", v: "Low-rise residences" },
   { n: "05", k: "Setting", v: "Mature landscape" },
@@ -98,3 +98,26 @@ export const TRUST: { k: string; v: string }[] = [
   { k: "Pricing", v: "Indicative and exclusive of duty, registration and taxes" },
   { k: "Distances", v: "Measured by road and to be confirmed on site" },
 ];
+
+/**
+ * The fuller statement behind a specification row, where the project already
+ * makes one. Every sentence here is an existing FAQ answer, quoted rather
+ * than paraphrased, so opening a row adds detail without adding a claim.
+ * Rows with nothing further to say show their value alone.
+ */
+export const SPEC_DETAIL: Record<string, string> = {
+  Structure:
+    "An RCC frame in warm-grey architectural concrete, with a façade of warm limestone and beige sandstone, deep recessed window reveals and horizontal roof slabs.",
+  Windows: "Slim charcoal metal window frames.",
+  Joinery: "Natural teak joinery where a hand touches it.",
+  Flooring: "Limestone and warm-neutral stone flooring to living areas. A full specification sheet is available on request.",
+  Landscape:
+    "The planting is designed to read as mature, with established trees retained and reinforced rather than a newly turfed site.",
+  Parking:
+    "Covered parking is allotted with each residence, and separate visitor parking is provided within the development.",
+  Security:
+    "Gated access with 24 × 7 manned security, CCTV coverage of entries and common areas, and visitor management at the gate.",
+  Power:
+    "Power backup covers common areas, lifts and essential services. Backup provision to individual residences is confirmed in the specification sheet.",
+  Water: "A treated supply with underground and overhead storage, supported by rainwater harvesting across the site.",
+};

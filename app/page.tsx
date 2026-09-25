@@ -12,29 +12,28 @@ import Gallery from "@/components/Gallery";
 import Location from "@/components/Location";
 import Specs from "@/components/Specs";
 import Faq from "@/components/Faq";
-import Closer from "@/components/Closer";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 /**
- * Nine sections, each answering one question.
+ * The journey, in the order the specification sets it:
  *
- *   Hero            what is this?
- *   At a glance     what are the facts?
- *   Introduction    what does it feel like?
- *   Residences      what can I buy?
- *   Floor plans     what does each home look like?
- *   Amenities       what do I get?
- *   Location        where is it?
- *   Specifications  what exactly is included?
- *   Questions       what else should I know?
- *   Visit           what do I do next?
+ *   Hero             land — understand the property
+ *   At a glance      the key numbers in five seconds
+ *   Setting          feel the place
+ *   Architecture     feel the architecture
+ *   Inside           feel the rooms
+ *   Residences       explore and compare configurations  (#residences)
+ *   Floor plans      view a plan
+ *   Amenities        what is shared                      (#amenities)
+ *   Gallery          see the development
+ *   Location         what is around it                   (#location)
+ *   Specifications   what exactly is included            (#specifications)
+ *   Questions        resolve what is left                (#faq)
+ *   Visit            book a site visit                   (#enquire)
  *
- * There were sixteen. A landscape chapter, four materials, six principles,
- * a day in five hours, a neighbourhood read as a week, a comparison table
- * and a separate gallery all answered "what is it like?" over and over.
- * Nothing factual was lost — it moved into the glance, the residence
- * panels, the specifications and the questions, where a buyer looks for it.
+ * Search, Residences, Amenities, Location and Enquire are reachable from the
+ * header at every point; nothing forces a linear read.
  */
 export default function Page() {
   return (
@@ -54,7 +53,6 @@ export default function Page() {
         <Location />
         <Specs />
         <Faq />
-        <Closer />
         <Contact />
       </main>
       <Footer />

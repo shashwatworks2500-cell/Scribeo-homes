@@ -6,42 +6,49 @@ import { HERO } from "@/lib/assets";
 /**
  * The hero.
  *
- * Visual first, and the visual is the whole background. The information
- * panel sits low-left and is deliberately quieter than the architecture
- * behind it: brand, statement, the three facts that matter, two actions.
+ * Visual first — the photograph is the whole background and stays vivid.
+ * Shade is added only where type sits on it: a band at the top for the
+ * navigation, and a low wash under the statement. The statement is left
+ * aligned on the page margin (9vw on a desktop) with its centre at 60% of
+ * the viewport; on a phone it moves into the lower third, clear of the
+ * houses.
  *
- * The entrance is one choreography of about 900ms — visual, brand, headline,
- * facts, actions — so the page composes itself once rather than each element
- * arriving on its own schedule. Under reduced motion everything is simply
- * present.
+ * Entrance: one choreography, 1000ms end to end — visual, brand, headline,
+ * facts, actions, then the navigation settles (globals.css). Leaving: the
+ * foot of the photograph warms into the soft stone of the next section as
+ * it scrolls away, so the page continues out of the image rather than
+ * cutting from it (MotionProvider).
  */
-const FACTS = ["1 – 4 BHK", "753 – 2,333 sq ft", "₹48 L onwards"];
+const FACTS = ["1–4 BHK", "753–2,333 sq ft", "₹48 L onwards"];
 
 export default function Hero() {
   return (
     <section
       aria-labelledby="hero-heading"
-      className="relative flex h-[100svh] min-h-[38rem] flex-col justify-end overflow-hidden bg-ground-2"
+      className="on-dark relative h-[100svh] min-h-[36rem] overflow-hidden bg-charcoal text-on-dark"
     >
-      <Image
-        src={HERO.src}
-        alt={HERO.alt}
-        fill
-        priority
-        fetchPriority="high"
-        sizes="100vw"
-        quality={90}
-        className="object-cover motion-safe:animate-[heroIn_1100ms_var(--ease-out-quiet)_both]"
-      />
+      {/* The supplied file carries a stock-library watermark strip down its
+          left edge. The frame starts 4% into the picture so the strip stays
+          out of view at every width until a licensed copy replaces it. */}
+      <div data-hero-media className="absolute inset-y-0 -left-[4%] right-0">
+        <Image
+          src={HERO.src}
+          alt={HERO.alt}
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          quality={90}
+          className="hero-visual object-cover"
+        />
+      </div>
 
-      {/* Legibility only. A vertical wash for the navigation and the panel,
-          and a horizontal one so the statement has a ground on the left. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(244,242,237,0.66) 0%, rgba(244,242,237,0.10) 26%, rgba(244,242,237,0.44) 62%, rgba(244,242,237,0.96) 100%)",
+            "linear-gradient(to bottom, rgba(23,23,23,0.46) 0%, rgba(23,23,23,0.16) 12%, rgba(23,23,23,0) 22%)",
         }}
       />
       <div
@@ -49,32 +56,44 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(105deg, rgba(244,242,237,0.88) 0%, rgba(244,242,237,0.66) 30%, rgba(244,242,237,0.32) 52%, rgba(244,242,237,0.06) 72%, rgba(244,242,237,0) 84%)",
+            "linear-gradient(to top, rgba(23,23,23,0.66) 0%, rgba(23,23,23,0.38) 34%, rgba(23,23,23,0.08) 58%, rgba(23,23,23,0) 70%)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 hidden md:block"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(23,23,23,0.42) 0%, rgba(23,23,23,0.2) 34%, rgba(23,23,23,0) 58%)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        data-hero-fade
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] opacity-0"
+        style={{
+          background:
+            "linear-gradient(to top, #e9e6de 0%, rgba(233,230,222,0.6) 38%, rgba(233,230,222,0) 100%)",
         }}
       />
 
-      <div className="relative shell w-full gutter pb-[clamp(4.5rem,14vh,9rem)]">
-        <p className="t-label text-travertine motion-safe:animate-[riseIn_500ms_var(--ease-out-quiet)_120ms_both]">
-          Scribeo Homes
-        </p>
+      <div className="gutter absolute inset-x-0 bottom-[calc(7rem+env(safe-area-inset-bottom))] md:bottom-auto md:top-[60%] md:-translate-y-1/2">
+        <p className="hero-brand t-eyebrow text-on-dark">Scribeo Homes</p>
 
-        <h1
-          id="hero-heading"
-          className="t-display-xl mt-5 max-w-[11ch] text-ink motion-safe:animate-[riseIn_700ms_var(--ease-out-quiet)_260ms_both]"
-        >
+        <h1 id="hero-heading" className="hero-title t-hero mt-5 max-w-[13ch] text-on-dark md:mt-6">
           Low-rise, held in landscape.
         </h1>
 
-        <ul className="mt-[clamp(1.5rem,4vh,2.25rem)] flex flex-wrap items-center gap-x-6 gap-y-2 motion-safe:animate-[riseIn_600ms_var(--ease-out-quiet)_520ms_both]">
+        <ul className="hero-facts t-meta mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-on-dark md:mt-8">
           {FACTS.map((f, i) => (
-            <li key={f} className="t-meta flex items-center gap-6 text-ink">
-              {i > 0 ? <span aria-hidden="true" className="hidden h-3 w-px bg-hair sm:block" /> : null}
+            <li key={f} className="flex items-center gap-4">
+              {i > 0 ? <span aria-hidden="true" className="h-3 w-px bg-on-dark/50" /> : null}
               {f}
             </li>
           ))}
         </ul>
 
-        <div className="mt-[clamp(1.5rem,4vh,2.25rem)] flex flex-col gap-3 motion-safe:animate-[riseIn_600ms_var(--ease-out-quiet)_680ms_both] sm:flex-row sm:items-center sm:gap-4">
+        <div className="hero-actions mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 md:mt-9">
           <a href="#residences" className="btn btn-primary">
             Explore Residences
           </a>
@@ -88,14 +107,13 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator. Quiet, and it retires once the reader has moved. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-[clamp(1.5rem,4vh,2.5rem)] left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 motion-safe:animate-[riseIn_600ms_var(--ease-out-quiet)_840ms_both] sm:left-auto sm:right-[clamp(1.25rem,5vw,6.5rem)] sm:translate-x-0"
+        className="hero-cue pointer-events-none absolute bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-1/2 flex -translate-x-1/2 flex-col items-center gap-2.5 md:bottom-10 md:left-auto md:right-[var(--gutter)] md:translate-x-0"
       >
-        <span className="t-label text-ink-faint">Scroll</span>
-        <span className="relative block h-12 w-px bg-hair">
-          <span className="absolute inset-x-0 top-0 block h-4 bg-travertine motion-safe:animate-[scrollCue_2400ms_var(--ease-in-out-quiet)_infinite]" />
+        <span className="t-label text-on-dark">Scroll</span>
+        <span className="relative block h-9 w-px overflow-hidden bg-on-dark/35 md:h-12">
+          <span className="hero-cue-line absolute inset-x-0 top-0 block h-3 bg-on-dark md:h-4" />
         </span>
       </div>
     </section>

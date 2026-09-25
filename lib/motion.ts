@@ -1,13 +1,13 @@
 /**
- * Motion tokens and budget for Scribeo Homes.
+ * Motion tokens for Scribeo Homes.
  *
- * MOTION BUDGET (enforced, not aspirational):
- *  - One focal element moves at a time. Supporting detail may follow it.
- *  - Exactly two scrubbed sequences on the page: the hero (progression)
- *    and the horizontal plates (progression). Nothing else is scroll-linked.
- *  - Parallax only on full-bleed imagery, for spatial relationship, capped
- *    at ±6% travel so nothing ever reveals an edge.
- *  - Section entrances: one reveal per section, max three staggered children.
+ * Budget:
+ *  - Entrances: opacity, a short rise, or a clip wipe — grouped, never one
+ *    trigger per element.
+ *  - Scroll-linked: the hero's foot warming into the next section, and
+ *    capped parallax on large desktop imagery only. Nothing on text or
+ *    controls, nothing on phones.
+ *  - State changes 300–500ms (residence swap, amenity crossfade, accordion).
  *  - Everything is legible and complete with all motion removed.
  */
 

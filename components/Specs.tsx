@@ -1,80 +1,70 @@
-"use client";
-
-import { useState } from "react";
-import { SPECS, TRUST } from "@/lib/story";
+import { SPECS, SPEC_DETAIL } from "@/lib/story";
+import Accordion from "./Accordion";
+import Icon from "./Icon";
 
 /**
- * Specifications.
+ * Specifications — the project's own fourteen categories, Structure through
+ * Vehicles, each a row with its label and a chevron that opens its value and,
+ * where the project states one, the fuller detail. Two columns of accordion
+ * on a desktop, one on a phone. No cards.
  *
- * A reference section. Two columns of accordion on a wide screen so the
- * whole set is legible without a long scroll, one column on a phone. Only
- * what the supplied project information states: anything a buyer would
- * reasonably ask that was not supplied says so rather than guessing.
+ * What has not been published yet says so, in the same place, rather than
+ * leaving a buyer to wonder whether it was forgotten.
  */
-const GROUPS = [
-  ...SPECS,
-  { group: "What is indicative, and what is confirmed", rows: TRUST.map((t) => [t.k, t.v] as [string, string]) },
-];
+const ROWS = SPECS.filter((g) => g.group !== "Not yet published").flatMap((g) => g.rows);
+const PENDING = SPECS.find((g) => g.group === "Not yet published")?.rows.map(([k]) => k) ?? [];
 
-function Fold({ group, rows }: { group: string; rows: [string, string][] }) {
-  const [open, setOpen] = useState(false);
+function Row({ label, value }: { label: string; value: string }) {
+  const detail = SPEC_DETAIL[label];
   return (
-    <div className="border-b hair">
-      <h3>
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          className="flex w-full items-center justify-between gap-5 py-5 text-left"
-        >
-          <span className="t-display-s text-ink">{group}</span>
-          <span
-            aria-hidden="true"
-            className={`t-display-s shrink-0 text-travertine transition-transform duration-300 ease-[var(--ease-out-quiet)] ${
-              open ? "rotate-45" : ""
-            }`}
-          >
-            +
-          </span>
-        </button>
-      </h3>
-      <div
-        className="grid transition-[grid-template-rows] duration-300 ease-[var(--ease-out-quiet)]"
-        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
-      >
-        <dl className="overflow-hidden">
-          {rows.map(([k, v]) => (
-            <div key={k} className="grid grid-cols-12 gap-x-5 gap-y-1 border-t hair py-3.5">
-              <dt className="t-label col-span-12 self-center text-ink-faint sm:col-span-4">{k}</dt>
-              <dd className="t-meta col-span-12 text-ink sm:col-span-8">{v}</dd>
-            </div>
-          ))}
-          <div className="h-4" />
-        </dl>
+    <details className="border-b hair">
+      <summary className="flex min-h-16 cursor-pointer items-center justify-between gap-5 py-4">
+        <span className="t-item text-ink">{label}</span>
+        <Icon name="chevron-down" className="chevron h-5 w-5 text-ink-dim" />
+      </summary>
+      <div className="pb-6 pr-10">
+        <p className="t-body text-ink">{value}</p>
+        {detail ? <p className="t-body mt-2 text-ink-dim">{detail}</p> : null}
       </div>
-    </div>
+    </details>
   );
 }
 
 export default function Specs() {
-  const half = Math.ceil(GROUPS.length / 2);
-  const columns = [GROUPS.slice(0, half), GROUPS.slice(half)];
+  const half = Math.ceil(ROWS.length / 2);
+  const columns = [ROWS.slice(0, half), ROWS.slice(half)];
 
   return (
     <section id="specifications" aria-labelledby="spec-heading" className="section-y-lg bg-ground-2">
       <div className="shell gutter">
-        <h2 id="spec-heading" className="t-display-m text-ink">
-          Specifications
-        </h2>
-        <div className="mt-[clamp(2rem,5vh,3rem)] grid gap-x-[clamp(2rem,5vw,4rem)] lg:grid-cols-2">
+        <div className="grid gap-y-5 lg:grid-cols-12 lg:gap-x-[clamp(2rem,4vw,4rem)]">
+          <h2 id="spec-heading" data-reveal className="t-section text-ink lg:col-span-6">
+            Specifications
+          </h2>
+          <p data-reveal className="t-body max-w-[34ch] text-ink-dim lg:col-span-5 lg:col-start-8 lg:self-end">
+            Only what the project information states. A full specification sheet is available on request.
+          </p>
+        </div>
+
+        <Accordion className="mt-[clamp(2.5rem,5vw,4rem)] grid gap-x-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-2">
           {columns.map((col, n) => (
-            <div key={n} className="border-t hair">
-              {col.map((g) => (
-                <Fold key={g.group} group={g.group} rows={g.rows as [string, string][]} />
+            <div key={n} className={`border-t hair ${n === 1 ? "border-t-0 lg:border-t" : ""}`}>
+              {col.map(([label, value]) => (
+                <Row key={label} label={label} value={value} />
               ))}
             </div>
           ))}
-        </div>
+        </Accordion>
+
+        {PENDING.length ? (
+          <div className="mt-10 grid gap-y-2 border-t hair pt-6 md:grid-cols-12 md:gap-x-[clamp(2rem,4vw,4rem)]">
+            <p className="t-label text-ink-dim md:col-span-3">Not yet published</p>
+            <p className="t-meta text-ink md:col-span-9">
+              {PENDING.map((k, i) => (i ? k.toLowerCase() : k)).join(", ").replace(/, ([^,]*)$/, " and $1")}: details are
+              available from the site office.
+            </p>
+          </div>
+        ) : null}
       </div>
     </section>
   );

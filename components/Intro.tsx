@@ -37,7 +37,7 @@ export default function Intro() {
               alt={setting.asset.alt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              quality={84}
+              quality={75}
               className="object-cover"
             />
           </figure>
@@ -53,7 +53,7 @@ export default function Intro() {
               alt={architecture.asset.alt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              quality={84}
+              quality={75}
               className="object-cover"
             />
           </figure>
@@ -71,7 +71,7 @@ export default function Intro() {
               alt={inside.asset.alt}
               fill
               sizes="100vw"
-              quality={84}
+              quality={75}
               className="object-cover object-[42%_50%] lg:object-center"
             />
           </div>

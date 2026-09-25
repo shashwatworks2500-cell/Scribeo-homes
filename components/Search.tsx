@@ -56,7 +56,7 @@ function ResultCard({ config, onPlan, onEnquire }: { config: Config; onPlan: () 
   return (
     <li className="grid grid-cols-[7rem_1fr] items-center gap-x-5 gap-y-4 border-b hair py-6 sm:grid-cols-[11rem_1fr_auto] sm:gap-x-8">
       <div className="relative aspect-[4/3] overflow-hidden bg-ground-2">
-        <Image src={asset.src} alt="" fill sizes="(max-width: 640px) 112px, 176px" quality={72} className="object-cover" />
+        <Image src={asset.src} alt="" fill sizes="(max-width: 640px) 112px, 176px" quality={75} className="object-cover" />
       </div>
       <div className="min-w-0">
         <p className="t-value text-ink">{config.bhk}</p>

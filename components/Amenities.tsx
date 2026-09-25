@@ -106,7 +106,7 @@ export default function Amenities() {
                     aria-hidden={n === i ? undefined : true}
                     fill
                     sizes="(max-width: 1024px) 100vw, 62vw"
-                    quality={82}
+                    quality={75}
                     className={`object-cover transition-opacity duration-[450ms] ease-[var(--ease-in-out-quiet)] ${
                       n === i ? "opacity-100" : "opacity-0"
                     }`}

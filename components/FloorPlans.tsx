@@ -69,9 +69,9 @@ export default function FloorPlans() {
                 <dt className="t-label text-ink-dim">Built-up area</dt>
                 <dd className="t-value text-ink">{cfg.builtUpSqft.toLocaleString("en-IN")} sq ft</dd>
               </div>
-              <div className="flex items-baseline justify-between gap-5 border-b hair py-4">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1 border-b hair py-4">
                 <dt className="t-label text-ink-dim">Price</dt>
-                <dd className="t-value text-right text-ink">
+                <dd className="t-value ml-auto whitespace-nowrap text-right text-ink">
                   {cfg.priceFrom} – {cfg.priceTo}
                 </dd>
               </div>

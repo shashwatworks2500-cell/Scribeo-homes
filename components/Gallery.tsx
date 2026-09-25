@@ -128,7 +128,7 @@ function Lightbox({ start, onClose, onIndex }: { start: number; onClose: () => v
               alt={g.alt}
               fill
               sizes="100vw"
-              quality={88}
+              quality={90}
               loading={Math.abs(j - k) <= 1 ? "eager" : "lazy"}
               className={`object-contain ${g.drawing ? "bg-paper p-6" : "p-[clamp(0.25rem,2vw,2.5rem)]"}`}
             />
@@ -286,7 +286,7 @@ export default function Gallery() {
               alt=""
               fill
               sizes="70vw"
-              quality={84}
+              quality={75}
               className={fit(GALLERY[prev])}
             />
           ) : null}
@@ -296,7 +296,7 @@ export default function Gallery() {
             alt={item.alt}
             fill
             sizes="70vw"
-            quality={84}
+            quality={75}
             className={`${fit(item)} ${prev !== null ? "motion-safe:animate-[fadeIn_450ms_var(--ease-in-out-quiet)_both]" : ""}`}
           />
           <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-[6px] bg-ground/90 text-ink opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -308,7 +308,7 @@ export default function Gallery() {
         {near ? (
           <div aria-hidden="true" className="hidden">
             {[next, before].map((n) => (
-              <Image key={`w-${n}`} src={GALLERY[n].src} alt="" width={16} height={9} sizes="70vw" quality={84} loading="eager" />
+              <Image key={`w-${n}`} src={GALLERY[n].src} alt="" width={16} height={9} sizes="70vw" quality={75} loading="eager" />
             ))}
           </div>
         ) : null}
@@ -334,7 +334,7 @@ export default function Gallery() {
                 alt=""
                 fill
                 sizes="18vw"
-                quality={70}
+                quality={75}
                 className={`${fit(GALLERY[next])} transition-transform duration-700 ease-[var(--ease-out-quiet)] group-hover:scale-[1.03]`}
               />
             </span>
@@ -390,7 +390,7 @@ export default function Gallery() {
                   alt={j === i ? g.alt : ""}
                   fill
                   sizes="100vw"
-                  quality={80}
+                  quality={75}
                   loading={near && Math.abs(j - i) <= 1 ? "eager" : "lazy"}
                   className={fit(g)}
                 />

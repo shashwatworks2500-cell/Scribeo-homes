@@ -27,7 +27,9 @@ import { goTo } from "@/lib/nav";
  * that app within two seconds. If it does not, the failure state says so
  * plainly and offers the other routes, rather than claiming a success.
  *
- * With scripting off it is still one ordinary form that posts by mailto.
+ * With scripting off the fields still render, and the action becomes a
+ * direct link to write to the site office. (A mailto form action would do
+ * the same job, but browsers flag it as an insecure form target on HTTPS.)
  */
 type Status = "idle" | "submitting" | "success" | "failed";
 type Errors = Partial<Record<"config" | "date" | "name" | "phone" | "email", string>>;
@@ -297,9 +299,6 @@ export default function Contact() {
 
           <form
             ref={formRef}
-            action={CONTACT.emailHref}
-            method="post"
-            encType="text/plain"
             onSubmit={onSubmit}
             noValidate={js}
             aria-busy={status === "submitting"}
@@ -409,7 +408,12 @@ export default function Contact() {
             ) : null}
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-              <button type="submit" aria-disabled={status === "submitting"} className="btn btn-primary">
+              <noscript>
+                <a href={CONTACT.emailHref} className="btn btn-primary">
+                  Write to the site office
+                </a>
+              </noscript>
+              <button type="submit" aria-disabled={status === "submitting"} className="js-only btn btn-primary">
                 {status === "submitting" ? (
                   <>
                     <span aria-hidden="true" className="h-4 w-4 rounded-full border-[1.5px] border-ink/25 border-t-ink motion-safe:animate-[spin_700ms_linear_infinite]" />

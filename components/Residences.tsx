@@ -76,7 +76,7 @@ export default function Residences() {
                   aria-hidden={i === shown ? undefined : true}
                   fill
                   sizes="(max-width: 1024px) 100vw, 52vw"
-                  quality={82}
+                  quality={75}
                   className={`object-cover ${i === shown ? "opacity-100" : "opacity-0"}`}
                 />
               );

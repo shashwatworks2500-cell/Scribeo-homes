@@ -48,7 +48,7 @@ export default function Location() {
                 width={A.locationMap.w}
                 height={A.locationMap.h}
                 sizes="(max-width: 1024px) 100vw, 46vw"
-                quality={88}
+                quality={90}
                 className="w-full"
               />
               {DISTANCES.map((d, i) => {

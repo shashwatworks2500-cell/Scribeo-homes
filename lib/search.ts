@@ -1,4 +1,4 @@
-import { CONFIGS, PRICE_RANGE, type Config } from "@/lib/content";
+import { CONFIGS, type Config } from "@/lib/content";
 
 /**
  * Residence search.
@@ -34,10 +34,14 @@ const crore = (s: string) => {
   return /cr/i.test(s) ? n * 100 : n; // normalise to lakh
 };
 
+/* Band ends use the same short form as every other price on the page. */
+const LOWEST = CONFIGS[0].priceFrom;
+const HIGHEST = CONFIGS[CONFIGS.length - 1].priceTo;
+
 export const PRICE_BANDS = [
-  { id: "under-75", label: `${PRICE_RANGE.min} – ₹75 L`, test: (c: Config) => crore(c.priceFrom) < 75 },
+  { id: "under-75", label: `${LOWEST} – ₹75 L`, test: (c: Config) => crore(c.priceFrom) < 75 },
   { id: "75-125", label: "₹75 L – ₹1.25 Cr", test: (c: Config) => crore(c.priceFrom) >= 75 && crore(c.priceFrom) < 125 },
-  { id: "over-125", label: `₹1.25 Cr – ${PRICE_RANGE.max}`, test: (c: Config) => crore(c.priceFrom) >= 125 },
+  { id: "over-125", label: `₹1.25 Cr – ${HIGHEST}`, test: (c: Config) => crore(c.priceFrom) >= 125 },
 ] as const;
 
 export function apply(f: Filters): Config[] {
